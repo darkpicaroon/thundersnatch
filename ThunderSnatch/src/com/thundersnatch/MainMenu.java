@@ -1,3 +1,13 @@
+/*
+ * Filename: MainMenu.java
+ * 
+ * Description: This file represents the mainmenu of the game. From here, the user
+ * 				can create a game, join a game, logout, or quit the application.
+ * 				Creating and joining a game will take you to their corresponding
+ *				screens. Logging out will take you back to the login screen so you
+ *              can log into a new account. Lastly, quitting will exit the application.
+ */
+
 package com.thundersnatch;
 
 import android.os.Bundle;

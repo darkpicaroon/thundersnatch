@@ -1,3 +1,14 @@
+/*
+ * Filename: CreateGame.java
+ * 
+ * Description: This represents the screen in which a user creates a game lobby.
+ *              They select the options that they want and then click the "Create
+ *              Game" button. This will set up the game. If they chose to manually
+ *              set flags, they will then be given the option to do so. Otherwise,
+ *              they will be brought to the game lobby where they will await other
+ *              players.
+ */
+
 package com.thundersnatch;
 
 import android.os.Bundle;

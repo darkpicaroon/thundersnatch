@@ -1,3 +1,12 @@
+/*
+ * Filename: SplashScreen.java
+ * 
+ * Description: This file represents a splash screen for our application. When
+ *              you first open up the application, this screen will appear on
+ *              the screen. After 2 seconds, the splash screen will exit and you
+ *              will be brought to the login screen.
+ */
+
 package com.thundersnatch;
 
 import android.os.Bundle;
@@ -10,7 +19,6 @@ import android.view.WindowManager;
 
 public class SplashScreen extends Activity {
 
-    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
@@ -21,16 +29,11 @@ public class SplashScreen extends Activity {
         setContentView(R.layout.activity_splash_screen);
         
         Handler handler = new Handler();
-        
-        // run a thread after 2 seconds to start the home screen
         handler.postDelayed(new Runnable() {
  
             public void run() {
  
-                // make sure we close the splash screen so the user won't come back when it presses back key
- 
                 finish();
-                // start the home screen
  
                 Intent intent = new Intent(SplashScreen.this, LoginScreen.class);
                 SplashScreen.this.startActivity(intent);
@@ -40,7 +43,6 @@ public class SplashScreen extends Activity {
         }, 2000);
     }
 
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_splash_screen, menu);
         return true;

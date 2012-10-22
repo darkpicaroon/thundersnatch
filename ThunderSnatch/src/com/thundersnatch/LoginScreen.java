@@ -1,10 +1,23 @@
+/*
+ * Filename: LoginScreen.java
+ * 
+ * Description: The login screen is where the user will log in to his/her account.
+ *              They will first enter their username and password, if they have one,
+ *              and then they will click the "Login" button. If they want the
+ *              application to remember their login credentials, they will simply
+ *              tick the "Remember Me" checkbox. It will then contact the server to
+ *              verify their credentials. If they are valid, they will be sent to the
+ *              main menu. If not, they will be presented with an error message.
+ *              If the user doesn't have an account, or wants to create a new one,
+ *              they can click the link at the bottom to be taken to the account
+ *              creation screen.
+ */
+
 package com.thundersnatch;
 
 import android.os.Bundle;
 import android.app.Activity;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.DialogInterface.OnClickListener;
 import android.view.Menu;
 import android.view.View;
 import android.view.Window;
