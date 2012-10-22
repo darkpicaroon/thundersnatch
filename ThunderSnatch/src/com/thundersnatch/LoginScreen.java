@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.TextView;
 
 public class LoginScreen extends Activity {
 
@@ -24,6 +25,7 @@ public class LoginScreen extends Activity {
         
         setContentView(R.layout.activity_login_screen);
         
+        // Makes the "Login" button clickable.
         Button login = (Button)findViewById(R.id.button1);
         login.setOnClickListener(new View.OnClickListener() {
 			
@@ -38,21 +40,22 @@ public class LoginScreen extends Activity {
 				
 			}
 		});
+        
+        // Makes the create account text a link.
+        TextView createAccount = (TextView)findViewById(R.id.textView3);
+        createAccount.setOnClickListener(new View.OnClickListener() {
+			
+			public void onClick(View v) {
+				
+				Intent intent = new Intent(LoginScreen.this, CreateAccount.class);
+	            LoginScreen.this.startActivity(intent);
+								
+			}
+		});
     }
 
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_login_screen, menu);
         return true;
     }
-    
-//    private OnClickListener loginListener = new OnClickListener()
-//    {
-//		public void onClick(DialogInterface dialog, int which) {
-//			
-//			Intent intent = new Intent(LoginScreen.this, MainMenu.class);
-//            LoginScreen.this.startActivity(intent);
-//			
-//		}
-//    };
 }

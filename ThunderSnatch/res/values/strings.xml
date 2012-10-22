@@ -9,7 +9,7 @@
     <string name="password">Password:</string>
     <string name="remember_me">Remember Me</string>
     <string name="login">Login</string>
-    <string name="signup">Don\'t have an account? Create one now.</string>
+    <string name="signup"><u>Don\'t have an account? Create one now!</u></string>
     <string name="title_activity_main_menu">MainMenu</string>
     <string name="create_game">Create Game</string>
     <string name="join_game">Join Game</string>
@@ -17,5 +17,26 @@
     <string name="logout">Logout</string>
     <string name="title_activity_create_game">CreateGame</string>
     <string name="title_activity_join_game">JoinGame</string>
+    <string name="title_activity_game_options">GameOptions</string>
+    <string name="game_type">Game Type: </string>
+    <string name="flag_placement">Flag Placement: </string>
+    <string name="map_radius">Map Radius: </string>
+    <string name="default_radius">100</string>
+    <string name="create_game2">Create Game</string>
+    <string name="blank"></string>
+    <string name="retype_password">Verify Password:</string>
+    <string name="create_account">Create Account</string>
+
+    <string-array name="game_types">
+        <item>Matchmade</item>
+        <item>Manual</item>
+    </string-array>
+    <string-array name="flag_placement">
+        <item>Automatic</item>
+        <item>Manual</item>
+    </string-array>
+
+    <string name="title_activity_game_lobby">GameLobby</string>
+    <string name="title_activity_create_account">CreateAccount</string>
 
 </resources>

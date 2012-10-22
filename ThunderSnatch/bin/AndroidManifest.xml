@@ -23,33 +23,30 @@
         <activity
             android:name=".LoginScreen"
             android:label="@string/title_activity_login_screen" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".MainMenu"
             android:label="@string/title_activity_main_menu" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".CreateGame"
             android:label="@string/title_activity_create_game" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".JoinGame"
             android:label="@string/title_activity_join_game" >
+        </activity>
+        <activity
+            android:name=".GameOptions"
+            android:label="@string/title_activity_game_options" >
+        </activity>
+        <activity
+            android:name=".GameLobby"
+            android:label="@string/title_activity_game_lobby" >
+        </activity>
+        <activity
+            android:name=".CreateAccount"
+            android:label="@string/title_activity_create_account" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
