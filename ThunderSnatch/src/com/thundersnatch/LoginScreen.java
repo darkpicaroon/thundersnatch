@@ -17,17 +17,28 @@ package com.thundersnatch;
 
 import android.os.Bundle;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.view.Menu;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.TextView;
 
 public class LoginScreen extends Activity {
 
-    @Override
+    private EditText username;
+    private EditText password;
+    private CheckBox rememberMe;
+    private Button login;
+    
+    private SharedPreferences settings;
+    private SharedPreferences.Editor editor;
+    
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
@@ -38,13 +49,50 @@ public class LoginScreen extends Activity {
         
         setContentView(R.layout.activity_login_screen);
         
+        username = (EditText)findViewById(R.id.editText1);
+        password = (EditText)findViewById(R.id.editText2);
+        rememberMe = (CheckBox)findViewById(R.id.checkBox1);
+        
+        settings = getApplicationContext().getSharedPreferences("com.thundersnatch", Context.MODE_PRIVATE);
+        editor = settings.edit();
+        
+        // If the user chose the "Remember Me" option last time,
+        // their account information should be loaded.
+        if (settings.getBoolean("remember_me", false))
+        {
+        	username.setText(settings.getString("username", ""));
+        	password.setText(settings.getString("password", ""));
+        	rememberMe.setChecked(true);
+        }
+        
         // Makes the "Login" button clickable.
-        Button login = (Button)findViewById(R.id.button1);
+        login = (Button)findViewById(R.id.button1);
         login.setOnClickListener(new View.OnClickListener() {
 			
 			public void onClick(View v) {
 				
-				// VERIFY CREDENTIALS HURR
+				String usernameText = username.getText().toString();
+				String passwordText = password.getText().toString();
+				
+				verifyCredentials(usernameText, passwordText);
+				
+				// PARSE JSON REQUEST TO DETERMINE IF CREDENTIALS WERE CORRECT
+				// Could be done in verifyCredentials method. In that case,
+				// we could make it return a boolean.
+				
+				// If the user has the "Remember Me" CheckBox checked,
+				// their login information is stored on the phone.
+				if (rememberMe.isChecked())
+				{
+					editor.putBoolean("remember_me", true);
+					editor.putString("username", usernameText);
+					// Wasn't sure if we just want to store a hashed value
+					// of the password or not but we can always fix that
+					// later.
+					editor.putString("password", passwordText);
+					editor.commit();
+					
+				}
 				
 				finish();
 				
@@ -70,5 +118,9 @@ public class LoginScreen extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_login_screen, menu);
         return true;
+    }
+    
+    private void verifyCredentials(String username, String password) {
+    	
     }
 }

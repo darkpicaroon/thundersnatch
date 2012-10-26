@@ -15,11 +15,11 @@ import android.widget.TextView;
 
 public class CreateAccount extends Activity {
 	
-	Button createAccount;
-    EditText username;
-    EditText password;
-    EditText retypePassword;
-    EditText emailAddress;
+	private Button createAccount;
+	private EditText username;
+	private EditText password;
+	private EditText retypePassword;
+	private EditText emailAddress;
     
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

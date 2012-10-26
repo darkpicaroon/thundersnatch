@@ -25,9 +25,13 @@ import android.widget.TextView;
 
 public class CreateGame extends Activity {
 
-	private TextView seekValue;
-	private SeekBar seekbar;
+	private TextView maxRadiusText;
+	private SeekBar radiusSeek;
 	private int mapRadius = 100;
+	
+	private TextView maxPlayersText;
+	private SeekBar playersSeek;
+	private int maxPlayers = 5;
 	
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);       
@@ -39,18 +43,41 @@ public class CreateGame extends Activity {
         
         setContentView(R.layout.activity_create_game);
         
-        seekValue = (TextView)findViewById(R.id.textView4);
+        // Sets up the max radius' changing TextView and its
+        // corresponding SeekBar.
+        maxRadiusText = (TextView)findViewById(R.id.textView4);
         
-        seekbar = (SeekBar)findViewById(R.id.seekBar1);
-        seekbar.setOnSeekBarChangeListener(new OnSeekBarChangeListener(){
+        radiusSeek = (SeekBar)findViewById(R.id.seekBar1);
+        radiusSeek.setOnSeekBarChangeListener(new OnSeekBarChangeListener(){
 
 			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 				
 				progress += 50;
 				mapRadius = progress;
 				char[] num = Integer.toString(progress).toCharArray();
-				//Integer.toString(progress);
-				seekValue.setText(num, 0, num.length);
+				maxRadiusText.setText(num, 0, num.length);
+				
+			}
+
+			public void onStartTrackingTouch(SeekBar arg0) { }
+
+			public void onStopTrackingTouch(SeekBar arg0) { }
+        	
+        });
+        
+        // Sets up the max players' changing TextView and its
+        // corresponding SeekBar.
+        maxPlayersText = (TextView)findViewById(R.id.textView6);
+        
+        playersSeek = (SeekBar)findViewById(R.id.seekBar2);
+        playersSeek.setOnSeekBarChangeListener(new OnSeekBarChangeListener(){
+
+			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+				
+				progress += 1;
+				maxPlayers = progress;
+				char[] num = Integer.toString(progress).toCharArray();
+				maxPlayersText.setText(num, 0, num.length);
 				
 			}
 

@@ -21,7 +21,7 @@
     <string name="title_activity_game_options">GameOptions</string>
     <string name="game_type">Game Type: </string>
     <string name="flag_placement">Flag Placement: </string>
-    <string name="map_radius">Map Radius:   </string>
+    <string name="map_radius">Map Radius:&#160;&#160;&#160;</string>
     <string name="default_radius">100</string>
     <string name="create_game2">Create Game</string>
     <string name="blank"></string>
@@ -31,6 +31,8 @@
     <string name="email">Email Address:</string>
     <string name="verify_email">Verify Email:</string>
     <string name="create_account">Create Account</string>
+    <string name="max_players">Team Size:&#160;&#160;&#160;</string>
+    <string name="default_players">5</string>
 
     <string-array name="game_types">
         <item>Matchmade</item>

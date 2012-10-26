@@ -13,8 +13,10 @@ package com.thundersnatch;
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.view.Menu;
 import android.view.View;
 import android.view.Window;
@@ -72,6 +74,13 @@ public class MainMenu extends Activity {
 					public void onClick(DialogInterface dialog, int which) {
 						
 						dialog.dismiss();
+						
+						// Stores in the settings that the user no longer
+						// wants their account to be remembered since they
+						// logged out.
+						SharedPreferences settings = getApplicationContext().getSharedPreferences("com.thundersnatch", Context.MODE_PRIVATE);
+						SharedPreferences.Editor editor = settings.edit();
+						editor.putBoolean("remember_me", false).commit();
 						
 						finish();
 						
