@@ -53,6 +53,7 @@ public class LoginScreen extends Activity {
         username = (EditText)findViewById(R.id.editText1);
         password = (EditText)findViewById(R.id.editText2);
         rememberMe = (CheckBox)findViewById(R.id.checkBox1);
+        errorMsg = (TextView)findViewById(R.id.textView5);
         
         settings = getApplicationContext().getSharedPreferences("com.thundersnatch", Context.MODE_PRIVATE);
         editor = settings.edit();
