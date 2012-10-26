@@ -125,13 +125,16 @@ public class LoginScreen extends Activity {
     }
     
     private boolean verifyCredentials(String username, String password) {
+    	//admin debugger should always be allowed in
     	if(username == "admin" && password == "admin"){
     		return true;
     	}
+    	//send info to database
     	else if(false){
     		//send info to database to check validity
     		return false;
     	}
+    	//will return an error message if nothing is entered
     	else{
     		errorMsg.setText("Please enter your username and password: admin/admin");
     		return false;//will change to false
