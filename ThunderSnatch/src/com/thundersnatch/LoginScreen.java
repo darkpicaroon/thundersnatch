@@ -31,6 +31,7 @@ import android.widget.TextView;
 
 public class LoginScreen extends Activity {
 
+	private TextView errorMsg;
     private EditText username;
     private EditText password;
     private CheckBox rememberMe;
@@ -131,6 +132,9 @@ public class LoginScreen extends Activity {
     		//send info to database to check validity
     		return false;
     	}
-    	else return true;//will change to false
+    	else{
+    		errorMsg.setText("Please enter your username and password: admin/admin");
+    		return false;//will change to false
+    	}
     }
 }
