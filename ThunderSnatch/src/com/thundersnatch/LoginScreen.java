@@ -131,6 +131,6 @@ public class LoginScreen extends Activity {
     		//send info to database to check validity
     		return false;
     	}
-    	else return false;
+    	else return true;//will change to false
     }
 }
