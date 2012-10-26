@@ -55,7 +55,7 @@
 
             <EditText
                 android:id="@+id/editText2"
-android:layout_width="fill_parent"
+				android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:singleLine="true"
@@ -78,7 +78,7 @@ android:layout_width="fill_parent"
                     android:id="@+id/textView4"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/forgot_password"
+                    android:text="forgot_password"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textSize="15sp" />
 
@@ -94,7 +94,7 @@ android:layout_width="fill_parent"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:gravity="right"
-                android:text="@string/sign_up"
+                android:text="@string/signup"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textSize="15sp" />
 
