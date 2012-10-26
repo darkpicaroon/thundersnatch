@@ -74,7 +74,8 @@ public class LoginScreen extends Activity {
 				String usernameText = username.getText().toString();
 				String passwordText = password.getText().toString();
 				
-				verifyCredentials(usernameText, passwordText);
+				
+				boolean enableLogin = verifyCredentials(usernameText, passwordText);
 				
 				// PARSE JSON REQUEST TO DETERMINE IF CREDENTIALS WERE CORRECT
 				// Could be done in verifyCredentials method. In that case,
@@ -94,10 +95,12 @@ public class LoginScreen extends Activity {
 					
 				}
 				
-				finish();
-				
-				Intent intent = new Intent(LoginScreen.this, MainMenu.class);
-	            LoginScreen.this.startActivity(intent);
+				if(enableLogin){
+					finish();
+					
+					Intent intent = new Intent(LoginScreen.this, MainMenu.class);
+		            LoginScreen.this.startActivity(intent);
+				}
 				
 			}
 		});
@@ -120,7 +123,14 @@ public class LoginScreen extends Activity {
         return true;
     }
     
-    private void verifyCredentials(String username, String password) {
-    	
+    private boolean verifyCredentials(String username, String password) {
+    	if(username == "admin" && password == "admin"){
+    		return true;
+    	}
+    	else if(false){
+    		//send info to database to check validity
+    		return false;
+    	}
+    	else return false;
     }
 }
