@@ -9,7 +9,8 @@
     <string name="password">Password:</string>
     <string name="remember_me">Remember Me</string>
     <string name="login">Login</string>
-    <string name="signup"><u>Don\'t have an account? Create one now!</u></string>
+    <string name="signup"><u>Create Account</u></string>
+    <string name="forgot_password"><u>Forgot Password?</u> </string>
     <string name="title_activity_main_menu">MainMenu</string>
     <string name="create_game">Create Game</string>
     <string name="join_game">Join Game</string>
@@ -25,8 +26,11 @@
     <string name="create_game2">Create Game</string>
     <string name="blank"></string>
     <string name="retype_password">Verify Password:</string>
-    <string name="create_account">Create Account</string>
+    <string name="sign_up">Need an account? <b>Sign Up</b></string>
     <string name="feet">ft</string>
+    <string name="email">Email Address:</string>
+    <string name="verify_email">Verify Email:</string>
+    <string name="create_account">Create Account</string>
 
     <string-array name="game_types">
         <item>Matchmade</item>
