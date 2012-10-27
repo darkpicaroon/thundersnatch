@@ -46,9 +46,10 @@ public class CreateAccount extends Activity {
 				String usernameText = username.getText().toString();
 				String passwordText = password.getText().toString();
 				String retypeText = retypePassword.getText().toString();
+				String emailAddressText = emailAddress.getText().toString();
 				
 				if (passwordText.compareTo(retypeText) == 0 && passwordText.length() >= 6) {
-					createAccount(usernameText, passwordText, retypeText);
+					createAccount(usernameText, passwordText, emailAddressText);
 					
 					// SHOULD THEY BE TAKEN TO THE MAIN MENU HERE?
 				}
