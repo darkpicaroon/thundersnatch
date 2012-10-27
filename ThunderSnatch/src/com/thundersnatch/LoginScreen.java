@@ -134,12 +134,17 @@ public class LoginScreen extends Activity {
         	}
         	else{
         		//send info to database to check validity
+        		
+        		
+        		
+        		
+        		
         		if(false){
         			//credentials are valid
         			return true;
         		}
-        		//if credentials are invalid
         		else{
+        			//credentials are invalid
         			errorMsg.setText("Invalid login credentials, please try again");
             		return false;
         		}
