@@ -126,19 +126,29 @@ public class LoginScreen extends Activity {
     }
     
     private boolean verifyCredentials(String username, String password) {
-    	//admin debugger should always be allowed in
-    	if(username == "admin" && password == "admin"){
-    		return true;
-    	}
     	//send info to database
-    	else if(false){
-    		//send info to database to check validity
-    		return false;
+    	if(!username.equals("") != !password.equals("")){//xor
+    		//admin debugger should always be allowed in
+        	if(username.equals("admin") && password.equals("admin")){
+        		return true;
+        	}
+        	else{
+        		//send info to database to check validity
+        		if(false){
+        			//credentials are valid
+        			return true;
+        		}
+        		//if credentials are invalid
+        		else{
+        			errorMsg.setText("Invalid login credentials, please try again");
+            		return false;
+        		}
+        	}
     	}
     	//will return an error message if nothing is entered
     	else{
     		errorMsg.setText("Please enter your username and password: admin/admin");
-    		return false;//will change to false
+    		return false;
     	}
     }
 }
