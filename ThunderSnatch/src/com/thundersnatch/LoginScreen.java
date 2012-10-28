@@ -95,9 +95,6 @@ public class LoginScreen extends Activity {
 				
 				boolean enableLogin = verifyCredentials(usernameText, passwordText);
 				
-				// PARSE JSON REQUEST TO DETERMINE IF CREDENTIALS WERE CORRECT
-				// Could be done in verifyCredentials method. In that case,
-				// we could make it return a boolean.
 				
 				// If the user has the "Remember Me" CheckBox checked,
 				// their login information is stored on the phone.
@@ -136,10 +133,17 @@ public class LoginScreen extends Activity {
 		});
     }
 
+    
+    
+    
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_login_screen, menu);
         return true;
     }
+    
+    
+    
+    
     
     private boolean verifyCredentials(String username, String password) {
         
