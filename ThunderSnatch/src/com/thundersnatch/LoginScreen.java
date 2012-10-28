@@ -15,11 +15,27 @@
 
 package com.thundersnatch;
 
-import android.os.Bundle;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONObject;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
 import android.view.Window;
@@ -126,19 +142,71 @@ public class LoginScreen extends Activity {
     }
     
     private boolean verifyCredentials(String username, String password) {
-    	//send info to database
-    	if(!username.equals("") != !password.equals("")){//xor
+        
+    	if(username.equals("") != password.equals("")){//xor
+    		
     		//admin debugger should always be allowed in
         	if(username.equals("admin") && password.equals("admin")){
         		return true;
         	}
+        	
+        	//send info to database to check validity
         	else{
-        		//send info to database to check validity
+        		//Create a HTTPClient as the form container
+                HttpClient httpclient = new DefaultHttpClient();
+                
+                //Use HTTP POST method
+                HttpPost httppost = new HttpPost("");//this is where the address to the php file goes
+                
+                //Create an array list for the input data to be sent
+                ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+                
+                //Create a HTTP Response and HTTP Entity
+                HttpResponse response;
+                HttpEntity entity;
+                
+                //place credentials in the array list
+                nameValuePairs.add(new BasicNameValuePair("username", username));
+                nameValuePairs.add(new BasicNameValuePair("password", password));
+        		
+                //run http methods
+        		try {
+        			   //Add array list to http post
+        			   httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+        			   
+        			   //assign executed form container to response
+        			   response = httpclient.execute(httppost);
+        			   
+        			   //check status code, need to check status code 200
+        			   if(response.getStatusLine().getStatusCode()== 200){
+	        			    
+	        			   //assign response entity to http entity
+	        			   entity = response.getEntity();
+	        			    
+	        			   //check if entity is not null
+	        			   if(entity != null){
+		        			     //Create new input stream with received data assigned
+		        			     InputStream instream = entity.getContent();
+		        			     
+		        			     //Create new JSON Object. assign converted data as parameter.
+		        			     JSONObject jsonResponse = new JSONObject(convertStreamToString(instream));
+		        			     
+		        			     //assign json responses to local strings
+		        			     String retUser = jsonResponse.getString("user");//mySQL table field
+		        			     String retPass = jsonResponse.getString("pass");
+	        			    }
+        			   }
+    			} 
+        		catch(Exception e){
+    			   e.printStackTrace();
+    			}
         		
         		
         		
         		
+        		//NEED CODE BELOW HERE
         		
+
         		if(false){
         			//credentials are valid
         			return true;
@@ -148,6 +216,12 @@ public class LoginScreen extends Activity {
         			errorMsg.setText("Invalid login credentials, please try again");
             		return false;
         		}
+        		
+        		
+        		
+        		//NEED CODE ABOVE HERE
+        		
+        		
         	}
     	}
     	//will return an error message if nothing is entered
@@ -156,4 +230,40 @@ public class LoginScreen extends Activity {
     		return false;
     	}
     }
+    
+    
+    
+    private static String convertStreamToString(InputStream is) {
+        /*
+         * To convert the InputStream to String we use the BufferedReader.readLine()
+         * method. We iterate until the BufferedReader return null which means
+         * there's no more data to read. Each line will appended to a StringBuilder
+         * and returned as String.
+         */
+        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+        StringBuilder sb = new StringBuilder();
+ 
+        String line = null;
+        try {
+            while ((line = reader.readLine()) != null) {
+                sb.append(line + "\n");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                is.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return sb.toString();
+    }
 }
+
+
+
+
+
+
+
