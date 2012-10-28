@@ -8,20 +8,20 @@ error_reporting(E_ALL ^ E_NOTICE ^ E_WARNING);
 $dbhost = ""; //database address goes here
 $dbuser = "root";
 $dbpass = "";
-$dbtable = ""; //table name goes here
+$dbdb = "ThunderSnatch"; //database name goes here
 
 //connect to mySQL
 $connect = mysql_connect($dbhost, $dbuser, $dbpass) or die("connection error");
 
 //Select the database
-mysql_select_db($dbtable)or die("database selection error");
+mysql_select_db($dbdb)or die("database selection error");
 
 //Retrieve the login details via POST
 $username = $_POST['username'];
 $password = $_POST['password'];
 
 //Query the table android login
-$query = mysql_query("SELECT * FROM androidlogin WHERE user='$username' AND pass='$password'");//user/pass are column names in the table
+$query = mysql_query("SELECT * FROM Users WHERE UserName='$username' AND Password='$password'");
 
 //check if there any results returned
 $num = mysql_num_rows($query);
