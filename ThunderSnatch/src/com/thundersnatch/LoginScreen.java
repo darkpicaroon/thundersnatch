@@ -147,7 +147,7 @@ public class LoginScreen extends Activity {
     
     private boolean verifyCredentials(String username, String password) {
         
-    	if(username.equals("") != password.equals("")){//xor
+    	if(!(username.equals("") || password.equals(""))){
     		
     		//admin debugger should always be allowed in
         	if(username.equals("admin") && password.equals("admin")){
@@ -163,69 +163,64 @@ public class LoginScreen extends Activity {
                 HttpPost httppost = new HttpPost("");//this is where the address to the php file goes
                 
                 //Create an array list for the input data to be sent
-                ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+                ArrayList<NameValuePair> nameValuePairs;
                 
                 //Create a HTTP Response and HTTP Entity
                 HttpResponse response;
                 HttpEntity entity;
-                
-                //place credentials in the array list
-                nameValuePairs.add(new BasicNameValuePair("username", username));
-                nameValuePairs.add(new BasicNameValuePair("password", password));
+               
         		
                 //run http methods
         		try {
-        			   //Add array list to http post
-        			   httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-        			   
-        			   //assign executed form container to response
-        			   response = httpclient.execute(httppost);
-        			   
-        			   //check status code, need to check status code 200
-        			   if(response.getStatusLine().getStatusCode()== 200){
-	        			    
-	        			   //assign response entity to http entity
-	        			   entity = response.getEntity();
-	        			    
-	        			   //check if entity is not null
-	        			   if(entity != null){
-		        			     //Create new input stream with received data assigned
-		        			     InputStream instream = entity.getContent();
-		        			     
-		        			     //Create new JSON Object. assign converted data as parameter.
-		        			     JSONObject jsonResponse = new JSONObject(convertStreamToString(instream));
-		        			     
-		        			     //assign json responses to local strings
-		        			     String retUser = jsonResponse.getString("user");//mySQL table field
-		        			     String retPass = jsonResponse.getString("pass");
-	        			    }
-        			   }
+        			//place credentials in the array list
+        			nameValuePairs = new ArrayList<NameValuePair>();
+                    nameValuePairs.add(new BasicNameValuePair("username", username));
+                    nameValuePairs.add(new BasicNameValuePair("password", password));
+        			
+    			    //Add array list to http post
+    			    httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+    			   
+    			    //assign executed form container to response
+    			    response = httpclient.execute(httppost);
+    			    
+    			    //check status code, need to check status code 200
+    			    if(response.getStatusLine().getStatusCode()== 200){
+        			    
+        			   //assign response entity to http entity
+        			   entity = response.getEntity();
+        			    
+        			   //check if entity is not null
+        			   if(entity != null){
+	        			     //Create new input stream with received data assigned
+	        			     InputStream instream = entity.getContent();
+	        			     
+	        			     //Create new JSON Object. assign converted data as parameter.
+	        			     JSONObject jsonResponse = new JSONObject(convertStreamToString(instream));
+	        			     
+	        			     //assign json responses to local strings
+	        			     String retUser = jsonResponse.getString("user");//mySQL table field
+	        			     String retPass = jsonResponse.getString("pass");
+	        			     
+	        			     if(username.equals(retUser) && password.equals(retPass)){
+	        	        			//credentials are valid
+	        	        			return true;
+	        	        		}
+        	        		 else{
+	        	        			//credentials are invalid
+        	        			 	errorMsg.setText("Invalid login credentials, please try again");
+	        	        		 	return false;
+        	        		 }
+	        			     
+        			    }
+    			   }
     			} 
         		catch(Exception e){
     			   e.printStackTrace();
+    			   errorMsg.setText("Connection error");
+    			   return false;
     			}
-        		
-        		
-        		
-        		
-        		//NEED CODE BELOW HERE
-        		
-
-        		if(false){
-        			//credentials are valid
-        			return true;
-        		}
-        		else{
-        			//credentials are invalid
-        			errorMsg.setText("Invalid login credentials, please try again");
-            		return false;
-        		}
-        		
-        		
-        		
-        		//NEED CODE ABOVE HERE
-        		
-        		
+        		errorMsg.setText("Internal error");
+        		return false;
         	}
     	}
     	//will return an error message if nothing is entered
