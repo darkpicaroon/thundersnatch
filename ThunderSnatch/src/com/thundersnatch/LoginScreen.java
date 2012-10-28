@@ -203,6 +203,14 @@ public class LoginScreen extends Activity {
 	        			     
 	        			     if(username.equals(retUser) && password.equals(retPass)){
 	        	        			//credentials are valid
+	        			    	 	//Store credentials in shared preferences
+	        			    	 	SharedPreferences sp = getSharedPreferences("loginDetails", 0);
+	        			    	 	SharedPreferences.Editor spEdit = sp.edit();
+	        			    	 	spEdit.putString("username", username);
+	        			    	 	spEdit.putString("password", password);
+	        			    	 	spEdit.commit();
+	        			    	 	
+	        			    	 	//return
 	        	        			return true;
 	        	        		}
         	        		 else{
@@ -216,7 +224,7 @@ public class LoginScreen extends Activity {
     			} 
         		catch(Exception e){
     			   e.printStackTrace();
-    			   errorMsg.setText("Connection error");
+    			   errorMsg.setText("Unable to connect to server");
     			   return false;
     			}
         		errorMsg.setText("Internal error");
