@@ -19,6 +19,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URI;
 import java.util.ArrayList;
 
 import org.apache.http.HttpEntity;
@@ -46,7 +47,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 public class LoginScreen extends Activity {
+	
+	private String loginURL = "http://www.rkaneda.com/Login.php";
 
+	
 	private TextView errorMsg;
     private EditText username;
     private EditText password;
@@ -159,9 +163,6 @@ public class LoginScreen extends Activity {
         		//Create a HTTPClient as the form container
                 HttpClient httpclient = new DefaultHttpClient();
                 
-                //Use HTTP POST method
-                HttpPost httppost = new HttpPost("");//this is where the address to the php file goes
-                
                 //Create an array list for the input data to be sent
                 ArrayList<NameValuePair> nameValuePairs;
                 
@@ -172,9 +173,13 @@ public class LoginScreen extends Activity {
         		
                 //run http methods
         		try {
+        			//Use HTTP POST method
+                    URI uri = new URI(loginURL);
+                    HttpPost httppost = new HttpPost(uri);//this is where the address to the php file goes
+                    
         			//place credentials in the array list
         			nameValuePairs = new ArrayList<NameValuePair>();
-                    nameValuePairs.add(new BasicNameValuePair("username", username));
+                    nameValuePairs.add(new BasicNameValuePair("userName", username));
                     nameValuePairs.add(new BasicNameValuePair("password", password));
         			
     			    //Add array list to http post
@@ -198,19 +203,10 @@ public class LoginScreen extends Activity {
 	        			     JSONObject jsonResponse = new JSONObject(convertStreamToString(instream));
 	        			     
 	        			     //assign json responses to local strings
-	        			     String retUser = jsonResponse.getString("user");//mySQL table field
-	        			     String retPass = jsonResponse.getString("pass");
+	        			     boolean isValid = jsonResponse.getBoolean("isValid");
 	        			     
-	        			     if(username.equals(retUser) && password.equals(retPass)){
+	        			     if(isValid){
 	        	        			//credentials are valid
-	        			    	 	//Store credentials in shared preferences
-	        			    	 	SharedPreferences sp = getSharedPreferences("loginDetails", 0);
-	        			    	 	SharedPreferences.Editor spEdit = sp.edit();
-	        			    	 	spEdit.putString("username", username);
-	        			    	 	spEdit.putString("password", password);
-	        			    	 	spEdit.commit();
-	        			    	 	
-	        			    	 	//return
 	        	        			return true;
 	        	        		}
         	        		 else{
