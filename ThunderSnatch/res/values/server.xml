@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="server_login">http://www.rkaneda.com/Login.php</string>
+    <string name="server_forgot_password">http://www.rkaneda.com/ForgotPassword.php</string>
+    <string name="server_sign_up">http://www.rkaneda.com/SignUp.php</string>
+    
+</resources>
