@@ -4,31 +4,6 @@
     android:layout_height="match_parent"
     android:background="@drawable/main_bg" >
 
-    <TextEdit
-        android:id="@+id/textEdit1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <ListView
-        android:id="@+id/listView2"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:background="@color/error_red" >
-
-    </ListView>
-
-    <ListView
-        android:id="@+id/listView1"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:background="@color/error_red" >
-
-    </ListView>
-
     <Button
         android:id="@+id/switch_team_button"
         android:layout_width="wrap_content"
@@ -36,5 +11,44 @@
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:text="Switch Team" />
+
+    <ListView
+        android:id="@+id/listView2"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginBottom="36dp"
+        android:drawSelectorOnTop="false" >
+    </ListView>
+
+    <ListView
+        android:id="@+id/listView1"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true" >
+    </ListView>
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/listView1"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:text="Team 1"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/error_red" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/listView2"
+        android:layout_alignLeft="@+id/textView1"
+        android:text="Team 2"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/error_red" />
 
 </RelativeLayout>
