@@ -100,6 +100,20 @@ public class InGame extends MapActivity{
 					 
 					 
 					 //ADD PLAYER ARRAY ASSIGNMENT
+					 /*
+					  * for(int i = 0; i < numPlayers; i++){
+					  * userID = id;
+						xPosition = x;
+						yPosition = y;
+						hasOwnFlag = own;
+						hasOpponentFlag = opp;
+						stealsThisGame = steals;
+						capturesThisGame = captures;
+						teamID = team;
+						
+						players[i] = Player(userID, xPosition, yPosition, hasOwnFlag, hasOpponentFlag, stealsThisGame, capturesThisGame, teamID);
+						}
+					  */
 					    			     
 			   }
 		   }
