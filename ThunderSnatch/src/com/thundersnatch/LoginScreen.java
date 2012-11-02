@@ -151,7 +151,7 @@ public class LoginScreen extends Activity {
     
     private boolean verifyCredentials(String username, String password) {
         
-    	if(!(username.equals("") || password.equals(""))){
+    	if((username.equals("") || password.equals(""))){
     		
     		//admin debugger should always be allowed in
         	if(username.equals("admin") && password.equals("admin")){
