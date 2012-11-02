@@ -73,10 +73,12 @@ public class InGame extends MapActivity{
             URI uri = new URI(updateURL);
             HttpPost httppost = new HttpPost(uri);
             
+           // TreeMap<String, Integer> coordinates = new TreeMap<String,Integer>();
+            //coordinates.add("XPosition", xPosition);
 			//place credentials in the array list
 			nameValuePairs = new ArrayList<NameValuePair>();
-            nameValuePairs.add(new NameValuePair("XPosition", xPosition));
-            nameValuePairs.add(new NameValuePair("YPosition", yPosition));
+            //nameValuePairs.add(new NameValuePair("XPosition", xPosition));
+            //nameValuePairs.add(new NameValuePair("YPosition", yPosition));
 			
 			//Add array list to http post
 		    httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
