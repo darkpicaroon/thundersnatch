@@ -13,19 +13,6 @@
         android:text="Switch Team" />
 
     <ListView
-        android:id="@+id/listView2"
-        android:layout_width="match_parent"
-        android:layout_height="150dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_marginBottom="36dp"
-        android:background="#1255ff"
-        android:drawSelectorOnTop="false"
-        tools:listitem="@android:layout/simple_list_item_1" >
-
-    </ListView>
-
-    <ListView
         android:id="@+id/listView1"
         android:layout_width="match_parent"
         android:layout_height="150dp"
@@ -34,27 +21,40 @@
         android:background="@color/error_red"
         android:divider="@android:drawable/divider_horizontal_bright"
         tools:listitem="@android:layout/simple_list_item_1" >
-
     </ListView>
 
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/listView1"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp"
-        android:text="Team 1"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="#ffffff" />
+    <ListView
+        android:id="@+id/listView2"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:background="#1255ff"
+        android:drawSelectorOnTop="false"
+        tools:listitem="@android:layout/simple_list_item_1" >
+    </ListView>
 
     <TextView
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/listView2"
-        android:layout_alignLeft="@+id/textView1"
+        android:layout_alignParentLeft="true"
+        android:layout_marginBottom="15dp"
+        android:layout_marginLeft="21dp"
         android:text="Team 2"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="#ffffff" />
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/listView1"
+        android:layout_marginRight="18dp"
+        android:layout_marginTop="24dp"
+        android:text="Team 1"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="#ffffff" />
 
