@@ -10,7 +10,7 @@
     <string name="remember_me">Remember Me</string>
     <string name="login">Login</string>
     <string name="signup"><u>Create Account</u></string>
-    <string name="forgot_password"><u>Forgot Password?</u> </string>
+    <string name="forgot_password"><u>Forgot Password?</u></string>
     <string name="title_activity_main_menu">MainMenu</string>
     <string name="create_game">Create Game</string>
     <string name="join_game">Join Game</string>
@@ -45,5 +45,7 @@
 
     <string name="title_activity_game_lobby">GameLobby</string>
     <string name="title_activity_create_account">CreateAccount</string>
+    <string name="title_activity_in_game">InGame</string>
+    <string name="title_activity_play_game">PlayGame</string>
 
 </resources>
