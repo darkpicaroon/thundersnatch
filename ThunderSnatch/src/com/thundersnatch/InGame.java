@@ -26,6 +26,7 @@ import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
 
 public class InGame extends MapActivity{
+	public final int MAX_NUM_PLAYERS = 20;
 	
 	public String updateURL = "";
 
@@ -51,7 +52,10 @@ public class InGame extends MapActivity{
 		return false;
 	}
 	
-	private void updatePositions(float xPosition, float yPosition){
+	private Player[] updatePositions(float xPosition, float yPosition){
+		//create array to return
+		Player[] players = new Player[MAX_NUM_PLAYERS];
+		
 		//Create a HTTPClient as the form container
         HttpClient httpclient = new DefaultHttpClient();
         
@@ -67,7 +71,7 @@ public class InGame extends MapActivity{
 		try {
 			//Use HTTP POST method
             URI uri = new URI(updateURL);
-            HttpPost httppost = new HttpPost(uri);//this is where the address to the php file goes
+            HttpPost httppost = new HttpPost(uri);
             
 			//place credentials in the array list
 			nameValuePairs = new ArrayList<NameValuePair>();
@@ -94,6 +98,8 @@ public class InGame extends MapActivity{
 					 //Create new JSON Object. assign converted data as parameter.
 					 JSONObject jsonResponse = new JSONObject(convertStreamToString(instream));
 					 
+					 
+					 //ADD PLAYER ARRAY ASSIGNMENT
 					    			     
 			   }
 		   }
@@ -101,6 +107,7 @@ public class InGame extends MapActivity{
 		catch(Exception e){
 		   e.printStackTrace();
 		}
+		return players;
 	}
 
 	private static String convertStreamToString(InputStream is) {
