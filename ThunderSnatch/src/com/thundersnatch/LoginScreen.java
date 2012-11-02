@@ -203,7 +203,7 @@ public class LoginScreen extends Activity {
 	        			     JSONObject jsonResponse = new JSONObject(convertStreamToString(instream));
 	        			     
 	        			     //assign json responses to local strings
-	        			     boolean isValid = jsonResponse.getBoolean("isValid");
+	        			     boolean isValid = jsonResponse.getBoolean("IsValid");
 	        			     
 	        			     if(isValid){
 	        	        			//credentials are valid
@@ -220,6 +220,7 @@ public class LoginScreen extends Activity {
     			} 
         		catch(Exception e){
     			   e.printStackTrace();
+    			   System.err.println(e);
     			   errorMsg.setText("Unable to connect to server");
     			   return false;
     			}
