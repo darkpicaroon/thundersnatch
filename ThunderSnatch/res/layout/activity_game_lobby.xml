@@ -10,33 +10,31 @@
         android:layout_height="wrap_content" />
 
     <ListView
-        android:id="@+id/team_1_listview"
-        android:layout_width="300"
-        android:layout_height="150"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
+        android:id="@+id/listView2"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
         android:background="@color/error_red" >
+
+    </ListView>
+
+    <ListView
+        android:id="@+id/listView1"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:background="@color/error_red" >
+
     </ListView>
 
     <Button
         android:id="@+id/switch_team_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/team_1_listview"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="24dp"
+        android:layout_centerVertical="true"
         android:text="Switch Team" />
-
-    <ListView
-        android:id="@+id/team_2_listview"
-        android:layout_width="300"
-        android:layout_height="150"
-        android:layout_alignLeft="@+id/team_1_listview"
-        android:layout_alignParentBottom="true"
-        android:layout_below="@+id/switch_team_button"
-        android:layout_marginTop="33dp"
-        android:background="@color/error_red" >
-
-    </ListView>
 
 </RelativeLayout>
