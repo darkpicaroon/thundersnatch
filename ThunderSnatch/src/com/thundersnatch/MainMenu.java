@@ -126,6 +126,7 @@ public class MainMenu extends Activity {
 				intent.putExtra("GameID", 1);
 				intent.putExtra("TeamID", 1);
 				intent.putExtra("UserID", 1);
+				intent.putExtra("TeamColor", "red");
 	            MainMenu.this.startActivity(intent);
 			}
 		});
