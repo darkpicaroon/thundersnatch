@@ -35,9 +35,15 @@ import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
 import com.google.android.maps.OverlayItem;
 
+/* Still need to create 
+ * 
+ */
+
 public class PlayGame extends MapActivity {
 
 	public final int MAX_NUM_PLAYERS = 20;
+	private Player[] players = new Player[MAX_NUM_PLAYERS];
+	private int numPlayers = 0;
 	
 	public String updateURL = "http://www.rkaneda.com/update.php";
 	
@@ -47,6 +53,7 @@ public class PlayGame extends MapActivity {
 	
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
         
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -74,9 +81,9 @@ public class PlayGame extends MapActivity {
             	itemizedoverlay.addOverlay(overlayitem);
                 mapOverlays.add(itemizedoverlay);
                 
-                Player[] players = updatePositions((float)location.getLatitude(), (float)location.getLongitude());
+                updatePositions((float)location.getLatitude(), (float)location.getLongitude(), players);
                 if(players != null){
-	                for(int i = 0; i < players.length; i++){
+	                for(int i = 0; i < numPlayers; i++){
 	    				//if ((myTeam == redTeam && myTeamID == iTeamID) || (myTeam == blueTeam && myTeamID != iTeamID))
 	                		//if iHasOwnFlag == 1
 	                			//drawable = getResources().getDrawable(R.drawable.red_flag);
@@ -122,9 +129,7 @@ public class PlayGame extends MapActivity {
 		return false;
 	}
 	
-	private Player[] updatePositions(float xPosition, float yPosition){
-		//Create array to return
-		Player[] players = null;
+	private void updatePositions(float xPosition, float yPosition, Player[] players){
 		
 		//Create a HTTPClient as the form container
         HttpClient httpclient = new DefaultHttpClient();
@@ -171,10 +176,9 @@ public class PlayGame extends MapActivity {
 					 JSONObject jsonResponse = new JSONObject(convertStreamToString(instream));
 					 
 					 
-
-					 players = new Player[jsonResponse.getInt("NumUsers")];
-					 for(int i = 0; i < jsonResponse.getInt("NumUsers"); i++){
-						 players[i] = convertJsonResponseToPlayer(jsonResponse, i);
+					 numPlayers = jsonResponse.getInt("NumUsers");
+					 for(int i = 0; i < numPlayers; i++){
+						 convertJsonResponseToPlayer(jsonResponse, i, players);
 					 }
 					    			     
 			   }
@@ -183,7 +187,6 @@ public class PlayGame extends MapActivity {
 		catch(Exception e){
 		   e.printStackTrace();
 		}
-		return players;
 		
 		
 	}
@@ -215,30 +218,28 @@ public class PlayGame extends MapActivity {
 	    return sb.toString();
 	}
 	
-	public Player convertJsonResponseToPlayer(JSONObject json, int i){
+	public void convertJsonResponseToPlayer(JSONObject json, int i, Player[] players){
 		try{
 			String stringToParse = json.getString("User" + i);
 			String[] playerInfo = stringToParse.split(", ");
 			String[] temp;
 			temp = playerInfo[0].split("UserGameID: ");
-			int userID = Integer.parseInt(temp[1]);
+			players[i].userID = Integer.parseInt(temp[1]);
 			temp = playerInfo[0].split("userName: ");
-			String userName = temp[1];	
+			players[i].userName = temp[1];	
 			temp = playerInfo[0].split("TeamID: ");
-			int teamID = Integer.parseInt(temp[1]);
+			players[i].teamID = Integer.parseInt(temp[1]);
 			temp = playerInfo[0].split("xPosition: ");
-			float xPosition = Float.parseFloat(temp[1]);
+			players[i].xPosition = Float.parseFloat(temp[1]);
 			temp = playerInfo[0].split("yPosition: ");
-			float yPosition = Float.parseFloat(temp[1]);
+			players[i].yPosition = Float.parseFloat(temp[1]);
 			temp = playerInfo[0].split("hasOppFlag: ");
-			boolean hasOpponentFlag = Boolean.parseBoolean(temp[1]);
+			players[i].hasOpponentFlag = Boolean.parseBoolean(temp[1]);
 			temp = playerInfo[0].split("hasOwnFlag: ");
-			boolean hasOwnFlag = Boolean.parseBoolean(temp[1]);
-			return new Player(userID, userName, xPosition, yPosition, hasOwnFlag, hasOpponentFlag,teamID);
+			players[i].hasOwnFlag = Boolean.parseBoolean(temp[1]);
 		}catch(Exception e){
 			System.out.println(e);
 		}
-		return null;
 	}
 	
 }
