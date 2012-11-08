@@ -152,8 +152,8 @@ public class PlayGame extends MapActivity {
             
 			//place credentials in the array list
 			nameValuePairs = new ArrayList<NameValuePair>();
-            nameValuePairs.add(new BasicNameValuePair("XPosition", "" + xPosition));
-            nameValuePairs.add(new BasicNameValuePair("YPosition", "" + yPosition));
+            nameValuePairs.add(new BasicNameValuePair("xPosition", "" + xPosition));
+            nameValuePairs.add(new BasicNameValuePair("yPosition", "" + yPosition));
             nameValuePairs.add(new BasicNameValuePair("userGameID", "" + userGameID));
             nameValuePairs.add(new BasicNameValuePair("gameID", "" + gameID));
 			
@@ -229,7 +229,7 @@ public class PlayGame extends MapActivity {
 			players[i].userID = Integer.parseInt(temp[1]);
 			temp = playerInfo[0].split("userName: ");
 			players[i].userName = temp[1];	
-			temp = playerInfo[0].split("TeamID: ");
+			temp = playerInfo[0].split("teamID: ");
 			players[i].teamID = Integer.parseInt(temp[1]);
 			temp = playerInfo[0].split("xPosition: ");
 			players[i].xPosition = Float.parseFloat(temp[1]);
@@ -242,6 +242,7 @@ public class PlayGame extends MapActivity {
 		}catch(Exception e){
 			System.out.println(e);
 		}
+		System.out.println(players[i]);
 	}
 	
 	public void putLocationsOnMap(Player[] players, MapView map){
