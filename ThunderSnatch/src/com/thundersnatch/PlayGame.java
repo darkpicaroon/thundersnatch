@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -16,6 +17,11 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONObject;
 
+import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.Window;
@@ -25,12 +31,14 @@ import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapActivity;
 import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
+import com.google.android.maps.Overlay;
+import com.google.android.maps.OverlayItem;
 
 public class PlayGame extends MapActivity {
 
 	public final int MAX_NUM_PLAYERS = 20;
 	
-	public String updateURL = "";
+	public String updateURL = "http://www.rkaneda.com/update.php";
 	
 	MapView map;
 	GeoPoint geoP;
@@ -44,8 +52,53 @@ public class PlayGame extends MapActivity {
         
         setContentView(R.layout.activity_map);
         map = (MapView)findViewById(R.id.mapView); 
-        map.displayZoomControls(true);
-        map.setBuiltInZoomControls(true);
+        map.displayZoomControls(false);
+        map.setBuiltInZoomControls(false);
+        
+        
+        // Acquire a reference to the system Location Manager
+        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+
+        // Define a listener that responds to location updates
+        LocationListener locationListener = new LocationListener() {
+            public void onLocationChanged(Location location) {
+            	//Called when a new location is found by the network location provider.
+            	List<Overlay> mapOverlays = map.getOverlays();
+            	Drawable drawable = getResources().getDrawable(R.drawable.black_dot);
+                MapItemizedOverlay itemizedoverlay = new MapItemizedOverlay(drawable);
+                
+                GeoPoint point = new GeoPoint((int)(location.getLatitude() * 1E6),  (int)(location.getLongitude() * 1E6));
+            	OverlayItem overlayitem = new OverlayItem(point, "Hello", "Here I am!");
+            	itemizedoverlay.addOverlay(overlayitem);
+                mapOverlays.add(itemizedoverlay);
+                
+                Player[] players = updatePositions((float)location.getLatitude(), (float)location.getLongitude());
+                for(int i = 0; i < players.length; i++){
+    				//if ((myTeam == redTeam && myTeamID == iTeamID) || (myTeam == blueTeam && myTeamID != iTeamID))
+                	//drawable = getResources().getDrawable(R.drawable.red_dot);
+                	//if ((myTeam == blueTeam && myTeamID == iTeamID) || (myTeam == redTeam && myTeamID != iTeamID))
+                	//drawable = getResources().getDrawable(R.drawable.blue_dot);
+    				
+                    itemizedoverlay = new MapItemizedOverlay(drawable);
+                    
+                	point = new GeoPoint((int)(players[i].xPosition * 1E6),  (int)(players[i].yPosition * 1E6));
+                	overlayitem = new OverlayItem(point, "Player" + players[i].userName, "");
+                	itemizedoverlay.addOverlay(overlayitem);
+                    mapOverlays.add(itemizedoverlay);
+                }
+            }
+
+            public void onStatusChanged(String provider, int status, Bundle extras) {}
+
+            public void onProviderEnabled(String provider) {}
+
+            public void onProviderDisabled(String provider) {}
+          };
+
+        // Register the listener with the Location Manager to receive location updates
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+        
     }
     
     public boolean onCreateOptionsMenu(Menu menu) {
