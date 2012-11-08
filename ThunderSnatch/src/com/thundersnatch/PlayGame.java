@@ -106,21 +106,11 @@ public class PlayGame extends MapActivity {
 					 JSONObject jsonResponse = new JSONObject(convertStreamToString(instream));
 					 
 					 
-					 //ADD PLAYER ARRAY ASSIGNMENT
-					 /*
-					  * for(int i = 0; i < numPlayers; i++){
-					  * userID = id;
-						xPosition = x;
-						yPosition = y;
-						hasOwnFlag = own;
-						hasOpponentFlag = opp;
-						stealsThisGame = steals;
-						capturesThisGame = captures;
-						teamID = team;
-						
-						players[i] = Player(userID, xPosition, yPosition, hasOwnFlag, hasOpponentFlag, stealsThisGame, capturesThisGame, teamID);
-						}
-					  */
+
+					 players = new Player[jsonResponse.getInt("NumUsers")];
+					 for(int i = 0; i < jsonResponse.getInt("NumUsers"); i++){
+						 players[i] = convertJsonResponseToPlayer(jsonResponse, i);
+					 }
 					    			     
 			   }
 		   }
@@ -158,6 +148,32 @@ public class PlayGame extends MapActivity {
 	        }
 	    }
 	    return sb.toString();
+	}
+	
+	public Player convertJsonResponseToPlayer(JSONObject json, int i){
+		try{
+			String stringToParse = json.getString("User" + i);
+			String[] playerInfo = stringToParse.split(", ");
+			String[] temp;
+			temp = playerInfo[0].split("UserGameID: ");
+			int userID = Integer.parseInt(temp[1]);
+			temp = playerInfo[0].split("userName: ");
+			String userName = temp[1];	
+			temp = playerInfo[0].split("TeamID: ");
+			int teamID = Integer.parseInt(temp[1]);
+			temp = playerInfo[0].split("xPosition: ");
+			float xPosition = Float.parseFloat(temp[1]);
+			temp = playerInfo[0].split("yPosition: ");
+			float yPosition = Float.parseFloat(temp[1]);
+			temp = playerInfo[0].split("hasOppFlag: ");
+			boolean hasOpponentFlag = Boolean.parseBoolean(temp[1]);
+			temp = playerInfo[0].split("hasOwnFlag: ");
+			boolean hasOwnFlag = Boolean.parseBoolean(temp[1]);
+			return new Player(userID, userName, xPosition, yPosition, hasOwnFlag, hasOpponentFlag,teamID);
+		}catch(Exception e){
+			System.out.println(e);
+		}
+		return null;
 	}
 	
 }
