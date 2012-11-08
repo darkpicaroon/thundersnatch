@@ -68,22 +68,29 @@ public class PlayGame extends MapActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         
         setContentView(R.layout.activity_map);
+        
         map = (MapView)findViewById(R.id.mapView); 
         map.displayZoomControls(false);
         map.setBuiltInZoomControls(false);
+        map.setSatellite(false);
+        map.setTraffic(false);
+        
+        MapController mapControl = map.getController();
+        
         
         // Acquire a reference to the system Location Manager
         //LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         
         List<Overlay> mapOverlays = map.getOverlays();
         Drawable drawable = getResources().getDrawable(R.drawable.black_dot);
-        MapItemizedOverlay itemizedoverlay = new MapItemizedOverlay(drawable);
-        GeoPoint point = new GeoPoint((int)((28.555708) * 1E6),  (int)((-81.276141) * 1E6));
+        MapItemizedOverlay itemizedoverlay = new MapItemizedOverlay(drawable, this);
+        GeoPoint point = new GeoPoint((int)((28.555708) * 1e6),  (int)((-81.276141) * 1e6));
         
     	OverlayItem overlayitem = new OverlayItem(point, "" + userGameID, "");
-    	overlayitem.setMarker(drawable);
     	itemizedoverlay.addOverlay(overlayitem);
         mapOverlays.add(itemizedoverlay);
+  
+        map.invalidate();
         
         // Define a listener that responds to location updates
         /*
