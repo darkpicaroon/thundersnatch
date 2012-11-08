@@ -80,6 +80,20 @@ public class PlayGame extends MapActivity {
         MapController mapControl = map.getController();
         
         
+        updatePositions((float)28.555708, (float)-81.276141, players);
+        putLocationsOnMap(players, map);
+        
+        List<Overlay> mapOverlays = map.getOverlays();
+        Drawable drawable = getResources().getDrawable(R.drawable.black_dot);
+        GeoPoint point = new GeoPoint((int)((28.555708) * 1e6),  (int)((-81.276141) * 1e6));
+        MapItemizedOverlay itemizedoverlay;
+    	OverlayItem overlayitem;
+    	itemizedoverlay = new MapItemizedOverlay(drawable, this);
+    	overlayitem = new OverlayItem(point, "" + userGameID, "");
+    	itemizedoverlay.addOverlay(overlayitem);
+        mapOverlays.add(itemizedoverlay);
+        map.invalidate();
+        
         // Acquire a reference to the system Location Manager
         LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         
@@ -91,7 +105,7 @@ public class PlayGame extends MapActivity {
             	location.setLongitude(-81.276141);
                 
                 updatePositions((float)location.getLatitude(), (float)location.getLongitude(), players);
-                putLocationsOnMap(players);
+                putLocationsOnMap(players, map);
                 
             }
 
@@ -230,7 +244,7 @@ public class PlayGame extends MapActivity {
 		}
 	}
 	
-	public void putLocationsOnMap(Player[] players){
+	public void putLocationsOnMap(Player[] players, MapView map){
 		
 		List<Overlay> mapOverlays = map.getOverlays();
         Drawable drawable = null;
