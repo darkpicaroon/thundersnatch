@@ -42,8 +42,8 @@ public class PlayGame extends MapActivity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         
-        setContentView(R.layout.activity_play_game);
-        map = (MapView)findViewById(R.id.mapview); 
+        setContentView(R.layout.activity_map);
+        map = (MapView)findViewById(R.id.mapView); 
         map.displayZoomControls(true);
         map.setBuiltInZoomControls(true);
     }
