@@ -17,6 +17,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONObject;
 
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -24,7 +25,6 @@ import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapActivity;
 import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
-import android.view.Menu;
 
 public class PlayGame extends MapActivity {
 
@@ -43,7 +43,7 @@ public class PlayGame extends MapActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         
         setContentView(R.layout.activity_play_game);
-        map = (MapView)findViewById(R.id.MapView); 
+        map = (MapView)findViewById(R.id.mapview); 
         map.displayZoomControls(true);
         map.setBuiltInZoomControls(true);
     }
