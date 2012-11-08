@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="horizontal" >
     
 <com.google.android.maps.MapView
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -11,7 +11,7 @@
     android:layout_height="fill_parent"
     android:enabled="true"
     android:clickable="true"
-    android:apiKey="ON7zs3S1aFScC1XuF6LV9ZTN5Y-vEzC9WfVKwDA"
+    android:apiKey="AIzaSyBlkazmCskYKeEUnopJ__n2UrOCk7xqF_I"
 />
 
 </RelativeLayout>
