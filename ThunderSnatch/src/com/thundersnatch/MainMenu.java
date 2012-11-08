@@ -123,6 +123,9 @@ public class MainMenu extends Activity {
 			public void onClick(View v) {
 				
 				Intent intent = new Intent(MainMenu.this, PlayGame.class);
+				intent.putExtra("GameID", 1);
+				intent.putExtra("TeamID", 1);
+				intent.putExtra("UserID", 1);
 	            MainMenu.this.startActivity(intent);
 			}
 		});
