@@ -45,7 +45,12 @@ public class PlayGame extends MapActivity {
 	private Player[] players = new Player[MAX_NUM_PLAYERS];
 	private int numPlayers = 0;
 	
-	public String updateURL = "http://www.rkaneda.com/update.php";
+
+    private int userGameID;
+    private int gameID;
+    private int teamID;
+	
+	private String updateURL = "http://www.rkaneda.com/Update.php";
 	
 	MapView map;
 	GeoPoint geoP;
@@ -54,6 +59,10 @@ public class PlayGame extends MapActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
+        Bundle extras = getIntent().getExtras();
+        userGameID = extras.getInt("UserID");
+        gameID = extras.getInt("GameID");
+        teamID = extras.getInt("TeamID");
         
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -64,9 +73,20 @@ public class PlayGame extends MapActivity {
         map.setBuiltInZoomControls(false);
         
         // Acquire a reference to the system Location Manager
-        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-
+        //LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        
+        List<Overlay> mapOverlays = map.getOverlays();
+        Drawable drawable = getResources().getDrawable(R.drawable.black_dot);
+        MapItemizedOverlay itemizedoverlay = new MapItemizedOverlay(drawable);
+        GeoPoint point = new GeoPoint((int)((28.555708) * 1E6),  (int)((-81.276141) * 1E6));
+        
+    	OverlayItem overlayitem = new OverlayItem(point, "" + userGameID, "");
+    	overlayitem.setMarker(drawable);
+    	itemizedoverlay.addOverlay(overlayitem);
+        mapOverlays.add(itemizedoverlay);
+        
         // Define a listener that responds to location updates
+        /*
         LocationListener locationListener = new LocationListener() {
             public void onLocationChanged(Location location) {
             	location.setLatitude(28.555708);
@@ -84,16 +104,16 @@ public class PlayGame extends MapActivity {
                 updatePositions((float)location.getLatitude(), (float)location.getLongitude(), players);
                 if(players != null){
 	                for(int i = 0; i < numPlayers; i++){
-	    				//if ((myTeam == redTeam && myTeamID == iTeamID) || (myTeam == blueTeam && myTeamID != iTeamID))
-	                		//if iHasOwnFlag == 1
+	    				//if ((teamID == redTeam && teamID == players[i].teamID) || (myTeam == blueTeam && myTeamID != players[i].teamID))
+	                		//if(players[i].hasOwnFlag == 1)
 	                			//drawable = getResources().getDrawable(R.drawable.red_flag);
-	                		//else if iHasOppFlag == 1
+	                		//else if(players[i].hasOpponentsFlag == 1)
 	            				//drawable = getResources().getDrawable(R.drawable.blue_flag);
 	                		//else drawable = getResources().getDrawable(R.drawable.red_dot);
-	                	//if ((myTeam == blueTeam && myTeamID == iTeamID) || (myTeam == redTeam && myTeamID != iTeamID))
-	                		//if iHasOwnFlag == 1
+	                	//if ((myTeam == blueTeam && teamID == players[i].teamID) || (myTeam == redTeam && teamID != players[i].teamID))
+	                		//if(players[i].hasOwnFlag == 1)
 	            				//drawable = getResources().getDrawable(R.drawable.blue_flag);
-	            			//else if iHasOppFlag == 1
+	            			//else if(players[i].hasOpponentsFlag == 1)
 	        					//drawable = getResources().getDrawable(R.drawable.red_flag);
 	            			//else drawable = getResources().getDrawable(R.drawable.blue_dot);
 	    				
@@ -117,7 +137,7 @@ public class PlayGame extends MapActivity {
         // Register the listener with the Location Manager to receive location updates
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
-        
+        */
     }
     
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -152,8 +172,8 @@ public class PlayGame extends MapActivity {
 			nameValuePairs = new ArrayList<NameValuePair>();
             nameValuePairs.add(new BasicNameValuePair("XPosition", "" + xPosition));
             nameValuePairs.add(new BasicNameValuePair("YPosition", "" + yPosition));
-            //nameValuePairs.add(new BasicNameValuePair("userGameID", "" + userGameID));
-            //nameValuePairs.add(new BasicNameValuePair("gameID", "" + gameID));
+            nameValuePairs.add(new BasicNameValuePair("userGameID", "" + userGameID));
+            nameValuePairs.add(new BasicNameValuePair("gameID", "" + gameID));
 			
 			//Add array list to http post
 		    httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
