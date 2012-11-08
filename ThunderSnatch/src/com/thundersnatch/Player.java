@@ -32,5 +32,9 @@ public class Player {
 		userName = name;
 	}
 	
+	public String toString(){
+		String sReturn = "UserID: " + userID + " UserName: " + userName;
+		return sReturn;
+	}
 	
 }
