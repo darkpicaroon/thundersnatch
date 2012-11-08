@@ -49,6 +49,7 @@ public class PlayGame extends MapActivity {
     private int userGameID;
     private int gameID;
     private int teamID;
+    private String teamColor;
 	
 	private String updateURL = "http://www.rkaneda.com/Update.php";
 	
@@ -63,6 +64,7 @@ public class PlayGame extends MapActivity {
         userGameID = extras.getInt("UserID");
         gameID = extras.getInt("GameID");
         teamID = extras.getInt("TeamID");
+        teamColor = extras.getString("TeamColor");
         
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -79,59 +81,18 @@ public class PlayGame extends MapActivity {
         
         
         // Acquire a reference to the system Location Manager
-        //LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         
-        List<Overlay> mapOverlays = map.getOverlays();
-        Drawable drawable = getResources().getDrawable(R.drawable.black_dot);
-        MapItemizedOverlay itemizedoverlay = new MapItemizedOverlay(drawable, this);
-        GeoPoint point = new GeoPoint((int)((28.555708) * 1e6),  (int)((-81.276141) * 1e6));
         
-    	OverlayItem overlayitem = new OverlayItem(point, "" + userGameID, "");
-    	itemizedoverlay.addOverlay(overlayitem);
-        mapOverlays.add(itemizedoverlay);
-  
-        map.invalidate();
         
-        // Define a listener that responds to location updates
-        /*
         LocationListener locationListener = new LocationListener() {
             public void onLocationChanged(Location location) {
             	location.setLatitude(28.555708);
             	location.setLongitude(-81.276141);
-            	//Called when a new location is found by the network location provider.
-            	List<Overlay> mapOverlays = map.getOverlays();
-            	Drawable drawable = getResources().getDrawable(R.drawable.black_dot);
-                MapItemizedOverlay itemizedoverlay = new MapItemizedOverlay(drawable);
-                
-                GeoPoint point = new GeoPoint((int)(location.getLatitude() * 1E6),  (int)(location.getLongitude() * 1E6));
-            	OverlayItem overlayitem = new OverlayItem(point, "username goes here", "");
-            	itemizedoverlay.addOverlay(overlayitem);
-                mapOverlays.add(itemizedoverlay);
                 
                 updatePositions((float)location.getLatitude(), (float)location.getLongitude(), players);
-                if(players != null){
-	                for(int i = 0; i < numPlayers; i++){
-	    				//if ((teamID == redTeam && teamID == players[i].teamID) || (myTeam == blueTeam && myTeamID != players[i].teamID))
-	                		//if(players[i].hasOwnFlag == 1)
-	                			//drawable = getResources().getDrawable(R.drawable.red_flag);
-	                		//else if(players[i].hasOpponentsFlag == 1)
-	            				//drawable = getResources().getDrawable(R.drawable.blue_flag);
-	                		//else drawable = getResources().getDrawable(R.drawable.red_dot);
-	                	//if ((myTeam == blueTeam && teamID == players[i].teamID) || (myTeam == redTeam && teamID != players[i].teamID))
-	                		//if(players[i].hasOwnFlag == 1)
-	            				//drawable = getResources().getDrawable(R.drawable.blue_flag);
-	            			//else if(players[i].hasOpponentsFlag == 1)
-	        					//drawable = getResources().getDrawable(R.drawable.red_flag);
-	            			//else drawable = getResources().getDrawable(R.drawable.blue_dot);
-	    				
-	                    itemizedoverlay = new MapItemizedOverlay(drawable);
-	                    
-	                	point = new GeoPoint((int)(players[i].xPosition * 1E6),  (int)(players[i].yPosition * 1E6));
-	                	overlayitem = new OverlayItem(point, players[i].userName, "");
-	                	itemizedoverlay.addOverlay(overlayitem);
-	                    mapOverlays.add(itemizedoverlay);
-	                }
-                }
+                putLocationsOnMap(players);
+                
             }
 
             public void onStatusChanged(String provider, int status, Bundle extras) {}
@@ -144,7 +105,7 @@ public class PlayGame extends MapActivity {
         // Register the listener with the Location Manager to receive location updates
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
-        */
+        
     }
     
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -268,5 +229,47 @@ public class PlayGame extends MapActivity {
 			System.out.println(e);
 		}
 	}
+	
+	public void putLocationsOnMap(Player[] players){
+		
+		List<Overlay> mapOverlays = map.getOverlays();
+        Drawable drawable = null;
+        GeoPoint point = new GeoPoint((int)((28.555708) * 1e6),  (int)((-81.276141) * 1e6));
+        MapItemizedOverlay itemizedoverlay;
+    	OverlayItem overlayitem;
+    	
+  
+        if(players != null){
+            for(int i = 0; i < numPlayers; i++){
+            	
+            	if(teamID == players[i].teamID){
+            		drawable = getResources().getDrawable(R.drawable.black_dot);
+            	}
+            	else if ((teamColor.equals("red") && teamID == players[i].teamID) || (teamColor.equals("blue") &&teamID != players[i].teamID)){
+            		if(players[i].hasOwnFlag == true)
+            			drawable = getResources().getDrawable(R.drawable.red_flag);
+            		else if(players[i].hasOpponentFlag == true)
+        				drawable = getResources().getDrawable(R.drawable.blue_flag);
+            		else drawable = getResources().getDrawable(R.drawable.red_dot);
+				}
+				else if ((teamColor.equals("blue") && teamID == players[i].teamID) || (teamColor.equals("red") && teamID != players[i].teamID)){
+            		if(players[i].hasOwnFlag == true)
+        				drawable = getResources().getDrawable(R.drawable.blue_flag);
+        			else if(players[i].hasOpponentFlag == true)
+    					drawable = getResources().getDrawable(R.drawable.red_flag);
+        			else drawable = getResources().getDrawable(R.drawable.blue_dot);
+            	}
+            	
+            	itemizedoverlay = new MapItemizedOverlay(drawable, this);
+                
+            	point = new GeoPoint((int)(players[i].xPosition * 1E6),  (int)(players[i].yPosition * 1E6));
+            	overlayitem = new OverlayItem(point, players[i].userName, "");
+            	itemizedoverlay.addOverlay(overlayitem);
+                mapOverlays.add(itemizedoverlay);
+            }
+        }
+        map.invalidate();
+	}
+	
 	
 }
