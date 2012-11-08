@@ -25,7 +25,7 @@ public class MapItemizedOverlay extends ItemizedOverlay {
 	
 	public void addOverlay(OverlayItem overlay) {
 	    mOverlays.add(overlay);
-	    populate();
+	    this.populate();
 	}
 
 	@Override
