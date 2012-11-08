@@ -9,6 +9,7 @@ public class Player {
 	public int stealsThisGame;
 	public int capturesThisGame;
 	public int teamID;
+	public String userName;
 	
 	public Player(int id, float x, float y, boolean own, boolean opp, int steals, int captures, int team){
 		userID = id;
@@ -21,13 +22,14 @@ public class Player {
 		teamID = team;
 	}
 	
-	public Player(int id, float x, float y, boolean own, boolean opp, int team){
+	public Player(int id, String name, float x, float y, boolean own, boolean opp, int team){
 		userID = id;
 		xPosition = x;
 		yPosition = y;
 		hasOwnFlag = own;
 		hasOpponentFlag = opp;
 		teamID = team;
+		userName = name;
 	}
 	
 	
