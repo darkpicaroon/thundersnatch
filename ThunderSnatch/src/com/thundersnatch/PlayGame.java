@@ -69,7 +69,7 @@ public class PlayGame extends MapActivity {
                 MapItemizedOverlay itemizedoverlay = new MapItemizedOverlay(drawable);
                 
                 GeoPoint point = new GeoPoint((int)(location.getLatitude() * 1E6),  (int)(location.getLongitude() * 1E6));
-            	OverlayItem overlayitem = new OverlayItem(point, "Hello", "Here I am!");
+            	OverlayItem overlayitem = new OverlayItem(point, "username goes here", "");
             	itemizedoverlay.addOverlay(overlayitem);
                 mapOverlays.add(itemizedoverlay);
                 
@@ -91,7 +91,7 @@ public class PlayGame extends MapActivity {
                     itemizedoverlay = new MapItemizedOverlay(drawable);
                     
                 	point = new GeoPoint((int)(players[i].xPosition * 1E6),  (int)(players[i].yPosition * 1E6));
-                	overlayitem = new OverlayItem(point, "Player" + players[i].userName, "");
+                	overlayitem = new OverlayItem(point, players[i].userName, "");
                 	itemizedoverlay.addOverlay(overlayitem);
                     mapOverlays.add(itemizedoverlay);
                 }
