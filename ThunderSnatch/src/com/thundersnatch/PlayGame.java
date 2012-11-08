@@ -15,6 +15,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
 
 import android.content.Context;
@@ -75,9 +76,17 @@ public class PlayGame extends MapActivity {
                 Player[] players = updatePositions((float)location.getLatitude(), (float)location.getLongitude());
                 for(int i = 0; i < players.length; i++){
     				//if ((myTeam == redTeam && myTeamID == iTeamID) || (myTeam == blueTeam && myTeamID != iTeamID))
-                	//drawable = getResources().getDrawable(R.drawable.red_dot);
+                		//if iHasOwnFlag == 1
+                			//drawable = getResources().getDrawable(R.drawable.red_flag);
+                		//else if iHasOppFlag == 1
+            				//drawable = getResources().getDrawable(R.drawable.blue_flag);
+                		//else drawable = getResources().getDrawable(R.drawable.red_dot);
                 	//if ((myTeam == blueTeam && myTeamID == iTeamID) || (myTeam == redTeam && myTeamID != iTeamID))
-                	//drawable = getResources().getDrawable(R.drawable.blue_dot);
+                		//if iHasOwnFlag == 1
+            				//drawable = getResources().getDrawable(R.drawable.blue_flag);
+            			//else if iHasOppFlag == 1
+        					//drawable = getResources().getDrawable(R.drawable.red_flag);
+            			//else drawable = getResources().getDrawable(R.drawable.blue_dot);
     				
                     itemizedoverlay = new MapItemizedOverlay(drawable);
                     
@@ -131,12 +140,12 @@ public class PlayGame extends MapActivity {
             URI uri = new URI(updateURL);
             HttpPost httppost = new HttpPost(uri);
             
-           // TreeMap<String, Integer> coordinates = new TreeMap<String,Integer>();
-            //coordinates.add("XPosition", xPosition);
 			//place credentials in the array list
 			nameValuePairs = new ArrayList<NameValuePair>();
-            //nameValuePairs.add(new NameValuePair("XPosition", xPosition));
-            //nameValuePairs.add(new NameValuePair("YPosition", yPosition));
+            nameValuePairs.add(new BasicNameValuePair("XPosition", "" + xPosition));
+            nameValuePairs.add(new BasicNameValuePair("YPosition", "" + yPosition));
+            //nameValuePairs.add(new BasicNameValuePair("userGameID", "" + userGameID));
+            //nameValuePairs.add(new BasicNameValuePair("gameID", "" + gameID));
 			
 			//Add array list to http post
 		    httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
