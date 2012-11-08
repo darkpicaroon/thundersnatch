@@ -56,7 +56,7 @@ public class PlayGame extends MapActivity {
         map.displayZoomControls(false);
         map.setBuiltInZoomControls(false);
         
-        
+        /*
         // Acquire a reference to the system Location Manager
         LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
@@ -107,7 +107,7 @@ public class PlayGame extends MapActivity {
         // Register the listener with the Location Manager to receive location updates
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
-        
+        */
     }
     
     public boolean onCreateOptionsMenu(Menu menu) {
