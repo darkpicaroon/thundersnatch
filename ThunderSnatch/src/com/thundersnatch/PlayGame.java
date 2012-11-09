@@ -36,6 +36,15 @@ import com.google.android.maps.Overlay;
 import com.google.android.maps.OverlayItem;
 
 
+//TEAM ID's ARE NOT BEING STORED FOR SOME REASON. NEED TO DEBUG
+
+/* To enable the maps functionality, you must set the keystore location in your own IDE
+ * to the file "debug.keystore" in this package.
+ * 
+ * To do this, open up the "Preferences..." menu; expand "Android"; click on the "Build" tab; 
+ * insert the filepath into the "custom debug keystore:" text box; click "Apply"
+ */
+
 public class PlayGame extends MapActivity {
 
 	public final int MAX_NUM_PLAYERS = 20;
@@ -79,10 +88,12 @@ public class PlayGame extends MapActivity {
         map.setTraffic(false);
         
         MapController mapControl = map.getController();
+        mapControl.setZoom(3);
         
-        if(user.xPosition == 0 && user.yPosition == 0)
+        if(!(user.xPosition == 0) || !(user.yPosition == 0)){
         	putLocationsOnMap(players, map);
-        
+        	mapControl.animateTo(new GeoPoint((int)(user.yPosition * 1e6), (int)(user.xPosition * 1e6)));
+        }
         
         // Acquire a reference to the system Location Manager
         LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
@@ -223,7 +234,7 @@ public class PlayGame extends MapActivity {
 			int index = -1;
 			for(int j = 0; j < numPlayers; j++){
 				if(players[j] != null){
-					if(players[j].userGameID == userGameID){
+					if(players[j].userGameID == userID){
 						index = j;
 						break;
 					}
@@ -240,9 +251,15 @@ public class PlayGame extends MapActivity {
 				temp = playerInfo[4].split("yPosition: ");
 				players[index].yPosition = Float.parseFloat(temp[1]);
 				temp = playerInfo[5].split("hasOppFlag: ");
-				players[index].hasOpponentFlag = Boolean.parseBoolean(temp[1]);
+				int opp = Integer.parseInt(temp[1]);
+				if(opp == 0)
+					players[index].hasOpponentFlag = false;
+				else players[index].hasOpponentFlag = true;
 				temp = playerInfo[6].split("hasOwnFlag: ");
-				players[index].hasOwnFlag = Boolean.parseBoolean(temp[1]);
+				int own = Integer.parseInt(temp[1]);
+				if(own == 0)
+					players[index].hasOwnFlag = false;
+				else players[index].hasOwnFlag = true;
 			}
 			else{
 				//player does not exist in array; need to create new player
@@ -257,14 +274,21 @@ public class PlayGame extends MapActivity {
 				temp = playerInfo[4].split("yPosition: ");
 				float yPosition = Float.parseFloat(temp[1]);
 				temp = playerInfo[5].split("hasOppFlag: ");
-				boolean hasOpponentFlag = Boolean.parseBoolean(temp[1]);
+				int opp = Integer.parseInt(temp[1]);
+				boolean hasOpponentFlag;
+				if(opp == 0) 
+					hasOpponentFlag = false;
+				else hasOpponentFlag = true;
 				temp = playerInfo[6].split("hasOwnFlag: ");
-				boolean hasOwnFlag = Boolean.parseBoolean(temp[1]);
-				
+				boolean hasOwnFlag;
+				int own = Integer.parseInt(temp[1]);
+				if(own == 0)
+					hasOwnFlag = false;
+				else hasOwnFlag = true;
 				players[index] = new Player(userID, userName, xPosition, yPosition, hasOpponentFlag, hasOwnFlag, teamID);
 				
 			}
-			System.out.println("Here I am" + players[i].toString());
+			System.out.println(players[i].toString());
 		}catch(Exception e){
 			System.out.println("Error: " + e);
 		}
@@ -282,7 +306,7 @@ public class PlayGame extends MapActivity {
         if(players != null){
             for(int i = 0; i < numPlayers; i++){
             	
-            	if(userGameID == players[i].userGameID){;
+            	if(user.userGameID == players[i].userGameID){;
             		drawable = getResources().getDrawable(R.drawable.black_dot);
             	}
             	else if ((teamColor.equals("red") && teamID == players[i].teamID) || (teamColor.equals("blue") &&teamID != players[i].teamID)){
@@ -303,7 +327,7 @@ public class PlayGame extends MapActivity {
             	itemizedoverlay = new MapItemizedOverlay(drawable, this);
                 
             	point = new GeoPoint((int)(players[i].xPosition * 1E6),  (int)(players[i].yPosition * 1E6));
-            	overlayitem = new OverlayItem(point, players[i].userName, "");
+            	overlayitem = new OverlayItem(point, players[i].userName, "" + players[i].teamID);
             	itemizedoverlay.addOverlay(overlayitem);
                 mapOverlays.add(itemizedoverlay);
             }

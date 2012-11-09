@@ -149,7 +149,7 @@ public class MainMenu extends Activity {
 				Intent intent = new Intent(MainMenu.this, PlayGame.class);
 				intent.putExtra("GameID", 0);
 				intent.putExtra("TeamID", 0);
-				intent.putExtra("UserGameID", 37);
+				intent.putExtra("UserGameID", 34);
 				intent.putExtra("TeamColor", "red");
 				if(location != null){
 					intent.putExtra("Longitude", (float)location.getLongitude());
