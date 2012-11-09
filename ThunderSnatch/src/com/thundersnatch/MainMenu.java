@@ -10,6 +10,9 @@
 
 package com.thundersnatch;
 
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -24,7 +27,9 @@ import android.view.WindowManager;
 import android.widget.Button;
 
 public class MainMenu extends Activity {
-
+	
+	public Location location;
+	
     public void onCreate(Bundle savedInstanceState) {
     	
         super.onCreate(savedInstanceState);
@@ -35,6 +40,25 @@ public class MainMenu extends Activity {
         		WindowManager.LayoutParams.FLAG_FULLSCREEN);
         
         setContentView(R.layout.activity_main_menu);
+        
+        //Start looking for a location
+        //Acquire a reference to the system Location Manager
+        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        LocationListener locationListener = new LocationListener() {
+            public void onLocationChanged(Location location) {
+                saveLocation(location);
+            }
+
+            public void onStatusChanged(String provider, int status, Bundle extras) {}
+
+            public void onProviderEnabled(String provider) {}
+
+            public void onProviderDisabled(String provider) {}
+          };
+        // Register the listener with the Location Manager to receive location updates
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+        
         
         // Sets up the "Create Game" button handler.
         Button createGame = (Button)findViewById(R.id.button1);
@@ -123,10 +147,17 @@ public class MainMenu extends Activity {
 			public void onClick(View v) {
 				
 				Intent intent = new Intent(MainMenu.this, PlayGame.class);
-				intent.putExtra("GameID", 1);
-				intent.putExtra("TeamID", 1);
-				intent.putExtra("UserID", 1);
+				intent.putExtra("GameID", 0);
+				intent.putExtra("TeamID", 0);
+				intent.putExtra("UserGameID", 37);
 				intent.putExtra("TeamColor", "red");
+				if(location != null){
+					intent.putExtra("Longitude", (float)location.getLongitude());
+					intent.putExtra("Latitude", (float)location.getLatitude());
+				}else{
+					intent.putExtra("Longitude", 0);
+					intent.putExtra("Latitude", 0);
+				}
 	            MainMenu.this.startActivity(intent);
 			}
 		});
@@ -135,5 +166,9 @@ public class MainMenu extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_main_menu, menu);
         return true;
+    }
+    
+    public void saveLocation(Location l){
+    	location = l;
     }
 }
