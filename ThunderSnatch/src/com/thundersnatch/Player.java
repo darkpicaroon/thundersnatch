@@ -1,7 +1,7 @@
 package com.thundersnatch;
 
 public class Player {
-	public int userID;
+	public int userGameID;
 	public float xPosition;
 	public float yPosition;
 	public boolean hasOwnFlag;
@@ -12,7 +12,7 @@ public class Player {
 	public String userName;
 	
 	public Player(int id, float x, float y, boolean own, boolean opp, int steals, int captures, int team){
-		userID = id;
+		userGameID = id;
 		xPosition = x;
 		yPosition = y;
 		hasOwnFlag = own;
@@ -23,7 +23,7 @@ public class Player {
 	}
 	
 	public Player(int id, String name, float x, float y, boolean own, boolean opp, int team){
-		userID = id;
+		userGameID = id;
 		xPosition = x;
 		yPosition = y;
 		hasOwnFlag = own;
@@ -33,7 +33,7 @@ public class Player {
 	}
 	
 	public String toString(){
-		String sReturn = "UserID: " + userID + " UserName: " + userName;
+		String sReturn = "UserGameID: " + userGameID + " UserName: " + userName;
 		return sReturn;
 	}
 	

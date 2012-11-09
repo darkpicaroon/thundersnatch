@@ -35,9 +35,6 @@ import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
 import com.google.android.maps.OverlayItem;
 
-/* Still need to create 
- * 
- */
 
 public class PlayGame extends MapActivity {
 
@@ -50,6 +47,8 @@ public class PlayGame extends MapActivity {
     private int gameID;
     private int teamID;
     private String teamColor;
+    
+    Player user;
 	
 	private String updateURL = "http://www.rkaneda.com/Update.php";
 	
@@ -66,6 +65,8 @@ public class PlayGame extends MapActivity {
         teamID = extras.getInt("TeamID");
         teamColor = extras.getString("TeamColor");
         
+        user = new Player(userGameID, "USER", (float)extras.getDouble("Longitude"), (float)extras.getDouble("Latitude"), false, false, teamID);
+        
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         
@@ -79,32 +80,18 @@ public class PlayGame extends MapActivity {
         
         MapController mapControl = map.getController();
         
+        if(user.xPosition == 0 && user.yPosition == 0)
+        	putLocationsOnMap(players, map);
         
-        updatePositions((float)28.555708, (float)-81.276141, players);
-        putLocationsOnMap(players, map);
-        
-        List<Overlay> mapOverlays = map.getOverlays();
-        Drawable drawable = getResources().getDrawable(R.drawable.black_dot);
-        GeoPoint point = new GeoPoint((int)((28.555708) * 1e6),  (int)((-81.276141) * 1e6));
-        MapItemizedOverlay itemizedoverlay;
-    	OverlayItem overlayitem;
-    	itemizedoverlay = new MapItemizedOverlay(drawable, this);
-    	overlayitem = new OverlayItem(point, "" + userGameID, "");
-    	itemizedoverlay.addOverlay(overlayitem);
-        mapOverlays.add(itemizedoverlay);
-        map.invalidate();
         
         // Acquire a reference to the system Location Manager
         LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         
-        
-        
         LocationListener locationListener = new LocationListener() {
             public void onLocationChanged(Location location) {
-            	location.setLatitude(28.555708);
-            	location.setLongitude(-81.276141);
-                
-                updatePositions((float)location.getLatitude(), (float)location.getLongitude(), players);
+                user.xPosition = (float)location.getLatitude();
+                user.yPosition = (float)location.getLongitude();
+                updatePositions(user.xPosition, user.yPosition, user.hasOwnFlag, user.hasOpponentFlag, players);
                 putLocationsOnMap(players, map);
                 
             }
@@ -131,7 +118,7 @@ public class PlayGame extends MapActivity {
 		return false;
 	}
 	
-	private void updatePositions(float xPosition, float yPosition, Player[] players){
+	private void updatePositions(float xPosition, float yPosition, boolean hasOwnFlag, boolean hasOppFlag, Player[] players){
 		
 		//Create a HTTPClient as the form container
         HttpClient httpclient = new DefaultHttpClient();
@@ -156,6 +143,11 @@ public class PlayGame extends MapActivity {
             nameValuePairs.add(new BasicNameValuePair("yPosition", "" + yPosition));
             nameValuePairs.add(new BasicNameValuePair("userGameID", "" + userGameID));
             nameValuePairs.add(new BasicNameValuePair("gameID", "" + gameID));
+            int iOwn = hasOwnFlag? 1 : 0;
+            nameValuePairs.add(new BasicNameValuePair("hasOwnFlag", "" + iOwn));
+            int iOpp = hasOppFlag? 1 : 0;
+            nameValuePairs.add(new BasicNameValuePair("hasOppFlag", "" + iOpp));
+            
 			
 			//Add array list to http post
 		    httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
@@ -181,17 +173,16 @@ public class PlayGame extends MapActivity {
 					 numPlayers = jsonResponse.getInt("NumUsers");
 					 for(int i = 0; i < numPlayers; i++){
 						 convertJsonResponseToPlayer(jsonResponse, i, players);
-					 }
-					    			     
+					 }			     
 			   }
 		   }
-		} 
-		catch(Exception e){
+		}catch(Exception e){
 		   e.printStackTrace();
 		}
-		
-		
-	}
+	}//end update method
+	
+	
+	
 	
 	private static String convertStreamToString(InputStream is) {
 	    /*
@@ -218,7 +209,9 @@ public class PlayGame extends MapActivity {
 	        }
 	    }
 	    return sb.toString();
-	}
+	}// end stream to string
+	
+	
 	
 	public void convertJsonResponseToPlayer(JSONObject json, int i, Player[] players){
 		try{
@@ -226,30 +219,62 @@ public class PlayGame extends MapActivity {
 			String[] playerInfo = stringToParse.split(", ");
 			String[] temp;
 			temp = playerInfo[0].split("UserGameID: ");
-			players[i].userID = Integer.parseInt(temp[1]);
-			temp = playerInfo[0].split("userName: ");
-			players[i].userName = temp[1];	
-			temp = playerInfo[0].split("teamID: ");
-			players[i].teamID = Integer.parseInt(temp[1]);
-			temp = playerInfo[0].split("xPosition: ");
-			players[i].xPosition = Float.parseFloat(temp[1]);
-			temp = playerInfo[0].split("yPosition: ");
-			players[i].yPosition = Float.parseFloat(temp[1]);
-			temp = playerInfo[0].split("hasOppFlag: ");
-			players[i].hasOpponentFlag = Boolean.parseBoolean(temp[1]);
-			temp = playerInfo[0].split("hasOwnFlag: ");
-			players[i].hasOwnFlag = Boolean.parseBoolean(temp[1]);
+			int userID = Integer.parseInt(temp[1]);
+			int index = -1;
+			for(int j = 0; j < numPlayers; j++){
+				if(players[j] != null){
+					if(players[j].userGameID == userGameID){
+						index = j;
+						break;
+					}
+				}
+				else{
+					index = index * j;
+					break;
+				}
+			}
+			if(index > 0){
+				//player already exists in array
+				temp = playerInfo[3].split("xPosition: ");
+				players[index].xPosition = Float.parseFloat(temp[1]);
+				temp = playerInfo[4].split("yPosition: ");
+				players[index].yPosition = Float.parseFloat(temp[1]);
+				temp = playerInfo[5].split("hasOppFlag: ");
+				players[index].hasOpponentFlag = Boolean.parseBoolean(temp[1]);
+				temp = playerInfo[6].split("hasOwnFlag: ");
+				players[index].hasOwnFlag = Boolean.parseBoolean(temp[1]);
+			}
+			else{
+				//player does not exist in array; need to create new player
+				index = index * -1;
+				
+				temp = playerInfo[1].split("userName: ");
+				String userName = temp[1];
+				temp = playerInfo[2].split("teamID: ");
+				int teamID = Integer.parseInt(temp[1]);
+				temp = playerInfo[3].split("xPosition: ");
+				float xPosition = Float.parseFloat(temp[1]);
+				temp = playerInfo[4].split("yPosition: ");
+				float yPosition = Float.parseFloat(temp[1]);
+				temp = playerInfo[5].split("hasOppFlag: ");
+				boolean hasOpponentFlag = Boolean.parseBoolean(temp[1]);
+				temp = playerInfo[6].split("hasOwnFlag: ");
+				boolean hasOwnFlag = Boolean.parseBoolean(temp[1]);
+				
+				players[index] = new Player(userID, userName, xPosition, yPosition, hasOpponentFlag, hasOwnFlag, teamID);
+				
+			}
+			System.out.println("Here I am" + players[i].toString());
 		}catch(Exception e){
-			System.out.println(e);
+			System.out.println("Error: " + e);
 		}
-		System.out.println(players[i]);
-	}
+	}// end json response conversion
 	
 	public void putLocationsOnMap(Player[] players, MapView map){
 		
 		List<Overlay> mapOverlays = map.getOverlays();
         Drawable drawable = null;
-        GeoPoint point = new GeoPoint((int)((28.555708) * 1e6),  (int)((-81.276141) * 1e6));
+        GeoPoint point;
         MapItemizedOverlay itemizedoverlay;
     	OverlayItem overlayitem;
     	
@@ -257,7 +282,7 @@ public class PlayGame extends MapActivity {
         if(players != null){
             for(int i = 0; i < numPlayers; i++){
             	
-            	if(teamID == players[i].teamID){
+            	if(userGameID == players[i].userGameID){;
             		drawable = getResources().getDrawable(R.drawable.black_dot);
             	}
             	else if ((teamColor.equals("red") && teamID == players[i].teamID) || (teamColor.equals("blue") &&teamID != players[i].teamID)){
@@ -284,7 +309,7 @@ public class PlayGame extends MapActivity {
             }
         }
         map.invalidate();
-	}
+	}//end putLocations on map
 	
 	
 }
