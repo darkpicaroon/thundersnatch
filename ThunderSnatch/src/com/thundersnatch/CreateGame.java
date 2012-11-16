@@ -52,9 +52,9 @@ public class CreateGame extends Activity {
 
 			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 				
-				progress += 50;
+				progress += 5;
 				mapRadius = progress;
-				char[] num = Integer.toString(progress).toCharArray();
+				char[] num = Integer.toString(progress*10).toCharArray();
 				maxRadiusText.setText(num, 0, num.length);
 				
 			}
