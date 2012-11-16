@@ -108,9 +108,9 @@ public class PlayGame extends MapActivity {
 				user.xPosition = (float) location.getLatitude();
 				user.yPosition = (float) location.getLongitude();
 				// now being done in thread
-				// updatePositions(user.xPosition, user.yPosition,
-				// user.hasOwnFlag, user.hasOpponentFlag, players);
-				// putLocationsOnMap(players, map);
+				 updatePositions(user.xPosition, user.yPosition,
+						 user.hasOwnFlag, user.hasOpponentFlag, players);
+				 putLocationsOnMap(players, map);
 
 			}
 
@@ -128,25 +128,31 @@ public class PlayGame extends MapActivity {
 		// Register the listener with the Location Manager to receive location
 		// updates
 		
-		updateThread = new UpdateThread(this);
-		updateThread.run();
-
-		while (true) {
-			locationManager.requestLocationUpdates(
-					LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
-			locationManager.requestLocationUpdates(
-					LocationManager.GPS_PROVIDER, 0, 0, locationListener);
-		}
+		//updateThread = new UpdateThread(this);
+		//updateThread.run();
+		locationManager.requestLocationUpdates(
+				LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+		locationManager.requestLocationUpdates(
+				LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+		
 	}
+	/*
 
 	public void onPause(){
 		updateThread.stop();
 	}
 	
-	public void onResume(){
-		updateThread.stop();
-	}
 	
+	protected void onDestroy() {
+		updateThread.stop();
+		super.onDestroy();
+	}
+
+	public void onResume(){
+		updateThread.run();
+	}
+
+*/
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.activity_play_game, menu);
 		return true;
@@ -317,7 +323,6 @@ public class PlayGame extends MapActivity {
 						yPosition, hasOpponentFlag, hasOwnFlag, teamID);
 
 			}
-			System.out.println(players[i].toString());
 		} catch (Exception e) {
 			System.out.println("Error: " + e);
 		}
@@ -325,6 +330,8 @@ public class PlayGame extends MapActivity {
 
 	public void putLocationsOnMap(Player[] players, MapView map) {
 
+		//map.deleteoverlays()
+		map.getOverlays().clear();
 		List<Overlay> mapOverlays = map.getOverlays();
 		Drawable drawable = null;
 		GeoPoint point;
@@ -401,3 +408,4 @@ class UpdateThread extends Thread {
 	}
 
 }
+
