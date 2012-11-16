@@ -30,6 +30,13 @@ public class MainMenu extends Activity {
 	
 	public Location location;
 	
+	private int userID;
+    private String userName;
+    private int wins;
+    private int losses;
+    private int ties;
+    private int steals;
+	
     public void onCreate(Bundle savedInstanceState) {
     	
         super.onCreate(savedInstanceState);
@@ -40,6 +47,14 @@ public class MainMenu extends Activity {
         		WindowManager.LayoutParams.FLAG_FULLSCREEN);
         
         setContentView(R.layout.activity_main_menu);
+        
+        Bundle extras = this.getIntent().getExtras();
+        userID = extras.getInt("UserID");
+        userName = extras.getString("Username");
+        wins = extras.getInt("Wins");
+        losses = extras.getInt("Losses");
+        ties = extras.getInt("Ties");
+        steals = extras.getInt("Steals");
         
         //Start looking for a location
         //Acquire a reference to the system Location Manager
@@ -140,7 +155,7 @@ public class MainMenu extends Activity {
 			}
 		});
         
-     // Sets up the "Map - Developer" button handler.
+        // Sets up the "Map - Developer" button handler.
         Button map = (Button)findViewById(R.id.button5);
         map.setOnClickListener(new View.OnClickListener() {
 			
