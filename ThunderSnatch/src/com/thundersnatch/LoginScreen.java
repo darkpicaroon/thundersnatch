@@ -37,6 +37,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.Menu;
 import android.view.View;
 import android.view.Window;
@@ -49,16 +50,24 @@ import android.widget.TextView;
 public class LoginScreen extends Activity {
 	
 	private String loginURL = "http://www.rkaneda.com/Login.php";
-
 	
 	private TextView errorMsg;
     private EditText username;
     private EditText password;
     private CheckBox rememberMe;
     private Button login;
+    private TextView createAccount;
+    private TextView forgotPassword;
     
     private SharedPreferences settings;
     private SharedPreferences.Editor editor;
+    
+    private int userID;
+    private String userName;
+    private int wins;
+    private int losses;
+    private int ties;
+    private int steals;
     
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -96,9 +105,7 @@ public class LoginScreen extends Activity {
 				String usernameText = username.getText().toString();
 				String passwordText = password.getText().toString();
 				
-				
 				boolean enableLogin = verifyCredentials(usernameText, passwordText);
-				
 				
 				// If the user has the "Remember Me" CheckBox checked,
 				// their login information is stored on the phone.
@@ -111,13 +118,19 @@ public class LoginScreen extends Activity {
 					// later.
 					editor.putString("password", passwordText);
 					editor.commit();
-					
 				}
 				
 				if(enableLogin){
+					
 					finish();
 					System.out.println("do i get here?");
 					Intent intent = new Intent(LoginScreen.this, MainMenu.class);
+					intent.putExtra("UserID", userID);
+					intent.putExtra("Username", userName);
+					intent.putExtra("Wins", wins);
+					intent.putExtra("Losses", losses);
+					intent.putExtra("Ties", ties);
+					intent.putExtra("Steals", steals);
 		            LoginScreen.this.startActivity(intent);
 				}
 				
@@ -125,7 +138,7 @@ public class LoginScreen extends Activity {
 		});
         
         // Makes the create account text a link.
-        TextView createAccount = (TextView)findViewById(R.id.textView3);
+        createAccount = (TextView)findViewById(R.id.textView3);
         createAccount.setOnClickListener(new View.OnClickListener() {
 			
 			public void onClick(View v) {
@@ -135,31 +148,36 @@ public class LoginScreen extends Activity {
 								
 			}
 		});
+        
+        forgotPassword = (TextView)findViewById(R.id.textView4);
+        forgotPassword.setOnClickListener(new View.OnClickListener() {
+			
+			public void onClick(View v) {
+				
+				Intent intent = new Intent(LoginScreen.this, ForgotPassword.class);
+	            LoginScreen.this.startActivity(intent);
+								
+			}
+		});
     }
-
-    
-    
     
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_login_screen, menu);
         return true;
     }
     
-    
-    
-    
-    
     private boolean verifyCredentials(String username, String password) {
         
     	if((!username.equals("") && !password.equals(""))){
     		
     		//admin debugger should always be allowed in
-        	if(username.equals("admin") && password.equals("admin")){
+        	if(username.equals("admin") && password.equals("admin")) {
         		return true;
         	}
         	
         	//send info to database to check validity
-        	else{
+        	else {
+        		
         		//Create a HTTPClient as the form container
                 HttpClient httpclient = new DefaultHttpClient();
                 
@@ -173,6 +191,7 @@ public class LoginScreen extends Activity {
         		
                 //run http methods
         		try {
+        			
         			//Use HTTP POST method
                     URI uri = new URI(loginURL);
                     HttpPost httppost = new HttpPost(uri);//this is where the address to the php file goes
@@ -205,23 +224,29 @@ public class LoginScreen extends Activity {
 	        			     //assign json responses to local strings
 	        			     boolean isValid = jsonResponse.getBoolean("IsValid");
 	        			     
-	        			     if(isValid){
-	        	        			//credentials are valid
-	        	        			return true;
-	        	        		}
-        	        		 else{
+	        			     // Credentials are valid
+	        			     if(isValid) {
+	        			    	 	
+								userID = jsonResponse.getInt("UserID");
+								userName = username;
+								wins = jsonResponse.getInt("Wins");
+								losses = jsonResponse.getInt("Losses");
+								ties = jsonResponse.getInt("Ties");
+								steals = jsonResponse.getInt("Steals");
+
+								return true;
+	        	        	}
+        	        		 else {
 	        	        			//credentials are invalid
-        	        			 	errorMsg.setText("Invalid login credentials, please try again");
+        	        			 	errorMsg.setText("Invalid login credentials, please try again.");
 	        	        		 	return false;
         	        		 }
-	        			     
         			    }
     			   }
     			} 
         		catch(Exception e){
     			   e.printStackTrace();
-    			   System.err.println(e);
-    			   errorMsg.setText("Unable to connect to server");
+    			   errorMsg.setText("Unable to connect to server.");
     			   return false;
     			}
         		errorMsg.setText("Internal error");
@@ -234,8 +259,6 @@ public class LoginScreen extends Activity {
     		return false;
     	}
     }
-    
-    
     
     private static String convertStreamToString(InputStream is) {
         /*
@@ -262,6 +285,24 @@ public class LoginScreen extends Activity {
             }
         }
         return sb.toString();
+    }
+    
+    // Disables components on login screen.
+    private void disableComponents() {
+    	username.setEnabled(false);
+    	password.setEnabled(false);
+    	rememberMe.setEnabled(false);
+    	login.setEnabled(false);
+    	createAccount.setEnabled(false);
+    }
+    
+    // Enables components on login screen.
+    private void enableComponents() {
+    	username.setEnabled(true);
+    	password.setEnabled(true);
+    	rememberMe.setEnabled(true);
+    	login.setEnabled(true);
+    	createAccount.setEnabled(true);
     }
 }
 
