@@ -139,6 +139,14 @@ public class PlayGame extends MapActivity {
 		}
 	}
 
+	public void onPause(){
+		updateThread.running = false;
+	}
+	
+	public void onResume(){
+		updateThread.running = true;
+	}
+	
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.activity_play_game, menu);
 		return true;
