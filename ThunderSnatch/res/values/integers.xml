@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <integer name="max_radius">450</integer>
-    <integer name="default_progress">50</integer>
+    <integer name="max_radius">45</integer>
+    <integer name="default_progress">5</integer>
     <integer name="max_players">9</integer>
     <integer name="default_players">5</integer>
 </resources>
