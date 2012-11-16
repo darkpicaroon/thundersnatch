@@ -1,26 +1,43 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent" 
-    android:background="@drawable/main_bg">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/MainLayout"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/main_bg"
+    android:orientation="vertical" >
     
-    <ScrollView
+    <ImageView
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_marginBottom="35dip"
-        android:layout_marginLeft="35dip"
-        android:layout_marginRight="35dip"
-        android:layout_marginTop="5dip" >
+        android:layout_height="wrap_content"
+        android:layout_marginTop="-5dp"
+        android:gravity="top"
+        android:scaleType="fitXY"
+        android:src="@drawable/local_games" >
 
-        <LinearLayout
+    </ImageView>
+    
+    <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:background="@drawable/scroll_bg"
             android:orientation="vertical"
-            android:padding="10dip" >
-       </LinearLayout>
-       
-    </ScrollView>
-    
+            android:layout_marginLeft="15dip"
+            android:layout_marginRight="15dip"
+            android:layout_marginBottom="15dip"
+            android:layout_marginTop="5dip"
+            android:padding="3dip">
+            
+            <ListView
+                android:id="@+id/android:list"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/scroll_bg" />
 
-</RelativeLayout>
+            <TextView
+                android:id="@+id/android:empty"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:text="@string/no_games_available" />
+            </LinearLayout>
+
+
+</LinearLayout>
