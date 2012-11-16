@@ -140,11 +140,11 @@ public class PlayGame extends MapActivity {
 	}
 
 	public void onPause(){
-		updateThread.running = false;
+		updateThread.stop();
 	}
 	
 	public void onResume(){
-		updateThread.running = true;
+		updateThread.stop();
 	}
 	
 	public boolean onCreateOptionsMenu(Menu menu) {
