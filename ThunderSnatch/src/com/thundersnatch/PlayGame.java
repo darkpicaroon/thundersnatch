@@ -78,7 +78,7 @@ public class PlayGame extends MapActivity {
         
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        
+
         setContentView(R.layout.activity_map);
         
         map = (MapView)findViewById(R.id.mapView); 
@@ -117,7 +117,6 @@ public class PlayGame extends MapActivity {
         // Register the listener with the Location Manager to receive location updates
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
-        
     }
     
     public boolean onCreateOptionsMenu(Menu menu) {
