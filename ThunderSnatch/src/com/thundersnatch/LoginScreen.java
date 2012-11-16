@@ -116,7 +116,7 @@ public class LoginScreen extends Activity {
 				
 				if(enableLogin){
 					finish();
-					
+					System.out.println("do i get here?");
 					Intent intent = new Intent(LoginScreen.this, MainMenu.class);
 		            LoginScreen.this.startActivity(intent);
 				}
