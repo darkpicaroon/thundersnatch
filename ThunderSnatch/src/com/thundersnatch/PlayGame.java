@@ -368,9 +368,6 @@ public class PlayGame extends MapActivity {
 
 }
 
-// float xPosition, float yPosition, boolean hasOwnFlag, boolean hasOppFlag,
-// Player[] players){
-
 class UpdateThread extends Thread {
 	public boolean running;
 	private PlayGame pg;
@@ -382,10 +379,16 @@ class UpdateThread extends Thread {
 
 	public void run() {
 		running = true;
-		while (running) {
-			pg.updatePositions(pg.user.xPosition, pg.user.yPosition,
-					pg.user.hasOwnFlag, pg.user.hasOpponentFlag, pg.players);
-			pg.putLocationsOnMap(pg.players, pg.map);
+		try{
+			while (running) {
+				sleep(500);
+				pg.updatePositions(pg.user.xPosition, pg.user.yPosition,
+						pg.user.hasOwnFlag, pg.user.hasOpponentFlag, pg.players);
+				pg.putLocationsOnMap(pg.players, pg.map);
+			}
+		}
+		catch(Exception e){
+			
 		}
 	}
 
