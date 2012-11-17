@@ -36,6 +36,9 @@ public class MainMenu extends Activity {
     private int losses;
     private int ties;
     private int steals;
+    
+    private double xPos;
+    private double yPos;
 	
     public void onCreate(Bundle savedInstanceState) {
     	
@@ -60,6 +63,7 @@ public class MainMenu extends Activity {
         //Acquire a reference to the system Location Manager
         LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         LocationListener locationListener = new LocationListener() {
+        	
             public void onLocationChanged(Location location) {
                 saveLocation(location);
             }
@@ -70,6 +74,7 @@ public class MainMenu extends Activity {
 
             public void onProviderDisabled(String provider) {}
           };
+          
         // Register the listener with the Location Manager to receive location updates
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
@@ -94,6 +99,9 @@ public class MainMenu extends Activity {
 			public void onClick(View v) {
 				
 				Intent intent = new Intent(MainMenu.this, JoinGame.class);
+				intent.putExtra("UserID", userID);
+				intent.putExtra("xPos", 0.0);
+		        intent.putExtra("yPos", 0.0);
 	            MainMenu.this.startActivity(intent);
 				
 			}
