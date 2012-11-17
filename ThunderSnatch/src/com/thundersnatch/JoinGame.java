@@ -29,15 +29,19 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class JoinGame extends ListActivity
 {
-	private ArrayList<HashMap<String,String>> list = new ArrayList<HashMap<String,String>>();
+	private ArrayList<HashMap<String,String>> gameList = new ArrayList<HashMap<String,String>>();
+	private ArrayList<Integer> gameIdList = new ArrayList<Integer>();
 	private static final int ADD_ITEM_ID = 1;
 	private SimpleAdapter notes;
 	
-	private ListView listView;
+	private int userID;
+	private double xPos;
+	private double yPos;
 	
 	private String gameListURL = "http://www.rkaneda.com/GetGameList.php";
 
@@ -50,41 +54,38 @@ public class JoinGame extends ListActivity
        		WindowManager.LayoutParams.FLAG_FULLSCREEN);
        
        setContentView(R.layout.activity_join_game);
+       System.out.println("LOL");
+       Bundle extras = this.getIntent().getExtras();
+       userID = extras.getInt("UserID");
+       xPos = extras.getDouble("xPos");
+       yPos = extras.getDouble("yPos");
+       
        notes = new SimpleAdapter( 
 				this, 
-				list,
+				gameList,
 				R.layout.join_game_item2,
 				new String[] { "line1","line2" },
 				new int[] { R.id.text1, R.id.text2 }  );
        
        setListAdapter(notes);
+       
        this.getListView().setOnItemClickListener(new OnItemClickListener(){
 
     	   public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
     		   
     		   Intent intent = new Intent(JoinGame.this, GameLobby.class);
+    		   //intent.putExtra("GameID", gameIdList.get(position));
     		   intent.putExtra("GameID", 0);
+    		   intent.putExtra("UserID", userID);
+    		   intent.putExtra("xPos", 0.0);
+    		   intent.putExtra("yPos", 0.0);
     		   JoinGame.this.startActivity(intent);
     		   
     	   }
     	   
        });
        
-//       addItem();
-//       addItem();
-//       addItem();
-//       addItem();
-//       addItem();
-//       addItem();
-//       addItem();
-//       addItem();
-//       addItem();
-//       addItem();
-//       addItem();
-//       addItem();
-//       addItem();
-//       addItem();
-//       addItem();
+       getGameList(49.4, 49.4);
        
     }
 
@@ -107,9 +108,9 @@ public class JoinGame extends ListActivity
 
 	private void addItem() {
 	  HashMap<String,String> item = new HashMap<String,String>();
-	  item.put( "line1", "USERNAME");
-	  item.put( "line2", "Distance: 5 ft");
-	  list.add( item );
+	  item.put("line1", "Username");
+	  item.put("line2", "Distance: 5 ft");
+	  gameList.add(item);
       notes.notifyDataSetChanged();
 	}
     
@@ -146,12 +147,12 @@ public class JoinGame extends ListActivity
 
 			// check status code, need to check status code 200
 			if (response.getStatusLine().getStatusCode() == 200) {
-
+				
 				// assign response entity to http entity
 				entity = response.getEntity();
-
 				// check if entity is not null
 				if (entity != null) {
+					
 					// Create new input stream with received data assigned
 					InputStream instream = entity.getContent();
 
@@ -159,24 +160,31 @@ public class JoinGame extends ListActivity
 					// parameter.
 					JSONObject jsonResponse = new JSONObject(
 							convertStreamToString(instream));
-
+					
 					// assign json responses to local strings
-					boolean isValid = jsonResponse.getBoolean("IsValid");
-
-					// Credentials are valid
+					boolean isValid = jsonResponse.getBoolean("isValid");
+					
+					// Response is valid.
 					if (isValid) {
 						
 						JSONObject list = jsonResponse.getJSONObject("GameList");
+						System.out.println(list.length());
+						System.out.println("test");
 						
-						for(int i = 0; i < list.length(); i++){
+						for(int i = 0; i < list.length(); i++) {
+							JSONObject game = list.getJSONObject("Game" + i);
 							HashMap<String, String> temp = new HashMap<String,String>();
-				            //String value = settings.getJSONObject(i).getString("value");
-							String username = list.getString("userName");
-							int distance = (int)(list.getDouble("distance") * 364320);
-				            temp.put(username, "" + distance);
+							String username = game.getString("userName");
+							int distance = (int)(game.getDouble("distance") * 364320);
+							temp.put("line1", username);
+				            temp.put("line2", "Distance: " + distance + " ft");
+				            gameList.add(temp);
+				            gameIdList.add((int)game.getInt("gameID"));
 						}
-
+						
+						notes.notifyDataSetChanged();
 						return true;
+						
 					} else {
 						// credentials are invalid
 						// errorMsg.setText("Invalid login credentials, please try again.");
