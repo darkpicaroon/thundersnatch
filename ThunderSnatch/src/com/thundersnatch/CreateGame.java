@@ -11,6 +11,23 @@
 
 package com.thundersnatch;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URI;
+import java.util.ArrayList;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONObject;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -24,6 +41,8 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
 public class CreateGame extends Activity {
+	
+	private String newGameURL = "www.rkaneda.com/StartNewGame.php";
 
 	private TextView maxRadiusText;
 	private SeekBar radiusSeek;
@@ -32,6 +51,8 @@ public class CreateGame extends Activity {
 	private TextView maxPlayersText;
 	private SeekBar playersSeek;
 	private int maxPlayers = 5;
+	
+	Bundle extras = this.getIntent().getExtras();
 	
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);       
@@ -94,6 +115,7 @@ public class CreateGame extends Activity {
 			public void onClick(View v) {
 				
 				// Should all previous menus be closed at this point?
+				JSONObject response = serverShit();
 				
 				Intent intent = new Intent(CreateGame.this, GameLobby.class);
 	            CreateGame.this.startActivity(intent);
@@ -106,5 +128,94 @@ public class CreateGame extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_create_game, menu);
         return true;
+    }
+    
+private JSONObject serverShit() {
+    		
+		// Create a HTTPClient as the form container
+		HttpClient httpclient = new DefaultHttpClient();
+
+		// Create an array list for the input data to be sent
+		ArrayList<NameValuePair> nameValuePairs;
+
+		// Create a HTTP Response and HTTP Entity
+		HttpResponse response;
+		HttpEntity entity;
+
+		// run http methods
+		try {
+
+			// Use HTTP POST method
+			URI uri = new URI(newGameURL);
+			HttpPost httppost = new HttpPost(uri);// this is where the address
+													// to the php file goes
+
+			// place credentials in the array list
+			nameValuePairs = new ArrayList<NameValuePair>();
+			nameValuePairs.add(new BasicNameValuePair("userID", "" + extras.getInt("UserID")));
+			nameValuePairs.add(new BasicNameValuePair("gameType", "" + 0));
+			nameValuePairs.add(new BasicNameValuePair("duration", "" + 10));
+			nameValuePairs.add(new BasicNameValuePair("maxPlayer", "" + maxPlayers));
+			nameValuePairs.add(new BasicNameValuePair("gameRadius", "" + mapRadius));
+			nameValuePairs.add(new BasicNameValuePair("xPos", "" + extras.getFloat("Longitude")));
+			nameValuePairs.add(new BasicNameValuePair("yPos", "" + extras.getFloat("Latitude")));
+
+			// Add array list to http post
+			httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+
+			// assign executed form container to response
+			response = httpclient.execute(httppost);
+
+			// check status code, need to check status code 200
+			if (response.getStatusLine().getStatusCode() == 200) {
+
+				// assign response entity to http entity
+				entity = response.getEntity();
+
+				// check if entity is not null
+				if (entity != null) {
+					// Create new input stream with received data assigned
+					InputStream instream = entity.getContent();
+
+					// Create new JSON Object. assign converted data as
+					// parameter.
+					JSONObject jsonResponse = new JSONObject(
+							convertStreamToString(instream));
+					return jsonResponse;
+
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+    
+    private static String convertStreamToString(InputStream is) {
+        /*
+         * To convert the InputStream to String we use the BufferedReader.readLine()
+         * method. We iterate until the BufferedReader return null which means
+         * there's no more data to read. Each line will appended to a StringBuilder
+         * and returned as String.
+         */
+        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+        StringBuilder sb = new StringBuilder();
+ 
+        String line = null;
+        try {
+            while ((line = reader.readLine()) != null) {
+                sb.append(line + "\n");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                is.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return sb.toString();
     }
 }
