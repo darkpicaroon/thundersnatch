@@ -65,6 +65,10 @@
             android:name=".PlayGame"
             android:label="@string/title_activity_play_game" >
         </activity>
+        <activity
+            android:name=".ResetPassword"
+            android:label="@string/title_activity_reset_password" >
+        </activity>
     </application>
 
 </manifest>
