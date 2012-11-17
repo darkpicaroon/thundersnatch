@@ -342,7 +342,6 @@ public class PlayGame extends MapActivity {
 			for (int i = 0; i < numPlayers; i++) {
 
 				if (user.userGameID == players[i].userGameID) {
-					;
 					drawable = getResources().getDrawable(R.drawable.black_dot);
 				} else if ((teamColor.equals("red") && teamID == players[i].teamID)
 						|| (teamColor.equals("blue") && teamID != players[i].teamID)) {
