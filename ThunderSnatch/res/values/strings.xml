@@ -36,6 +36,7 @@
     <string name="submit">Submit</string>
     <string name="no_games_available">No available games.</string>
     <string name="add_item">Add item</string>
+    <string name="verify_password">Retype Password:</string>
 
     <string-array name="game_types">
         <item>Matchmade</item>
@@ -52,5 +53,6 @@
     <string name="title_activity_in_game">InGame</string>
     <string name="title_activity_play_game">PlayGame</string>
     <string name="title_activity_game_browser">GameBrowser</string>
+    <string name="title_activity_reset_password">ResetPassword</string>
 
 </resources>
