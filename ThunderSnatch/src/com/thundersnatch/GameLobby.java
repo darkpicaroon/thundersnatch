@@ -2,16 +2,15 @@ package com.thundersnatch;
 
 import android.os.Bundle;
 import android.app.Activity;
-import android.content.Intent;
 import android.view.Menu;
-import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.ListView;
-import android.widget.ScrollView;
 
 public class GameLobby extends Activity {
+	
+	private int UserID;
+	private double xPos;
+	private double yPos;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -23,6 +22,12 @@ public class GameLobby extends Activity {
         		WindowManager.LayoutParams.FLAG_FULLSCREEN);
         
         setContentView(R.layout.activity_game_lobby);
+        
+        Bundle extras = this.getIntent().getExtras();
+        UserID = extras.getInt("UserID");
+        xPos = extras.getDouble("xPos");
+        yPos = extras.getDouble("yPos");
+        
     }
 
     @Override
