@@ -90,9 +90,9 @@ public class PlayGame extends MapActivity {
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-		setContentView(R.layout.activity_map);
+		setContentView(R.layout.activity_play_game);
 
-		map = (MapView) findViewById(R.id.mapView);
+		map = (MapView) findViewById(R.id.MapView);
 		map.displayZoomControls(false);
 		map.setBuiltInZoomControls(false);
 		map.setSatellite(false);
