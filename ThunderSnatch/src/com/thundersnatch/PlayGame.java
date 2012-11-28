@@ -7,8 +7,6 @@ import java.io.InputStreamReader;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
-import java.util.List;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -20,18 +18,12 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.graphics.drawable.Drawable;
-import android.location.Geocoder;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.view.Gravity;
-import android.view.MotionEvent;
 import android.view.Menu;
 import android.view.Window;
 import android.view.WindowManager;
@@ -41,10 +33,6 @@ import com.google.android.maps.MapActivity;
 import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
 import com.google.android.maps.MyLocationOverlay;
-import com.google.android.maps.Overlay;
-import com.google.android.maps.OverlayItem;
-
-import android.view.Menu;
 import com.google.android.maps.Overlay;
 import com.google.android.maps.OverlayItem;
 
@@ -106,7 +94,7 @@ public class PlayGame extends MapActivity {
 
 		setContentView(R.layout.activity_play_game);
 
-		map = (MapView) findViewById(R.id.MapView);
+		map = (MapView) findViewById(R.id.mapView);
 		map.displayZoomControls(false);
 		map.setBuiltInZoomControls(false);
 		map.setSatellite(false);
@@ -202,26 +190,6 @@ public class PlayGame extends MapActivity {
 		return false;
 	}
 	
-	/*
-	 * 
-	 */
-	private Player[] updatePositions(float xPosition, float yPosition){
-		//Create array to return
-		Player[] players = new Player[MAX_NUM_PLAYERS];
-		
-		//Create a HTTPClient as the form container
-        HttpClient httpclient = new DefaultHttpClient();
-        
-        //Create an array list for the input data to be sent
-        ArrayList<NameValuePair> nameValuePairs;
-        
-        //Create a HTTP Response and HTTP Entity
-        HttpResponse response;
-        HttpEntity entity;
-		return players;
-       
-	}
-        //run http methods
         
 	protected void updatePositions(float xPosition, float yPosition,
 			boolean hasOwnFlag, boolean hasOppFlag, Player[] players) {
@@ -405,7 +373,6 @@ public class PlayGame extends MapActivity {
 
 	public void putLocationsOnMap(Player[] players, MapView map) {
 
-		//map.deleteoverlays()
 		map.getOverlays().clear();
 		List<Overlay> mapOverlays = map.getOverlays();
 		Drawable drawable = null;

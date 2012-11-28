@@ -115,7 +115,7 @@ public class CreateGame extends Activity {
 			public void onClick(View v) {
 				
 				// Should all previous menus be closed at this point?
-				JSONObject response = serverShit();
+				//JSONObject response = serverShit();
 				
 				Intent intent = new Intent(CreateGame.this, GameLobby.class);
 	            CreateGame.this.startActivity(intent);
