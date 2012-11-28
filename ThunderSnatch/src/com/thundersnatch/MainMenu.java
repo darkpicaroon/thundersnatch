@@ -37,9 +37,6 @@ public class MainMenu extends Activity {
     private int ties;
     private int steals;
     
-    private double xPos;
-    private double yPos;
-	
     public void onCreate(Bundle savedInstanceState) {
     	
         super.onCreate(savedInstanceState);
@@ -58,27 +55,6 @@ public class MainMenu extends Activity {
         losses = extras.getInt("Losses");
         ties = extras.getInt("Ties");
         steals = extras.getInt("Steals");
-        
-        //Start looking for a location
-        //Acquire a reference to the system Location Manager
-        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        LocationListener locationListener = new LocationListener() {
-        	
-            public void onLocationChanged(Location location) {
-                saveLocation(location);
-            }
-
-            public void onStatusChanged(String provider, int status, Bundle extras) {}
-
-            public void onProviderEnabled(String provider) {}
-
-            public void onProviderDisabled(String provider) {}
-          };
-          
-        // Register the listener with the Location Manager to receive location updates
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
-        
         
         // Sets up the "Create Game" button handler.
         Button createGame = (Button)findViewById(R.id.button1);
@@ -174,13 +150,6 @@ public class MainMenu extends Activity {
 				intent.putExtra("TeamID", 0);
 				intent.putExtra("UserGameID", 34);
 				intent.putExtra("TeamColor", "red");
-				if(location != null){
-					intent.putExtra("Longitude", (float)location.getLongitude());
-					intent.putExtra("Latitude", (float)location.getLatitude());
-				}else{
-					intent.putExtra("Longitude", 0);
-					intent.putExtra("Latitude", 0);
-				}
 	            MainMenu.this.startActivity(intent);
 			}
 		});
@@ -189,9 +158,5 @@ public class MainMenu extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_main_menu, menu);
         return true;
-    }
-    
-    public void saveLocation(Location l){
-    	location = l;
     }
 }

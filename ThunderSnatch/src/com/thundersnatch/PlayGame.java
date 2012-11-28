@@ -77,20 +77,20 @@ public class PlayGame extends MapActivity {
 		super.onCreate(savedInstanceState);
 
 		Bundle extras = getIntent().getExtras();
-		userGameID = extras.getInt("UserID");
+		userGameID = extras.getInt("UserGameID");
 		gameID = extras.getInt("GameID");
 		teamID = extras.getInt("TeamID");
 		teamColor = extras.getString("TeamColor");
 
 		user = new Player(userGameID, "USER",
-				(float) extras.getDouble("Longitude"),
-				(float) extras.getDouble("Latitude"), false, false, false, teamID);
+				extras.getFloat("Longitude"),
+				extras.getFloat("Latitude"), false, false, false, teamID);
 
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-		setContentView(R.layout.activity_play_game);
+		setContentView(R.layout.activity_map);
 
 		map = (MapView) findViewById(R.id.mapView);
 		map.displayZoomControls(false);
@@ -100,6 +100,7 @@ public class PlayGame extends MapActivity {
 
 		MapController mapControl = map.getController();
 		mapControl.setZoom(3);
+		
 
 		if (!(user.xPosition == 0) || !(user.yPosition == 0)) {
 			updatePositions(user.xPosition, user.yPosition,
@@ -366,10 +367,12 @@ public class PlayGame extends MapActivity {
 
 		if (players != null) {
 			for (int i = 0; i < numPlayers; i++) {
-
 				if (user.userGameID == players[i].userGameID) {
+					System.out.println("do i get here?");
+					
 					drawable = getResources().getDrawable(R.drawable.black_dot);
-				} else if ((teamColor.equals("red") && teamID == players[i].teamID)
+				} 
+				else if ((teamColor.equals("red") && teamID == players[i].teamID)
 						|| (teamColor.equals("blue") && teamID != players[i].teamID)) {
 					if (players[i].hasOwnFlag == true)
 						drawable = getResources().getDrawable(
