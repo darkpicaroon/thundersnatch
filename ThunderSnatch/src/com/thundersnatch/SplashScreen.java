@@ -9,9 +9,13 @@
 
 package com.thundersnatch;
 
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.view.Menu;
 import android.view.Window;
@@ -19,6 +23,9 @@ import android.view.WindowManager;
 
 public class SplashScreen extends Activity {
 
+	public float xPos;
+	public float yPos;
+	
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
@@ -28,14 +35,46 @@ public class SplashScreen extends Activity {
         
         setContentView(R.layout.activity_splash_screen);
         
+    	LocationManager locationManager = (LocationManager) this
+				.getSystemService(Context.LOCATION_SERVICE);
+
+		LocationListener locationListener = new LocationListener() {
+			public void onLocationChanged(Location location) {
+				xPos = (float) location.getLatitude();
+				yPos = (float) location.getLongitude();
+				
+			}
+
+			public void onStatusChanged(String provider, int status,
+					Bundle extras) {
+			}
+
+			public void onProviderEnabled(String provider) {
+			}
+
+			public void onProviderDisabled(String provider) {
+			}
+		};
+		
+		// Register the listener with the Location Manager to receive location
+		// updates
+		locationManager.requestLocationUpdates(
+				LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+		locationManager.requestLocationUpdates(
+				LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+        
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
  
+        
+        	
             public void run() {
  
                 finish();
  
                 Intent intent = new Intent(SplashScreen.this, LoginScreen.class);
+                intent.putExtra("Latitude", yPos + "");
+                intent.putExtra("Longitude", xPos + "");
                 SplashScreen.this.startActivity(intent);
  
             }

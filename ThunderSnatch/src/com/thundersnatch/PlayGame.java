@@ -7,6 +7,8 @@ import java.io.InputStreamReader;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.List;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -18,12 +20,18 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.graphics.drawable.Drawable;
+import android.location.Geocoder;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.Menu;
 import android.view.Window;
 import android.view.WindowManager;
@@ -32,6 +40,11 @@ import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapActivity;
 import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
+import com.google.android.maps.MyLocationOverlay;
+import com.google.android.maps.Overlay;
+import com.google.android.maps.OverlayItem;
+
+import android.view.Menu;
 import com.google.android.maps.Overlay;
 import com.google.android.maps.OverlayItem;
 
@@ -60,8 +73,17 @@ public class PlayGame extends MapActivity {
 	private String updateURL = "http://www.rkaneda.com/Update.php";
 
 	public MapView map;
-	GeoPoint geoP;
 	MapController mapC;
+	MyLocationOverlay compass;
+	MyLocationOverlay location;
+	GeoPoint touchPoint;
+	List<Overlay> overlayList;
+	Drawable d;
+	
+	int x, y;
+	
+	long startPoint;
+	long stopPoint;
 
 	private UpdateThread updateThread;
 
@@ -76,15 +98,15 @@ public class PlayGame extends MapActivity {
 
 		user = new Player(userGameID, "USER",
 				(float) extras.getDouble("Longitude"),
-				(float) extras.getDouble("Latitude"), false, false, teamID);
+				(float) extras.getDouble("Latitude"), false, false, false, teamID);
 
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-		setContentView(R.layout.activity_map);
+		setContentView(R.layout.activity_play_game);
 
-		map = (MapView) findViewById(R.id.mapView);
+		map = (MapView) findViewById(R.id.MapView);
 		map.displayZoomControls(false);
 		map.setBuiltInZoomControls(false);
 		map.setSatellite(false);
@@ -107,11 +129,12 @@ public class PlayGame extends MapActivity {
 			public void onLocationChanged(Location location) {
 				user.xPosition = (float) location.getLatitude();
 				user.yPosition = (float) location.getLongitude();
+
 				// now being done in thread
 				 updatePositions(user.xPosition, user.yPosition,
 						 user.hasOwnFlag, user.hasOpponentFlag, players);
 				 putLocationsOnMap(players, map);
-
+				
 			}
 
 			public void onStatusChanged(String provider, int status,
@@ -124,12 +147,9 @@ public class PlayGame extends MapActivity {
 			public void onProviderDisabled(String provider) {
 			}
 		};
-
+		
 		// Register the listener with the Location Manager to receive location
 		// updates
-		
-		//updateThread = new UpdateThread(this);
-		//updateThread.run();
 		locationManager.requestLocationUpdates(
 				LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
 		locationManager.requestLocationUpdates(
@@ -137,7 +157,6 @@ public class PlayGame extends MapActivity {
 		
 	}
 	/*
-
 	public void onPause(){
 		updateThread.stop();
 	}
@@ -148,20 +167,62 @@ public class PlayGame extends MapActivity {
 		super.onDestroy();
 	}
 
+    */
+
 	public void onResume(){
 		updateThread.run();
 	}
 
-*/
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.activity_play_game, menu);
 		return true;
 	}
-
+    
+	public void compareLocation(Player[] players){
+		
+		int i;
+		for(i=0; i<players.length; i++){
+			
+		}
+		
+		players[i] = jointFlagPlayer(players[i]); 
+	}
+	
+	public Player jointFlagPlayer(Player player){
+		
+		
+		return player;
+	}
+	
+    /*
+     * Override method for MapActivity.
+     * Doesn't need to be changed.
+     */
 	protected boolean isRouteDisplayed() {
 		return false;
 	}
-
+	
+	/*
+	 * 
+	 */
+	private Player[] updatePositions(float xPosition, float yPosition){
+		//Create array to return
+		Player[] players = new Player[MAX_NUM_PLAYERS];
+		
+		//Create a HTTPClient as the form container
+        HttpClient httpclient = new DefaultHttpClient();
+        
+        //Create an array list for the input data to be sent
+        ArrayList<NameValuePair> nameValuePairs;
+        
+        //Create a HTTP Response and HTTP Entity
+        HttpResponse response;
+        HttpEntity entity;
+		return players;
+       
+	}
+        //run http methods
+        
 	protected void updatePositions(float xPosition, float yPosition,
 			boolean hasOwnFlag, boolean hasOppFlag, Player[] players) {
 
@@ -176,6 +237,7 @@ public class PlayGame extends MapActivity {
 		HttpEntity entity;
 
 		// run http methods
+		
 		try {
 			// Use HTTP POST method
 			URI uri = new URI(updateURL);
@@ -228,6 +290,9 @@ public class PlayGame extends MapActivity {
 		}
 	}// end update method
 
+	/*
+	 * 
+	 */
 	private static String convertStreamToString(InputStream is) {
 		/*
 		 * To convert the InputStream to String we use the
@@ -263,6 +328,9 @@ public class PlayGame extends MapActivity {
 			String[] temp;
 			temp = playerInfo[0].split("UserGameID: ");
 			int userID = Integer.parseInt(temp[1]);
+			if (userID < 0){
+				
+			}
 			int index = -1;
 			for (int j = 0; j < numPlayers; j++) {
 				if (players[j] != null) {
@@ -319,8 +387,15 @@ public class PlayGame extends MapActivity {
 					hasOwnFlag = false;
 				else
 					hasOwnFlag = true;
+				temp = playerInfo[7].split("isBase: ");
+				int base = Integer.parseInt(temp[1]);
+				boolean isBase;
+				if (base == 0)
+					isBase = false;
+				else
+					isBase = true;
 				players[index] = new Player(userID, userName, xPosition,
-						yPosition, hasOpponentFlag, hasOwnFlag, teamID);
+						yPosition, hasOpponentFlag, hasOwnFlag, isBase, teamID);
 
 			}
 		} catch (Exception e) {
@@ -399,6 +474,7 @@ class UpdateThread extends Thread {
 				pg.updatePositions(pg.user.xPosition, pg.user.yPosition,
 						pg.user.hasOwnFlag, pg.user.hasOpponentFlag, pg.players);
 				pg.putLocationsOnMap(pg.players, pg.map);
+				
 			}
 		}
 		catch(Exception e){
