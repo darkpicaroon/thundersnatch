@@ -73,8 +73,6 @@ public class PlayGame extends MapActivity {
 	long startPoint;
 	long stopPoint;
 
-	private UpdateThread updateThread;
-
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
@@ -104,6 +102,8 @@ public class PlayGame extends MapActivity {
 		mapControl.setZoom(3);
 
 		if (!(user.xPosition == 0) || !(user.yPosition == 0)) {
+			updatePositions(user.xPosition, user.yPosition,
+					 user.hasOwnFlag, user.hasOpponentFlag, players);
 			putLocationsOnMap(players, map);
 			mapControl.animateTo(new GeoPoint((int) (user.yPosition * 1e6),
 					(int) (user.xPosition * 1e6)));
@@ -143,22 +143,6 @@ public class PlayGame extends MapActivity {
 		locationManager.requestLocationUpdates(
 				LocationManager.GPS_PROVIDER, 0, 0, locationListener);
 		
-	}
-	/*
-	public void onPause(){
-		updateThread.stop();
-	}
-	
-	
-	protected void onDestroy() {
-		updateThread.stop();
-		super.onDestroy();
-	}
-
-    */
-
-	public void onResume(){
-		updateThread.run();
 	}
 
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -423,31 +407,3 @@ public class PlayGame extends MapActivity {
 	}// end putLocations on map
 
 }
-
-class UpdateThread extends Thread {
-	public boolean running;
-	private PlayGame pg;
-
-	public UpdateThread(PlayGame pg) {
-		super();
-		this.pg = pg;
-	}
-
-	public void run() {
-		running = true;
-		try{
-			while (running) {
-				sleep(500);
-				pg.updatePositions(pg.user.xPosition, pg.user.yPosition,
-						pg.user.hasOwnFlag, pg.user.hasOpponentFlag, pg.players);
-				pg.putLocationsOnMap(pg.players, pg.map);
-				
-			}
-		}
-		catch(Exception e){
-			
-		}
-	}
-
-}
-
