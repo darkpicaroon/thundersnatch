@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="error_red">#E01B1B</color>
+    <color name="blue">#1255FF</color>
     
 </resources>
