@@ -33,7 +33,7 @@ import android.widget.SimpleAdapter;
 
 public class GameLobby extends Activity {
 	
-	private int UserID;
+	private int userID;
 	private double xPos;
 	private double yPos;
 	private int teamSize;
@@ -77,7 +77,7 @@ public class GameLobby extends Activity {
         setContentView(R.layout.activity_game_lobby);
         
         Bundle extras = this.getIntent().getExtras();
-        UserID = extras.getInt("UserID");
+        userID = extras.getInt("UserID");
         xPos = extras.getDouble("xPos");
         yPos = extras.getDouble("yPos");
         
