@@ -17,6 +17,7 @@ import android.os.Handler;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.view.Menu;
 import android.view.Window;
 import android.view.WindowManager;
@@ -26,6 +27,9 @@ public class SplashScreen extends Activity {
 	public float xPos;
 	public float yPos;
 	
+	private SharedPreferences settings;
+    private SharedPreferences.Editor editor;
+	
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
@@ -34,6 +38,9 @@ public class SplashScreen extends Activity {
         		WindowManager.LayoutParams.FLAG_FULLSCREEN);
         
         setContentView(R.layout.activity_splash_screen);
+        
+        settings = getApplicationContext().getSharedPreferences("com.thundersnatch", Context.MODE_PRIVATE);
+        editor = settings.edit();
         
     	LocationManager locationManager = (LocationManager) this
 				.getSystemService(Context.LOCATION_SERVICE);
@@ -73,8 +80,9 @@ public class SplashScreen extends Activity {
                 finish();
  
                 Intent intent = new Intent(SplashScreen.this, LoginScreen.class);
-                intent.putExtra("Latitude", yPos + "");
-                intent.putExtra("Longitude", xPos + "");
+                editor.putFloat("Longitude", xPos);
+                editor.putFloat("Latitude", yPos);
+                editor.commit();
                 SplashScreen.this.startActivity(intent);
  
             }

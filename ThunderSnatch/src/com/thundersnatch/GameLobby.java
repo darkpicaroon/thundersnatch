@@ -18,7 +18,9 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
@@ -31,13 +33,16 @@ import android.widget.ListView;
 public class GameLobby extends Activity {
 	Bundle extras;
 	String serverURL = "http://www.rkaneda.com/GetPlayerListForLobby.php";
-	Player players[] = new Player[20];
 	
 	boolean readyToStart = false;
 	
 	LobbyLists redLobbyList;
 	LobbyLists blueLobbyList;
 	
+	private SharedPreferences settings;
+    private SharedPreferences.Editor editor;
+	
+	int userGameID;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -50,11 +55,16 @@ public class GameLobby extends Activity {
         
         setContentView(R.layout.activity_game_lobby);
         
+        settings = getApplicationContext().getSharedPreferences("com.thundersnatch", Context.MODE_PRIVATE);
+        editor = settings.edit();
+        
         redLobbyList = new LobbyLists((ListView)findViewById(R.id.redList));
     	blueLobbyList = new LobbyLists((ListView)findViewById(R.id.blueList));
 
         
         extras = this.getIntent().getExtras();
+        //userGameID = extras.getInt("UserGameID");
+        
         
         // Sets up the "Start" button handler.
         Button start = (Button)findViewById(R.id.startButton);
@@ -74,14 +84,16 @@ public class GameLobby extends Activity {
         try{
 	        while(!readyToStart){
 	        	JSONObject response = serverShit(0);
+	        	System.out.println("is valid:" + response.getBoolean("isValid"));
 	        	if(response.getInt("gameStatus") == 1){
-	        		System.out.println("fuck");
 	        		readyToStart = true;
 	        		break;
 	        	}
 	        	int numPlayers = response.getInt("numPlayers");
+	        	System.out.println("numPlayers " + numPlayers);
 	        	for(int i = 0; i < numPlayers; i++){
 	        		String username = response.getJSONArray("PlayerArray").getJSONObject(i).getString("UserName");
+	        		System.out.println(username);
 	        		int teamID = response.getJSONArray("PlayerArray").getJSONObject(i).getInt("TeamID");
 	        		if(teamID == extras.getInt("TeamID")){
 	        			//addItems does nothing if string already exists in list
@@ -104,18 +116,13 @@ public class GameLobby extends Activity {
         	e.printStackTrace();
         }
         
-        moveToGame(extras);
+        //moveToGame(extras);
     }
     
     private void moveToGame(Bundle extras){
-    	try{
-	    	Intent intent = new Intent(GameLobby.this, PlayGame.class);
-	    	int userGameID = extras.getInt("UserGameID");
-	        intent.putExtra("UserGameID", "" + userGameID);
-	        GameLobby.this.startActivity(intent);
-    	}catch(Exception e){
-    		e.printStackTrace();
-    	}
+    	Intent intent = new Intent(GameLobby.this, PlayGame.class);
+        intent.putExtra("UserGameID", "" + userGameID);
+        GameLobby.this.startActivity(intent);
     }
     
 
@@ -148,9 +155,9 @@ public class GameLobby extends Activity {
 
 			// place credentials in the array list
 			nameValuePairs = new ArrayList<NameValuePair>();
-			nameValuePairs.add(new BasicNameValuePair("userID", "" + extras.getInt("UserID")));
-			nameValuePairs.add(new BasicNameValuePair("gameID", "" + extras.getInt("GameID")));
-			nameValuePairs.add(new BasicNameValuePair("gameStatus", "" + status));
+			nameValuePairs.add(new BasicNameValuePair("userId", "" + settings.getInt("UserID", -1)));
+			nameValuePairs.add(new BasicNameValuePair("gameId", "" + settings.getInt("GameID", -1)));
+			nameValuePairs.add(new BasicNameValuePair("status", "" + status));
 
 			// Add array list to http post
 			httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
