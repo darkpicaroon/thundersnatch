@@ -36,6 +36,11 @@ public class Player {
 		userName = name;
 	}
 
+	public Player(String name, int team){
+		userName = name;
+		teamID = team;
+	}
+	
 	public String toString() {
 		String sReturn = "UserGameID: " + userGameID + " UserName: " + userName + " Team: " + " Own:" + hasOwnFlag + " Opp: " + hasOpponentFlag;
 		return sReturn;
