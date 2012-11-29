@@ -122,10 +122,25 @@ public class CreateGame extends Activity {
 				Intent intent = new Intent(CreateGame.this, GameLobby.class);
 				try{
 					intent.putExtra("GameID", "" + response.getInt("gameID"));
-					intent.putExtra("TeamID1", "" + response.getInt("teamID1"));
-					intent.putExtra("TeamID2", "" + response.getInt("teamID2"));
-					intent.putExtra("userGameID", "" + response.getInt("userGameID"));
-					intent.putExtra("TeamID", "" + response.getInt("userTeamID"));
+					int teamID1 = response.getInt("teamID1");
+					intent.putExtra("TeamID1", "" + teamID1);
+					int teamID2 = response.getInt("teamID2");
+					intent.putExtra("TeamID2", "" + teamID2);
+					int userGameID = response.getInt("userGameID");
+					System.out.println("create game " + userGameID);
+					intent.putExtra("UserGameID", "" + userGameID);
+					int userTeamID = response.getInt("userTeamID");
+					intent.putExtra("TeamID", "" + userTeamID);
+					
+					//assign blue to the lowest teamID
+					if(userTeamID == teamID1 && teamID1 < teamID2)
+						intent.putExtra("TeamColor", "blue");
+					else if(userTeamID == teamID1 && teamID1 > teamID2)
+						intent.putExtra("TeamColor", "red");
+					else if(userTeamID == teamID2 && teamID1 < teamID2)
+						intent.putExtra("TeamColor", "red");
+					else if(userTeamID == teamID2 && teamID1 > teamID2)
+						intent.putExtra("TeamColor", "blue");
 				}catch(Exception e){
 					e.printStackTrace();
 				}
