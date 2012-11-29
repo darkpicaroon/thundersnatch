@@ -52,10 +52,13 @@ public class CreateGame extends Activity {
 	private SeekBar playersSeek;
 	private int maxPlayers = 5;
 	
-	Bundle extras = this.getIntent().getExtras();
+	Bundle extras;
+	
 	
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);       
+        super.onCreate(savedInstanceState);      
+        
+        extras = this.getIntent().getExtras();
         
         // Sets the activity to fullscreen.
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -115,9 +118,17 @@ public class CreateGame extends Activity {
 			public void onClick(View v) {
 				
 				// Should all previous menus be closed at this point?
-				//JSONObject response = serverShit();
-				
+				JSONObject response = serverShit();
 				Intent intent = new Intent(CreateGame.this, GameLobby.class);
+				try{
+					intent.putExtra("GameID", "" + response.getInt("gameID"));
+					intent.putExtra("TeamID1", "" + response.getInt("teamID1"));
+					intent.putExtra("TeamID2", "" + response.getInt("teamID2"));
+					intent.putExtra("userGameID", "" + response.getInt("userGameID"));
+					intent.putExtra("TeamID", "" + response.getInt("userTeamID"));
+				}catch(Exception e){
+					e.printStackTrace();
+				}
 	            CreateGame.this.startActivity(intent);
 				
 			}
