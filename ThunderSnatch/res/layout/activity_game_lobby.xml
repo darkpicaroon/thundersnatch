@@ -5,15 +5,15 @@
     android:background="@drawable/main_bg" >
 
     <Button
-        android:id="@+id/startButton"
+        android:id="@+id/switch_team_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:text="Start" />
+        android:text="@string/switch_team" />
 
     <ListView
-        android:id="@+id/redList"
+        android:id="@+id/listView1"
         android:layout_width="match_parent"
         android:layout_height="150dp"
         android:layout_alignParentLeft="true"
@@ -24,12 +24,12 @@
     </ListView>
 
     <ListView
-        android:id="@+id/blueList"
+        android:id="@+id/listView2"
         android:layout_width="match_parent"
         android:layout_height="150dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:background="#1255ff"
+        android:background="@color/blue"
         android:drawSelectorOnTop="false"
         tools:listitem="@android:layout/simple_list_item_1" >
     </ListView>
@@ -42,7 +42,7 @@
         android:layout_below="@+id/listView1"
         android:layout_marginRight="18dp"
         android:layout_marginTop="24dp"
-        android:text="Team 1"
+        android:text="@string/red_team"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="#ffffff" />
 
@@ -54,7 +54,7 @@
         android:layout_alignParentLeft="true"
         android:layout_marginBottom="22dp"
         android:layout_marginLeft="22dp"
-        android:text="Team 2"
+        android:text="@string/blue_team"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="#ffffff" />
 
