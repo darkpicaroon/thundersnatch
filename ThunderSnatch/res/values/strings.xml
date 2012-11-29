@@ -37,6 +37,10 @@
     <string name="no_games_available">No available games.</string>
     <string name="add_item">Add item</string>
     <string name="verify_password">Retype Password:</string>
+    <string name="red_team">Red Team</string>
+    <string name="blue_team">Blue Team</string>
+    <string name="map">Map</string>
+    <string name="switch_team">Switch Team</string>
 
     <string-array name="game_types">
         <item>Matchmade</item>
