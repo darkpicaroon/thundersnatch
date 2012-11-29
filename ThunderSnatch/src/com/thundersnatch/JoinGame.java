@@ -85,7 +85,7 @@ public class JoinGame extends ListActivity
     	   
        });
        
-       getGameList(49.4, 49.4);
+       getGameList(extras.getFloat("Latitude"), extras.getFloat("Longitude"));
        
     }
 
