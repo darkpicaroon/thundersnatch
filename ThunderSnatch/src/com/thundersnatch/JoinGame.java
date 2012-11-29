@@ -52,7 +52,6 @@ public class JoinGame extends ListActivity
        		WindowManager.LayoutParams.FLAG_FULLSCREEN);
        
        setContentView(R.layout.activity_join_game);
-       System.out.println("LOL");
        Bundle extras = this.getIntent().getExtras();
        userID = extras.getInt("UserID");
        xPos = extras.getDouble("xPos");
@@ -72,8 +71,7 @@ public class JoinGame extends ListActivity
     	   public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
     		   
     		   Intent intent = new Intent(JoinGame.this, GameLobby.class);
-    		   //intent.putExtra("GameID", gameIdList.get(position));
-    		   intent.putExtra("GameID", 0);
+    		   intent.putExtra("GameID", gameIdList.get(position));
     		   intent.putExtra("UserID", userID);
     		   intent.putExtra("xPos", 0.0);
     		   intent.putExtra("yPos", 0.0);
@@ -166,8 +164,6 @@ public class JoinGame extends ListActivity
 					if (isValid) {
 						
 						JSONObject list = jsonResponse.getJSONObject("GameList");
-						System.out.println(list.length());
-						System.out.println("test");
 						
 						for(int i = 0; i < list.length(); i++) {
 							JSONObject game = list.getJSONObject("Game" + i);
