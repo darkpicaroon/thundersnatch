@@ -29,7 +29,9 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
@@ -42,7 +44,7 @@ import android.widget.TextView;
 
 public class CreateGame extends Activity {
 	
-	private String newGameURL = "www.rkaneda.com/StartNewGame.php";
+	private String newGameURL = "http://www.rkaneda.com/StartNewGame.php";
 
 	private TextView maxRadiusText;
 	private SeekBar radiusSeek;
@@ -51,6 +53,9 @@ public class CreateGame extends Activity {
 	private TextView maxPlayersText;
 	private SeekBar playersSeek;
 	private int maxPlayers = 5;
+	
+	private SharedPreferences settings;
+    private SharedPreferences.Editor editor;
 	
 	Bundle extras;
 	
@@ -66,6 +71,9 @@ public class CreateGame extends Activity {
         		WindowManager.LayoutParams.FLAG_FULLSCREEN);
         
         setContentView(R.layout.activity_create_game);
+        
+        settings = getApplicationContext().getSharedPreferences("com.thundersnatch", Context.MODE_PRIVATE);
+        editor = settings.edit();
         
         // Sets up the max radius' changing TextView and its
         // corresponding SeekBar.
@@ -119,17 +127,21 @@ public class CreateGame extends Activity {
 				
 				// Should all previous menus be closed at this point?
 				JSONObject response = serverShit();
+				
+				int teamID1;
+				int teamID2;
+				int userGameID;
+				int userTeamID;
 				Intent intent = new Intent(CreateGame.this, GameLobby.class);
 				try{
 					intent.putExtra("GameID", "" + response.getInt("gameID"));
-					int teamID1 = response.getInt("teamID1");
+					teamID1 = response.getInt("teamID1");
 					intent.putExtra("TeamID1", "" + teamID1);
-					int teamID2 = response.getInt("teamID2");
+					teamID2 = response.getInt("teamID2");
 					intent.putExtra("TeamID2", "" + teamID2);
-					int userGameID = response.getInt("userGameID");
-					System.out.println("create game " + userGameID);
+					userGameID = response.getInt("userGameID");
 					intent.putExtra("UserGameID", "" + userGameID);
-					int userTeamID = response.getInt("userTeamID");
+					userTeamID = response.getInt("userTeamID");
 					intent.putExtra("TeamID", "" + userTeamID);
 					
 					//assign blue to the lowest teamID
@@ -167,6 +179,12 @@ private JSONObject serverShit() {
 		// Create a HTTP Response and HTTP Entity
 		HttpResponse response;
 		HttpEntity entity;
+		
+		int userID = settings.getInt("userID", -1);
+		if(userID == -1) System.out.println("sp error");
+		float lng = settings.getFloat("Longitude", -1);
+		float lat = settings.getFloat("Latitude", -1);
+		
 
 		// run http methods
 		try {
@@ -178,13 +196,15 @@ private JSONObject serverShit() {
 
 			// place credentials in the array list
 			nameValuePairs = new ArrayList<NameValuePair>();
-			nameValuePairs.add(new BasicNameValuePair("userID", "" + extras.getInt("UserID")));
+			
+			nameValuePairs.add(new BasicNameValuePair("userID", "" + userID));
 			nameValuePairs.add(new BasicNameValuePair("gameType", "" + 0));
 			nameValuePairs.add(new BasicNameValuePair("duration", "" + 10));
-			nameValuePairs.add(new BasicNameValuePair("maxPlayer", "" + maxPlayers));
+			nameValuePairs.add(new BasicNameValuePair("maxPlayers", "" + maxPlayers));
 			nameValuePairs.add(new BasicNameValuePair("gameRadius", "" + mapRadius));
-			nameValuePairs.add(new BasicNameValuePair("xPos", "" + extras.getFloat("Longitude")));
-			nameValuePairs.add(new BasicNameValuePair("yPos", "" + extras.getFloat("Latitude")));
+			nameValuePairs.add(new BasicNameValuePair("xPos", "" + lng));
+			nameValuePairs.add(new BasicNameValuePair("yPos", "" + lat));
+			
 
 			// Add array list to http post
 			httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));

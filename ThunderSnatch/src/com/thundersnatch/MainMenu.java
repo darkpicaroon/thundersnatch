@@ -37,6 +37,9 @@ public class MainMenu extends Activity {
     private int ties;
     private int steals;
     
+    float lat;
+    float lng;
+    
     public void onCreate(Bundle savedInstanceState) {
     	
         super.onCreate(savedInstanceState);
@@ -55,6 +58,8 @@ public class MainMenu extends Activity {
         losses = extras.getInt("Losses");
         ties = extras.getInt("Ties");
         steals = extras.getInt("Steals");
+        lat = extras.getFloat("Latitude");
+        lng = extras.getFloat("Latitude");
         
         // Sets up the "Create Game" button handler.
         Button createGame = (Button)findViewById(R.id.button1);
@@ -63,6 +68,12 @@ public class MainMenu extends Activity {
 			public void onClick(View v) {
 				
 				Intent intent = new Intent(MainMenu.this, CreateGame.class);
+				intent.putExtra("UserID", "" + userID);
+				intent.putExtra("Longitude", "" + lng);
+				intent.putExtra("Latitude", "" + lat);
+				intent.putExtra("Username", userName);
+				
+				
 	            MainMenu.this.startActivity(intent);
 				
 			}

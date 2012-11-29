@@ -68,6 +68,10 @@ public class LoginScreen extends Activity {
     private int losses;
     private int ties;
     private int steals;
+    float lat;
+    float lng;
+    
+    Bundle extras;
     
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,6 +83,9 @@ public class LoginScreen extends Activity {
         		WindowManager.LayoutParams.FLAG_FULLSCREEN);
         
         setContentView(R.layout.activity_login_screen);
+        
+        extras = getIntent().getExtras();
+        
         
         username = (EditText)findViewById(R.id.editText1);
         password = (EditText)findViewById(R.id.editText2);
@@ -124,6 +131,10 @@ public class LoginScreen extends Activity {
 				if(enableLogin){
 					
 					finish();
+					
+					editor.putInt("userID", userID);
+					editor.commit();
+					
 					Intent intent = new Intent(LoginScreen.this, MainMenu.class);
 					intent.putExtra("UserID", userID);
 					intent.putExtra("Username", userName);
@@ -131,6 +142,8 @@ public class LoginScreen extends Activity {
 					intent.putExtra("Losses", losses);
 					intent.putExtra("Ties", ties);
 					intent.putExtra("Steals", steals);
+					intent.putExtra("Latitude", lat);
+					intent.putExtra("Longitude", lng);
 		            LoginScreen.this.startActivity(intent);
 				}
 				
