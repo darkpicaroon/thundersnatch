@@ -17,15 +17,20 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.view.Menu;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
 
 public class ForgotPassword extends Activity {
 
@@ -61,7 +66,14 @@ public class ForgotPassword extends Activity {
 				{
 
 					finish();
-				
+					
+					Context context = getApplicationContext();
+					CharSequence text = "Email sent successfully.";
+					int duration = Toast.LENGTH_SHORT;
+					
+					Toast toast = Toast.makeText(context, text, duration);
+					toast.show();
+					
 					Intent intent = new Intent(ForgotPassword.this, LoginScreen.class);
 					ForgotPassword.this.startActivity(intent);
 				}
