@@ -38,7 +38,28 @@ import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
 import com.google.android.maps.OverlayItem;
 
-//TEAM ID's ARE NOT BEING STORED FOR SOME REASON. NEED TO DEBUG
+
+//          SCOTT AND ERIC:
+//Still need to work out how to incorporate the bases into this class.
+//the locations of the bases are currently being stored in the Team table
+//in the database under FlagStartXPosition and FlagStartYPosition.
+
+//The other thing that needs to be done is to incorporate the "rules"
+//Mike and I have outlined what needs to be done for this at the bottom of 
+//this class in a function called compareLocations(). that function is being called 
+//after putting the locations on the map in a thread like structure called
+//startUpdateCountDown()
+
+//Its about 4 in the morning so im calling it a night. The very minimum needed to 
+//present tomorrow is done: we can have multiple users join a lobby and then proceed 
+//to the playgame class together, where there positions will be placed on the map.
+
+//good luck to you guys
+
+
+
+
+
 
 /* To enable the maps functionality, you must set the keystore location in your own IDE
  * to the file "debug.keystore" in this package.
@@ -380,7 +401,7 @@ public class PlayGame extends MapActivity {
 			}
 		}
 		map.invalidate();
-	}// end putLocations on map
+	}
 	
 	public void startCountdown(int milliseconds){
 		new CountDownTimer(milliseconds, 1000){
@@ -398,13 +419,14 @@ public class PlayGame extends MapActivity {
 		}.start();
 	}
 	
+	//this will basically create a new thread that will handle updating everything
 	public void startUpdateCountDown(int milliseconds){
 		new CountDownTimer(milliseconds, 1000){
 			public void onTick(long millisecondsUntilFinished){
 				updatePositions(user.xPosition, user.yPosition,
 						 user.hasOwnFlag, user.hasOpponentFlag, players);
-				compareLocations();
 				putLocationsOnMap(players, map);
+				compareLocations();
 			}
 			public void onFinish(){
 				
