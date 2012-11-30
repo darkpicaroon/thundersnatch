@@ -132,9 +132,12 @@ public class CreateGame extends Activity {
 				int teamID2;
 				int userGameID;
 				int userTeamID;
+				int gameID;
 				Intent intent = new Intent(CreateGame.this, GameLobby.class);
 				try{
-					intent.putExtra("GameID", "" + response.getInt("gameID"));
+					gameID = response.getInt("gameID");
+					editor.putInt("GameID", gameID);
+					intent.putExtra("GameID", "" + gameID);
 					teamID1 = response.getInt("teamID1");
 					intent.putExtra("TeamID1", "" + teamID1);
 					teamID2 = response.getInt("teamID2");
@@ -142,17 +145,23 @@ public class CreateGame extends Activity {
 					userGameID = response.getInt("userGameID");
 					intent.putExtra("UserGameID", "" + userGameID);
 					userTeamID = response.getInt("userTeamID");
-					intent.putExtra("TeamID", "" + userTeamID);
+					editor.putInt("TeamID", userTeamID);
+					intent.putExtra("TeamID", userTeamID);
 					
+					String color = "";
 					//assign blue to the lowest teamID
 					if(userTeamID == teamID1 && teamID1 < teamID2)
-						intent.putExtra("TeamColor", "blue");
+						color = "blue";
 					else if(userTeamID == teamID1 && teamID1 > teamID2)
-						intent.putExtra("TeamColor", "red");
+						color = "red";
 					else if(userTeamID == teamID2 && teamID1 < teamID2)
-						intent.putExtra("TeamColor", "red");
+						color = "red";
 					else if(userTeamID == teamID2 && teamID1 > teamID2)
-						intent.putExtra("TeamColor", "blue");
+						color = "blue";
+					
+					editor.putString("TeamColor", color);
+					editor.commit();
+
 				}catch(Exception e){
 					e.printStackTrace();
 				}
@@ -204,7 +213,7 @@ private JSONObject serverShit() {
 			nameValuePairs.add(new BasicNameValuePair("gameRadius", "" + mapRadius));
 			nameValuePairs.add(new BasicNameValuePair("xPos", "" + lng));
 			nameValuePairs.add(new BasicNameValuePair("yPos", "" + lat));
-			
+			nameValuePairs.add(new BasicNameValuePair("gamestatus", "" + 0));
 
 			// Add array list to http post
 			httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));

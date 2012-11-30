@@ -19,8 +19,12 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -40,9 +44,7 @@ public class GameLobby extends Activity {
 	private int mapRadius;
 	
 	private boolean host;
-	
-	
-	
+
 	private static final int ADD_ITEM_ID = 1;
 	
 	private ArrayList<HashMap<String,String>> redTeam = new ArrayList<HashMap<String,String>>();
@@ -76,19 +78,22 @@ public class GameLobby extends Activity {
         
         setContentView(R.layout.activity_game_lobby);
         
+        settings = getApplicationContext().getSharedPreferences("com.thundersnatch", Context.MODE_PRIVATE);
+        editor = settings.edit();
+        
         Bundle extras = this.getIntent().getExtras();
         userID = extras.getInt("UserID");
         xPos = extras.getDouble("xPos");
         yPos = extras.getDouble("yPos");
         
-        if (extras.getInt("Host") == 1)
-        {
-        	teamSize = extras.getInt("TeamSize");
-        	mapRadius = extras.getInt("Radius");
-        	host = true;
-        }
-        else
-        	host = false;
+//        if (extras.getInt("Host") == 1)
+//        {
+//        	teamSize = extras.getInt("TeamSize");
+//        	mapRadius = extras.getInt("Radius");
+//        	host = true;
+//        }
+//        else
+//        	host = false;
         
         redListView = (ListView)findViewById(R.id.listView1);
         blueListView = (ListView)findViewById(R.id.listView2);
@@ -126,47 +131,40 @@ public class GameLobby extends Activity {
 			}
 		});
         
-        try{
-        	JSONObject response;
-	        while(!readyToStart){
-	        	response = serverShit(0);
-	        	System.out.println("is valid:" + response.getBoolean("isValid"));
-	        	System.out.println("response: " + response);
-	        	if(response.getInt("gameStatus") == 1){
-	        		System.out.println("in if statement");
-	        		readyToStart = true;
-	        		break;
-	        	}
-	        	System.out.println("before get num players");
-	        	int numPlayers = response.getInt("numPlayers");
-	        	System.out.println("numPlayers " + numPlayers);
-	        	for(int i = 0; i < numPlayers; i++){
-	        		String username = response.getJSONArray("PlayerArray").getJSONObject(i).getString("UserName");
-	        		System.out.println(username);
-	        		int teamID = response.getJSONArray("PlayerArray").getJSONObject(i).getInt("TeamID");
-	        		if(teamID == extras.getInt("TeamID")){
-	        			//addItems does nothing if string already exists in list
-	        			//put players on users side
-	        			if(extras.getString("teamColor" ).equals("blue"))//put player on blue side
-	        				addBluePlayer(username);
-	        			else //put player on red side
-	        				addRedPlayer(username);
-	        		}
-	        		else{
-	        			//put player on opp side
-	        			if(extras.getString("teamColor" ).equals("blue"))//put player on red side
-	        				addRedPlayer(username);
-	        			else //put player on blue side
-	        				addBluePlayer(username);
-	        		}
-	        	}
-	        }
-        }catch(Exception e){
-        	e.printStackTrace();
-        }
+        addBluePlayer("Mother FUCKER!!!!!!!!!");
         
         
-        //moveToGame(extras);
+        LocationManager locationManager = (LocationManager) this
+				.getSystemService(Context.LOCATION_SERVICE);
+
+		LocationListener locationListener = new LocationListener() {
+			public void onLocationChanged(Location location) {
+				updateLobby();
+				if(readyToStart) moveToGame();
+				
+			}
+
+			public void onStatusChanged(String provider, int status,
+					Bundle extras) {
+			}
+
+			public void onProviderEnabled(String provider) {
+			}
+
+			public void onProviderDisabled(String provider) {
+			}
+		};
+		
+		// Register the listener with the Location Manager to receive location
+		// updates
+		locationManager.requestLocationUpdates(
+				LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+		locationManager.requestLocationUpdates(
+				LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+        
+        
+        
+        if(readyToStart) moveToGame();
     }
     
     @Override
@@ -244,9 +242,13 @@ public class GameLobby extends Activity {
 
 			// place credentials in the array list
 			nameValuePairs = new ArrayList<NameValuePair>();
-			nameValuePairs.add(new BasicNameValuePair("userId", "" + settings.getInt("UserID", -1)));
-			nameValuePairs.add(new BasicNameValuePair("gameId", "" + settings.getInt("GameID", -1)));
+			userID = settings.getInt("userID", 0);
+			nameValuePairs.add(new BasicNameValuePair("userId", "" + userID));
+			int gameID = settings.getInt("GameID", 0);
+			nameValuePairs.add(new BasicNameValuePair("gameId", "" + gameID));
 			nameValuePairs.add(new BasicNameValuePair("status", "" + status));
+			
+			System.out.println("UserID: " + userID + " GameID: " + gameID);
 
 			// Add array list to http post
 			httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
@@ -306,4 +308,40 @@ public class GameLobby extends Activity {
         }
         return sb.toString();
     }
+    
+    public void updateLobby(){
+    	try{
+        	System.out.println("before call");
+        	JSONObject response = serverShit(0);
+        	System.out.println("response: " + response.toString());
+        	if(response.getInt("GameStatus") == 1){
+        		System.out.println("in if statement");
+        		readyToStart = true;
+        	}
+        	int numPlayers = response.getInt("numPlayers");
+        	for(int i = 0; i < numPlayers; i++){
+        		String username = response.getJSONObject("PlayerArray").getJSONObject("player" + i).getString("UserName");
+        		System.out.println(username);
+        		int teamID = response.getJSONObject("PlayerArray").getJSONObject("player" + i).getInt("TeamID");
+        		if(teamID == settings.getInt("TeamID", 0)){
+        			//addItems does nothing if string already exists in list
+        			//put players on users side
+        			if(settings.getString("TeamColor", "").equals("blue"))//put player on blue side
+        				addBluePlayer(username);
+        			else //put player on red side
+        				addRedPlayer(username);
+        		}
+        		else{
+        			//put player on opp side
+        			if(settings.getString("TeamColor", "").equals("blue"))//put player on red side
+        				addRedPlayer(username);
+        			else //put player on blue side
+        				addBluePlayer(username);
+        		}
+        	}
+        }catch(Exception e){
+        	e.printStackTrace();
+        }
+    }
 }
+
