@@ -68,6 +68,11 @@ public class PlayGame extends MapActivity {
 	
 	TextView clockText;
 	
+	TextView redScoreView;
+	int redScore;
+	TextView blueScoreView;
+	int blueScore;
+	
 	private SharedPreferences settings;
     private SharedPreferences.Editor editor;
 
@@ -96,6 +101,11 @@ public class PlayGame extends MapActivity {
 		clockText = (TextView)findViewById(R.id.countDown);
 		startCountdown(900000);
 		startUpdateCountDown(900000);
+		
+		blueScoreView = (TextView)findViewById(R.id.blueScore);
+		blueScore = 0;
+		redScoreView = (TextView)findViewById(R.id.redScore);
+		redScore = 0;
 
 		map = (MapView) findViewById(R.id.mapView);
 		map.displayZoomControls(false);
@@ -405,6 +415,9 @@ public class PlayGame extends MapActivity {
 	
 	/*
 	 * This is all you guys, have fun lol
+	 * 
+	 * update score with - redScoreView.setText(redScore++);
+	 * 
 	 */
 	public void compareLocations(){
 		//loop through the player array, on players that have a flag and are on opposing team
@@ -413,7 +426,7 @@ public class PlayGame extends MapActivity {
 		//steal from opp player
 		//on steal, make a new servercall with the opponents usergameID as a parameter
 		//to indicate that they no longer have the flag
-		//you will need to work with david/raiden  drewes/kaneda to create that php file.
+		//you will need to work with david/raiden to create that php file.
 		
 		//snatch flag from base
 		//so there is that case for shit getting done in each time interval
