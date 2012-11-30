@@ -514,19 +514,23 @@ public class PlayGame extends MapActivity {
 
 	public void putLocationsOnMap(Player[] players, MapView map) {
 
-		//map.deleteoverlays()
-		map.getOverlays().clear();
-		List<Overlay> mapOverlays = map.getOverlays();
+		List<Overlay> mapOverlays = null;
 		Drawable drawable = null;
 		GeoPoint point;
 		MapItemizedOverlay itemizedoverlay;
 		OverlayItem overlayitem;
 
 		int count = 0;
-		if (players.length == 20)
+		if (players.length == 20){
 			count = numPlayers;
-		else if (players.length == 2)
+			map.getOverlays().clear();
+			mapOverlays = map.getOverlays();
+			
+		}
+		else if (players.length == 2){
 			count = 2;
+			mapOverlays = map.getOverlays();
+		}
 		else
 			System.out.println("Error");
 		
