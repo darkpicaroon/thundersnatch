@@ -26,6 +26,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -56,7 +57,6 @@ public class GameLobby extends Activity {
 	private ListView redListView;
 	private ListView blueListView;
 	
-	Bundle extras;
 	String serverURL = "http://www.rkaneda.com/GetPlayerListForLobby.php";
 	
 	boolean readyToStart = false;
@@ -66,6 +66,8 @@ public class GameLobby extends Activity {
     private SharedPreferences.Editor editor;
 	
 	int userGameID;
+	
+	CountDownTimer updater;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -80,20 +82,7 @@ public class GameLobby extends Activity {
         
         settings = getApplicationContext().getSharedPreferences("com.thundersnatch", Context.MODE_PRIVATE);
         editor = settings.edit();
-        
-        Bundle extras = this.getIntent().getExtras();
-        userID = extras.getInt("UserID");
-        xPos = extras.getDouble("xPos");
-        yPos = extras.getDouble("yPos");
-        
-//        if (extras.getInt("Host") == 1)
-//        {
-//        	teamSize = extras.getInt("TeamSize");
-//        	mapRadius = extras.getInt("Radius");
-//        	host = true;
-//        }
-//        else
-//        	host = false;
+       
         
         redListView = (ListView)findViewById(R.id.listView1);
         blueListView = (ListView)findViewById(R.id.listView2);
@@ -121,54 +110,23 @@ public class GameLobby extends Activity {
         start.setOnClickListener(new View.OnClickListener() {
 			
 			public void onClick(View v) {
-				
+				updater.cancel();
 				finish();
 				
-				JSONObject response = serverShit(1);
+				JSONObject response = lobbyServerInterface(1);
 
 		        moveToGame();
 				
 			}
 		});
+        updater = startCountdown();
         
-        
-        
-        LocationManager locationManager = (LocationManager) this
-				.getSystemService(Context.LOCATION_SERVICE);
-
-		LocationListener locationListener = new LocationListener() {
-			public void onLocationChanged(Location location) {
-				updateLobby();
-				if(readyToStart) moveToGame();
-				
-			}
-
-			public void onStatusChanged(String provider, int status,
-					Bundle extras) {
-			}
-
-			public void onProviderEnabled(String provider) {
-			}
-
-			public void onProviderDisabled(String provider) {
-			}
-		};
-		
-		// Register the listener with the Location Manager to receive location
-		// updates
-		locationManager.requestLocationUpdates(
-				LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
-		locationManager.requestLocationUpdates(
-				LocationManager.GPS_PROVIDER, 0, 0, locationListener);
-        
-        
-        
-        if(readyToStart) moveToGame();
     }
     
     @Override
     public void onStop() {
         super.onStop();
+        updater.cancel();
     }
 
 //    @Override
@@ -219,7 +177,7 @@ public class GameLobby extends Activity {
       }
     
     
-    private JSONObject serverShit(int status) {
+    private JSONObject lobbyServerInterface(int status) {
 		
 		// Create a HTTPClient as the form container
 		HttpClient httpclient = new DefaultHttpClient();
@@ -310,17 +268,14 @@ public class GameLobby extends Activity {
     
     public void updateLobby(){
     	try{
-        	System.out.println("before call");
-        	JSONObject response = serverShit(0);
+        	JSONObject response = lobbyServerInterface(0);
         	System.out.println("response: " + response.toString());
         	if(response.getInt("GameStatus") == 1){
-        		System.out.println("in if statement");
         		readyToStart = true;
         	}
         	int numPlayers = response.getInt("numPlayers");
         	for(int i = 0; i < numPlayers; i++){
         		String username = response.getJSONObject("PlayerArray").getJSONObject("player" + i).getString("UserName");
-        		System.out.println(username);
         		int teamID = response.getJSONObject("PlayerArray").getJSONObject("player" + i).getInt("TeamID");
         		if(teamID == settings.getInt("TeamID", 0)){
         			//addItems does nothing if string already exists in list
@@ -342,5 +297,17 @@ public class GameLobby extends Activity {
         	e.printStackTrace();
         }
     }
+    
+    public CountDownTimer startCountdown(){
+		CountDownTimer timer = new CountDownTimer(300000, 1000){
+			public void onTick(long millisecondsUntilFinished){
+				updateLobby();
+				if(readyToStart) moveToGame();
+			}
+			public void onFinish(){
+			}
+		}.start();
+		return timer;
+	}
 }
 
