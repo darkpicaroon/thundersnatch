@@ -133,13 +133,13 @@ public class GameLobby extends Activity {
         updater.cancel();
     }
     
-    @Override
-    protected void onPause()
-    {
-    	super.onPause();
-    	
-    	leaveGame();
-    }
+//    @Override
+//    protected void onPause()
+//    {
+//    	super.onPause();
+//    	
+//    	leaveGame();
+//    }
 
 //    @Override
 //    public boolean onCreateOptionsMenu(Menu menu) {
@@ -281,7 +281,7 @@ public class GameLobby extends Activity {
     public void updateLobby(){
     	try{
         	JSONObject response = lobbyServerInterface(0);
-        	System.out.println("response: " + response.toString());
+        	//System.out.println("response: " + response.toString());
         	if(response.getInt("GameStatus") == 1){
         		readyToStart = true;
         	}
