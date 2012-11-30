@@ -36,16 +36,13 @@ public class Player {
 		userName = name;
 	}
 	
-	public Player(int id, String name, float x, float y, boolean own,
-			boolean opp, boolean isBase, int team) {
-		userGameID = id;
+	// Flag constructor.
+	public Player(float x, float y, boolean own, boolean isBase, int team) {
 		xPosition = x;
 		yPosition = y;
 		hasOwnFlag = own;
-		hasOpponentFlag = opp;
 		base = isBase;
 		teamID = team;
-		userName = name;
 	}
 
 	public Player(String name, int team){
