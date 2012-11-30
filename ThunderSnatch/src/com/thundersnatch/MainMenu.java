@@ -149,19 +149,19 @@ public class MainMenu extends Activity {
 		});
         
         // Sets up the "Map - Developer" button handler.
-        Button map = (Button)findViewById(R.id.button5);
-        map.setOnClickListener(new View.OnClickListener() {
-			
-			public void onClick(View v) {
-				
-				Intent intent = new Intent(MainMenu.this, PlayGame.class);
-				intent.putExtra("GameID", 0);
-				intent.putExtra("TeamID", 0);
-				intent.putExtra("UserGameID", 34);
-				intent.putExtra("TeamColor", "red");
-	            MainMenu.this.startActivity(intent);
-			}
-		});
+//        Button map = (Button)findViewById(R.id.button5);
+//        map.setOnClickListener(new View.OnClickListener() {
+//			
+//			public void onClick(View v) {
+//				
+//				Intent intent = new Intent(MainMenu.this, PlayGame.class);
+//				intent.putExtra("GameID", 0);
+//				intent.putExtra("TeamID", 0);
+//				intent.putExtra("UserGameID", 34);
+//				intent.putExtra("TeamColor", "red");
+//	            MainMenu.this.startActivity(intent);
+//			}
+//		});
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {

@@ -19,7 +19,9 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
@@ -28,6 +30,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class CreateAccount extends Activity {
 	
@@ -75,9 +78,28 @@ public class CreateAccount extends Activity {
 					boolean success = createAccount(usernameText, passwordText, emailAddressText);
 					
 					if (success)
+					{
 						finish();
+						
+						Context context = getApplicationContext();
+						CharSequence text = "Account created successfully.";
+						int duration = Toast.LENGTH_SHORT;
+						
+						Toast toast = Toast.makeText(context, text, duration);
+						toast.show();
 					
-					// SHOULD THEY BE TAKEN TO THE MAIN MENU HERE?
+						Intent intent = new Intent(CreateAccount.this, LoginScreen.class);
+						CreateAccount.this.startActivity(intent);
+					}
+					else
+					{
+						Context context = getApplicationContext();
+						CharSequence text = "Failed to create account. Please try again.";
+						int duration = Toast.LENGTH_SHORT;
+						
+						Toast toast = Toast.makeText(context, text, duration);
+						toast.show();
+					}
 				}
 				else {
 					
@@ -114,7 +136,7 @@ public class CreateAccount extends Activity {
     
     private boolean createAccount(String username, String password, String emailAddress) {
 
-		if ((!username.equals("") && !password.equals(""))) {
+		if (!username.equals("") && !password.equals("") && !emailAddress.equals("")) {
 
 			// Create a HTTPClient as the form container
 			HttpClient httpclient = new DefaultHttpClient();
