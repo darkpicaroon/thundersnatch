@@ -131,7 +131,6 @@ public class GameLobby extends Activity {
 			}
 		});
         
-        addBluePlayer("Mother FUCKER!!!!!!!!!");
         
         
         LocationManager locationManager = (LocationManager) this
