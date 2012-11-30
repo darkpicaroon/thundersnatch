@@ -14,4 +14,38 @@
     android:apiKey="0IBxic7gKpKolQJcTutQS1tHyIBfNJ_HroujpDw"
 />
 
+<TextView
+    android:id="@+id/redScore"
+    android:layout_width="80dp"
+    android:layout_height="30dp"
+    android:layout_alignParentLeft="true"
+    android:layout_alignParentTop="true"
+    android:text="0"
+    android:gravity="center_horizontal"
+    android:background="@color/error_red"
+    android:textAppearance="?android:attr/textAppearanceLarge" />
+
+<TextView
+    android:id="@+id/blueScore"
+    android:layout_width="80dp"
+    android:layout_height="30dp"
+    android:layout_alignParentRight="true"
+    android:layout_alignParentTop="true"
+    android:gravity="center_horizontal"
+    android:background="@color/blue"
+    android:text="0"
+    android:textAppearance="?android:attr/textAppearanceLarge" />
+
+<TextView
+    android:id="@+id/countDown"
+    android:layout_width="wrap_content"
+    android:layout_height="30dp"
+    android:layout_alignParentTop="true"
+    android:background="@color/gray"
+    android:gravity="center_horizontal"
+    android:layout_toLeftOf="@+id/blueScore"
+    android:layout_toRightOf="@+id/redScore"
+    android:text="15:00"
+    android:textAppearance="?android:attr/textAppearanceMedium" />
+
 </RelativeLayout>
