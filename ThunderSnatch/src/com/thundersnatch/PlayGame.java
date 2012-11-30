@@ -53,8 +53,10 @@ import com.google.android.maps.OverlayItem;
 //Its about 4 in the morning so im calling it a night. The very minimum needed to 
 //present tomorrow is done: we can have multiple users join a lobby and then proceed 
 //to the playgame class together, where there positions will be placed on the map.
+//I have tested this many times to ensure functionality.
 
-//good luck to you guys
+//good luck to you guys!
+// -Andrew
 
 
 
