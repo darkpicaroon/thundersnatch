@@ -47,78 +47,75 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 public class LoginScreen extends Activity {
-	
+
 	private String loginURL = "http://www.rkaneda.com/Login.php";
-	
+
 	private TextView errorMsg;
-    private EditText username;
-    private EditText password;
-    private CheckBox rememberMe;
-    private Button login;
-    private TextView createAccount;
-    private TextView forgotPassword;
-    
-    private SharedPreferences settings;
-    private SharedPreferences.Editor editor;
-    
-    private int userID;
-    private String userName;
-    private int wins;
-    private int losses;
-    private int ties;
-    private int steals;
-    float lat;
-    float lng;
-    
-    Bundle extras;
-    
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        
-        
-        // Sets the activity to fullscreen.
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-        		WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        
-        setContentView(R.layout.activity_login_screen);
-        
-        extras = getIntent().getExtras();
-        
-        
-        username = (EditText)findViewById(R.id.editText1);
-        password = (EditText)findViewById(R.id.editText2);
-        rememberMe = (CheckBox)findViewById(R.id.checkBox1);
-        errorMsg = (TextView)findViewById(R.id.textView5);
-        
-        
-        settings = getApplicationContext().getSharedPreferences("com.thundersnatch", Context.MODE_PRIVATE);
-        editor = settings.edit();
-        
-        // If the user chose the "Remember Me" option last time,
-        // their account information should be loaded.
-        if (settings.getBoolean("remember_me", false))
-        {
-        	username.setText(settings.getString("username", ""));
-        	password.setText(settings.getString("password", ""));
-        	rememberMe.setChecked(true);
-        }
-        
-        // Makes the "Login" button clickable.
-        login = (Button)findViewById(R.id.button1);
-        login.setOnClickListener(new View.OnClickListener() {
-			
+	private EditText username;
+	private EditText password;
+	private CheckBox rememberMe;
+	private Button login;
+	private TextView createAccount;
+	private TextView forgotPassword;
+
+	private SharedPreferences settings;
+	private SharedPreferences.Editor editor;
+
+	private int userID;
+	private String userName;
+	private int wins;
+	private int losses;
+	private int ties;
+	private int steals;
+	float lat;
+	float lng;
+
+	Bundle extras;
+
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+
+		// Sets the activity to fullscreen.
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+				WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+		setContentView(R.layout.activity_login_screen);
+
+		extras = getIntent().getExtras();
+
+		username = (EditText) findViewById(R.id.editText1);
+		password = (EditText) findViewById(R.id.editText2);
+		rememberMe = (CheckBox) findViewById(R.id.checkBox1);
+		errorMsg = (TextView) findViewById(R.id.textView5);
+
+		settings = getApplicationContext().getSharedPreferences(
+				"com.thundersnatch", Context.MODE_PRIVATE);
+		editor = settings.edit();
+
+		// If the user chose the "Remember Me" option last time,
+		// their account information should be loaded.
+		if (settings.getBoolean("remember_me", false)) {
+			username.setText(settings.getString("username", ""));
+			password.setText(settings.getString("password", ""));
+			rememberMe.setChecked(true);
+		}
+
+		// Makes the "Login" button clickable.
+		login = (Button) findViewById(R.id.button1);
+		login.setOnClickListener(new View.OnClickListener() {
+
 			public void onClick(View v) {
-				
+
 				String usernameText = username.getText().toString();
 				String passwordText = password.getText().toString();
-				
-				boolean enableLogin = verifyCredentials(usernameText, passwordText);
-				
+
+				boolean enableLogin = verifyCredentials(usernameText,
+						passwordText);
+
 				// If the user has the "Remember Me" CheckBox checked,
 				// their login information is stored on the phone.
-				if (rememberMe.isChecked())
-				{
+				if (rememberMe.isChecked()) {
 					editor.putBoolean("remember_me", true);
 					editor.putString("username", usernameText);
 					// Wasn't sure if we just want to store a hashed value
@@ -127,14 +124,14 @@ public class LoginScreen extends Activity {
 					editor.putString("password", passwordText);
 					editor.commit();
 				}
-				
-				if(enableLogin){
-					
+
+				if (enableLogin) {
+
 					finish();
-					
+
 					editor.putInt("userID", userID);
 					editor.commit();
-					
+
 					Intent intent = new Intent(LoginScreen.this, MainMenu.class);
 					intent.putExtra("UserID", userID);
 					intent.putExtra("Username", userName);
@@ -144,102 +141,111 @@ public class LoginScreen extends Activity {
 					intent.putExtra("Steals", steals);
 					intent.putExtra("Latitude", lat);
 					intent.putExtra("Longitude", lng);
-		            LoginScreen.this.startActivity(intent);
+					LoginScreen.this.startActivity(intent);
 				}
-				
+
 			}
 		});
-        
-        // Makes the create account text a link.
-        createAccount = (TextView)findViewById(R.id.textView3);
-        createAccount.setOnClickListener(new View.OnClickListener() {
-			
+
+		// Makes the create account text a link.
+		createAccount = (TextView) findViewById(R.id.textView3);
+		createAccount.setOnClickListener(new View.OnClickListener() {
+
 			public void onClick(View v) {
-				
-				Intent intent = new Intent(LoginScreen.this, CreateAccount.class);
-	            LoginScreen.this.startActivity(intent);
-								
+
+				Intent intent = new Intent(LoginScreen.this,
+						CreateAccount.class);
+				LoginScreen.this.startActivity(intent);
+
 			}
 		});
-        
-        forgotPassword = (TextView)findViewById(R.id.textView4);
-        forgotPassword.setOnClickListener(new View.OnClickListener() {
-			
+
+		forgotPassword = (TextView) findViewById(R.id.textView4);
+		forgotPassword.setOnClickListener(new View.OnClickListener() {
+
 			public void onClick(View v) {
-				
-				Intent intent = new Intent(LoginScreen.this, ForgotPassword.class);
-	            LoginScreen.this.startActivity(intent);
-								
+
+				Intent intent = new Intent(LoginScreen.this,
+						ForgotPassword.class);
+				LoginScreen.this.startActivity(intent);
+
 			}
 		});
-    }
-    
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.activity_login_screen, menu);
-        return true;
-    }
-    
-    private boolean verifyCredentials(String username, String password) {
-        
-    	if((!username.equals("") && !password.equals(""))){
-    		
-    		//admin debugger should always be allowed in
-        	if(username.equals("admin") && password.equals("admin")) {
-        		return true;
-        	}
-        	
-        	//send info to database to check validity
-        	else {
-        		
-        		//Create a HTTPClient as the form container
-                HttpClient httpclient = new DefaultHttpClient();
-                
-                //Create an array list for the input data to be sent
-                ArrayList<NameValuePair> nameValuePairs;
-                
-                //Create a HTTP Response and HTTP Entity
-                HttpResponse response;
-                HttpEntity entity;
-               
-        		
-                //run http methods
-        		try {
-        			
-        			//Use HTTP POST method
-                    URI uri = new URI(loginURL);
-                    HttpPost httppost = new HttpPost(uri);//this is where the address to the php file goes
-                    
-        			//place credentials in the array list
-        			nameValuePairs = new ArrayList<NameValuePair>();
-                    nameValuePairs.add(new BasicNameValuePair("userName", username));
-                    nameValuePairs.add(new BasicNameValuePair("password", password));
-        			
-    			    //Add array list to http post
-    			    httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-    			   
-    			    //assign executed form container to response
-    			    response = httpclient.execute(httppost);
-    			    
-    			    //check status code, need to check status code 200
-    			    if(response.getStatusLine().getStatusCode()== 200){
-        			    
-        			   //assign response entity to http entity
-        			   entity = response.getEntity();
-        			    
-        			   //check if entity is not null
-        			   if(entity != null){
-	        			     //Create new input stream with received data assigned
-	        			     InputStream instream = entity.getContent();
-	        			     
-	        			     //Create new JSON Object. assign converted data as parameter.
-	        			     JSONObject jsonResponse = new JSONObject(convertStreamToString(instream));
-	        			     
-	        			     //assign json responses to local strings
-	        			     boolean isValid = jsonResponse.getBoolean("IsValid");
-	        			     
-	        			     // Credentials are valid
-	        			     if(isValid) {
-	        			    	 	
+	}
+
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.activity_login_screen, menu);
+		return true;
+	}
+
+	private boolean verifyCredentials(String username, String password) {
+
+		if ((!username.equals("") && !password.equals(""))) {
+
+			// admin debugger should always be allowed in
+			if (username.equals("admin") && password.equals("admin")) {
+				return true;
+			}
+
+			// send info to database to check validity
+			else {
+
+				// Create a HTTPClient as the form container
+				HttpClient httpclient = new DefaultHttpClient();
+
+				// Create an array list for the input data to be sent
+				ArrayList<NameValuePair> nameValuePairs;
+
+				// Create a HTTP Response and HTTP Entity
+				HttpResponse response;
+				HttpEntity entity;
+
+				// run http methods
+				try {
+
+					// Use HTTP POST method
+					URI uri = new URI(loginURL);
+					HttpPost httppost = new HttpPost(uri);// this is where the
+															// address to the
+															// php file goes
+
+					// place credentials in the array list
+					nameValuePairs = new ArrayList<NameValuePair>();
+					nameValuePairs.add(new BasicNameValuePair("userName",
+							username));
+					nameValuePairs.add(new BasicNameValuePair("password",
+							password));
+
+					// Add array list to http post
+					httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+
+					// assign executed form container to response
+					response = httpclient.execute(httppost);
+
+					// check status code, need to check status code 200
+					if (response.getStatusLine().getStatusCode() == 200) {
+
+						// assign response entity to http entity
+						entity = response.getEntity();
+
+						// check if entity is not null
+						if (entity != null) {
+							// Create new input stream with received data
+							// assigned
+							InputStream instream = entity.getContent();
+
+							// Create new JSON Object. assign converted data as
+							// parameter.
+							JSONObject jsonResponse = new JSONObject(
+									convertStreamToString(instream));
+
+							// assign json responses to local strings
+							boolean isValid = jsonResponse
+									.getBoolean("IsValid");
+
+							// Credentials are valid
+							if (isValid) {
+
 								userID = jsonResponse.getInt("UserID");
 								userName = username;
 								wins = jsonResponse.getInt("Wins");
@@ -248,80 +254,71 @@ public class LoginScreen extends Activity {
 								steals = jsonResponse.getInt("Steals");
 
 								return true;
-	        	        	}
-        	        		 else {
-	        	        			//credentials are invalid
-        	        			 	errorMsg.setText("Invalid login credentials, please try again.");
-	        	        		 	return false;
-        	        		 }
-        			    }
-    			   }
-    			} 
-        		catch(Exception e){
-    			   e.printStackTrace();
-    			   errorMsg.setText("Unable to connect to server.");
-    			   return false;
-    			}
-        		errorMsg.setText("Internal error");
-        		return false;
-        	}
-    	}
-    	//will return an error message if nothing is entered
-    	else{
-    		errorMsg.setText("Please enter your username and password: admin/admin");
-    		return false;
-    	}
-    }
-    
-    private static String convertStreamToString(InputStream is) {
-        /*
-         * To convert the InputStream to String we use the BufferedReader.readLine()
-         * method. We iterate until the BufferedReader return null which means
-         * there's no more data to read. Each line will appended to a StringBuilder
-         * and returned as String.
-         */
-        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-        StringBuilder sb = new StringBuilder();
- 
-        String line = null;
-        try {
-            while ((line = reader.readLine()) != null) {
-                sb.append(line + "\n");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                is.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return sb.toString();
-    }
-    
-    // Disables components on login screen.
-    private void disableComponents() {
-    	username.setEnabled(false);
-    	password.setEnabled(false);
-    	rememberMe.setEnabled(false);
-    	login.setEnabled(false);
-    	createAccount.setEnabled(false);
-    }
-    
-    // Enables components on login screen.
-    private void enableComponents() {
-    	username.setEnabled(true);
-    	password.setEnabled(true);
-    	rememberMe.setEnabled(true);
-    	login.setEnabled(true);
-    	createAccount.setEnabled(true);
-    }
+							} else {
+								// credentials are invalid
+								errorMsg.setText("Invalid login credentials, please try again.");
+								return false;
+							}
+						}
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+					errorMsg.setText("Unable to connect to server.");
+					return false;
+				}
+				errorMsg.setText("Internal error");
+				return false;
+			}
+		}
+		// will return an error message if nothing is entered
+		else {
+			errorMsg.setText("Please enter your username and password: admin/admin");
+			return false;
+		}
+	}
+
+	private static String convertStreamToString(InputStream is) {
+		/*
+		 * To convert the InputStream to String we use the
+		 * BufferedReader.readLine() method. We iterate until the BufferedReader
+		 * return null which means there's no more data to read. Each line will
+		 * appended to a StringBuilder and returned as String.
+		 */
+		BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+		StringBuilder sb = new StringBuilder();
+
+		String line = null;
+		try {
+			while ((line = reader.readLine()) != null) {
+				sb.append(line + "\n");
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				is.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return sb.toString();
+	}
+
+	// Disables components on login screen.
+	private void disableComponents() {
+		username.setEnabled(false);
+		password.setEnabled(false);
+		rememberMe.setEnabled(false);
+		login.setEnabled(false);
+		createAccount.setEnabled(false);
+	}
+
+	// Enables components on login screen.
+	private void enableComponents() {
+		username.setEnabled(true);
+		password.setEnabled(true);
+		rememberMe.setEnabled(true);
+		login.setEnabled(true);
+		createAccount.setEnabled(true);
+	}
 }
-
-
-
-
-
-
-

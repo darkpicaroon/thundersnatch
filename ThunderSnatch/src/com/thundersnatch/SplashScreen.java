@@ -26,30 +26,31 @@ public class SplashScreen extends Activity {
 
 	public float xPos;
 	public float yPos;
-	
+
 	private SharedPreferences settings;
-    private SharedPreferences.Editor editor;
-	
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-        		WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        
-        setContentView(R.layout.activity_splash_screen);
-        
-        settings = getApplicationContext().getSharedPreferences("com.thundersnatch", Context.MODE_PRIVATE);
-        editor = settings.edit();
-        
-    	LocationManager locationManager = (LocationManager) this
+	private SharedPreferences.Editor editor;
+
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+				WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+		setContentView(R.layout.activity_splash_screen);
+
+		settings = getApplicationContext().getSharedPreferences(
+				"com.thundersnatch", Context.MODE_PRIVATE);
+		editor = settings.edit();
+
+		LocationManager locationManager = (LocationManager) this
 				.getSystemService(Context.LOCATION_SERVICE);
 
 		LocationListener locationListener = new LocationListener() {
 			public void onLocationChanged(Location location) {
 				xPos = (float) location.getLatitude();
 				yPos = (float) location.getLongitude();
-				
+
 			}
 
 			public void onStatusChanged(String provider, int status,
@@ -62,36 +63,34 @@ public class SplashScreen extends Activity {
 			public void onProviderDisabled(String provider) {
 			}
 		};
-		
+
 		// Register the listener with the Location Manager to receive location
 		// updates
 		locationManager.requestLocationUpdates(
 				LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
-		locationManager.requestLocationUpdates(
-				LocationManager.GPS_PROVIDER, 0, 0, locationListener);
-        
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
- 
-        
-        	
-            public void run() {
- 
-                finish();
- 
-                Intent intent = new Intent(SplashScreen.this, LoginScreen.class);
-                editor.putFloat("Longitude", xPos);
-                editor.putFloat("Latitude", yPos);
-                editor.commit();
-                SplashScreen.this.startActivity(intent);
- 
-            }
- 
-        }, 2000);
-    }
+		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0,
+				0, locationListener);
 
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.activity_splash_screen, menu);
-        return true;
-    }
+		Handler handler = new Handler();
+		handler.postDelayed(new Runnable() {
+
+			public void run() {
+
+				finish();
+
+				Intent intent = new Intent(SplashScreen.this, LoginScreen.class);
+				editor.putFloat("Longitude", xPos);
+				editor.putFloat("Latitude", yPos);
+				editor.commit();
+				SplashScreen.this.startActivity(intent);
+
+			}
+
+		}, 2000);
+	}
+
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.activity_splash_screen, menu);
+		return true;
+	}
 }

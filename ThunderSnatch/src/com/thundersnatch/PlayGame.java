@@ -39,7 +39,6 @@ import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
 import com.google.android.maps.OverlayItem;
 
-
 //          SCOTT AND ERIC:
 //Still need to work out how to incorporate the bases into this class.
 //the locations of the bases are currently being stored in the Team table
@@ -59,11 +58,6 @@ import com.google.android.maps.OverlayItem;
 //good luck to you guys!
 // -Andrew
 
-
-
-
-
-
 /* To enable the maps functionality, you must set the keystore location in your own IDE
  * to the file "debug.keystore" in this package.
  * 
@@ -77,13 +71,13 @@ public class PlayGame extends MapActivity {
 	public Player[] players = new Player[MAX_NUM_PLAYERS];
 	public Player[] bases = new Player[2];
 	private int numPlayers = 0;
-	
+
 	private int userID;
 	private int userGameID;
 	private int gameID;
 	private int teamID;
 	private String teamColor;
-	
+
 	Player user;
 	Player redFlag = null;
 	Player blueFlag = null;
@@ -95,46 +89,46 @@ public class PlayGame extends MapActivity {
 	public MapView map;
 	GeoPoint geoP;
 	MapController mapC;
-	
+
 	TextView clockText;
-	
+
 	TextView redScoreView;
 	int redScore;
 	TextView blueScoreView;
 	int blueScore;
-	
+
 	private SharedPreferences settings;
-    private SharedPreferences.Editor editor;
+	private SharedPreferences.Editor editor;
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
-		settings = getApplicationContext().getSharedPreferences("com.thundersnatch", Context.MODE_PRIVATE);
-        editor = settings.edit();
-        
+
+		settings = getApplicationContext().getSharedPreferences(
+				"com.thundersnatch", Context.MODE_PRIVATE);
+		editor = settings.edit();
+
 		userGameID = settings.getInt("UserGameID", 0);
 		gameID = settings.getInt("GameID", 0);
 		teamID = settings.getInt("TeamID", 0);
 		teamColor = settings.getString("TeamColor", "");
 		userID = settings.getInt("userID", 0);
 
-		user = new Player(userID, "USER",
-				settings.getFloat("Longitude", 0),
-				settings.getFloat("Latitude", 0), false, false, teamID);	
+		user = new Player(userID, "USER", settings.getFloat("Longitude", 0),
+				settings.getFloat("Latitude", 0), false, false, teamID);
 
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
 		setContentView(R.layout.activity_map);
-		
-		clockText = (TextView)findViewById(R.id.countDown);
+
+		clockText = (TextView) findViewById(R.id.countDown);
 		startCountdown(900000);
 		startUpdateCountDown(900000);
-		
-		blueScoreView = (TextView)findViewById(R.id.blueScore);
+
+		blueScoreView = (TextView) findViewById(R.id.blueScore);
 		blueScore = 0;
-		redScoreView = (TextView)findViewById(R.id.redScore);
+		redScoreView = (TextView) findViewById(R.id.redScore);
 		redScore = 0;
 
 		map = (MapView) findViewById(R.id.mapView);
@@ -175,12 +169,12 @@ public class PlayGame extends MapActivity {
 
 		// Register the listener with the Location Manager to receive location
 		// updates
-	
+
 		locationManager.requestLocationUpdates(
 				LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
-		locationManager.requestLocationUpdates(
-				LocationManager.GPS_PROVIDER, 0, 0, locationListener);
-		
+		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0,
+				0, locationListener);
+
 	}
 
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -192,72 +186,72 @@ public class PlayGame extends MapActivity {
 		return false;
 	}
 
-//	protected void updatePositions(float xPosition, float yPosition,
-//			boolean hasOwnFlag, boolean hasOppFlag, Player[] players) {
-//
-//		// Create a HTTPClient as the form container
-//		HttpClient httpclient = new DefaultHttpClient();
-//
-//		// Create an array list for the input data to be sent
-//		ArrayList<NameValuePair> nameValuePairs;
-//
-//		// Create a HTTP Response and HTTP Entity
-//		HttpResponse response;
-//		HttpEntity entity;
-//
-//		// run http methods
-//		try {
-//			// Use HTTP POST method
-//			URI uri = new URI(updateURL);
-//			HttpPost httppost = new HttpPost(uri);
-//
-//			// place credentials in the array list
-//			nameValuePairs = new ArrayList<NameValuePair>();
-//			nameValuePairs.add(new BasicNameValuePair("xPosition", ""
-//					+ xPosition));
-//			nameValuePairs.add(new BasicNameValuePair("yPosition", ""
-//					+ yPosition));
-//			nameValuePairs.add(new BasicNameValuePair("userGameID", ""
-//					+ userGameID));
-//			nameValuePairs.add(new BasicNameValuePair("gameID", "" + gameID));
-//			int iOwn = hasOwnFlag ? 1 : 0;
-//			nameValuePairs.add(new BasicNameValuePair("hasOwnFlag", "" + iOwn));
-//			int iOpp = hasOppFlag ? 1 : 0;
-//			nameValuePairs.add(new BasicNameValuePair("hasOppFlag", "" + iOpp));
-//
-//			// Add array list to http post
-//			httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-//
-//			// assign executed form container to response
-//			response = httpclient.execute(httppost);
-//
-//			// check status code, need to check status code 200
-//			if (response.getStatusLine().getStatusCode() == 200) {
-//
-//				// assign response entity to http entity
-//				entity = response.getEntity();
-//
-//				// check if entity is not null
-//				if (entity != null) {
-//					// Create new input stream with received data assigned
-//					InputStream instream = entity.getContent();
-//
-//					// Create new JSON Object. assign converted data as
-//					// parameter.
-//					JSONObject jsonResponse = new JSONObject(
-//							convertStreamToString(instream));
-//
-//					numPlayers = jsonResponse.getInt("NumUsers");
-//					for (int i = 0; i < numPlayers; i++) {
-//						convertJsonResponseToPlayer(jsonResponse, i, players);
-//					}
-//				}
-//			}
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//	}// end update method
-	
+	// protected void updatePositions(float xPosition, float yPosition,
+	// boolean hasOwnFlag, boolean hasOppFlag, Player[] players) {
+	//
+	// // Create a HTTPClient as the form container
+	// HttpClient httpclient = new DefaultHttpClient();
+	//
+	// // Create an array list for the input data to be sent
+	// ArrayList<NameValuePair> nameValuePairs;
+	//
+	// // Create a HTTP Response and HTTP Entity
+	// HttpResponse response;
+	// HttpEntity entity;
+	//
+	// // run http methods
+	// try {
+	// // Use HTTP POST method
+	// URI uri = new URI(updateURL);
+	// HttpPost httppost = new HttpPost(uri);
+	//
+	// // place credentials in the array list
+	// nameValuePairs = new ArrayList<NameValuePair>();
+	// nameValuePairs.add(new BasicNameValuePair("xPosition", ""
+	// + xPosition));
+	// nameValuePairs.add(new BasicNameValuePair("yPosition", ""
+	// + yPosition));
+	// nameValuePairs.add(new BasicNameValuePair("userGameID", ""
+	// + userGameID));
+	// nameValuePairs.add(new BasicNameValuePair("gameID", "" + gameID));
+	// int iOwn = hasOwnFlag ? 1 : 0;
+	// nameValuePairs.add(new BasicNameValuePair("hasOwnFlag", "" + iOwn));
+	// int iOpp = hasOppFlag ? 1 : 0;
+	// nameValuePairs.add(new BasicNameValuePair("hasOppFlag", "" + iOpp));
+	//
+	// // Add array list to http post
+	// httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+	//
+	// // assign executed form container to response
+	// response = httpclient.execute(httppost);
+	//
+	// // check status code, need to check status code 200
+	// if (response.getStatusLine().getStatusCode() == 200) {
+	//
+	// // assign response entity to http entity
+	// entity = response.getEntity();
+	//
+	// // check if entity is not null
+	// if (entity != null) {
+	// // Create new input stream with received data assigned
+	// InputStream instream = entity.getContent();
+	//
+	// // Create new JSON Object. assign converted data as
+	// // parameter.
+	// JSONObject jsonResponse = new JSONObject(
+	// convertStreamToString(instream));
+	//
+	// numPlayers = jsonResponse.getInt("NumUsers");
+	// for (int i = 0; i < numPlayers; i++) {
+	// convertJsonResponseToPlayer(jsonResponse, i, players);
+	// }
+	// }
+	// }
+	// } catch (Exception e) {
+	// e.printStackTrace();
+	// }
+	// }// end update method
+
 	protected void updatePositions(float xPosition, float yPosition,
 			boolean hasOwnFlag, boolean hasOppFlag, Player[] players) {
 
@@ -279,14 +273,12 @@ public class PlayGame extends MapActivity {
 
 			// place credentials in the array list
 			nameValuePairs = new ArrayList<NameValuePair>();
-			nameValuePairs.add(new BasicNameValuePair("userId", ""
-					+ userGameID));
+			nameValuePairs
+					.add(new BasicNameValuePair("userId", "" + userGameID));
 			nameValuePairs.add(new BasicNameValuePair("gameId", "" + gameID));
 			nameValuePairs.add(new BasicNameValuePair("teamId", "" + teamID));
-			nameValuePairs.add(new BasicNameValuePair("xPos", ""
-					+ xPosition));
-			nameValuePairs.add(new BasicNameValuePair("yPos", ""
-					+ yPosition));
+			nameValuePairs.add(new BasicNameValuePair("xPos", "" + xPosition));
+			nameValuePairs.add(new BasicNameValuePair("yPos", "" + yPosition));
 
 			// Add array list to http post
 			httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
@@ -312,35 +304,40 @@ public class PlayGame extends MapActivity {
 
 					JSONObject team0 = jsonResponse.getJSONObject("Team0");
 					JSONObject team1 = jsonResponse.getJSONObject("Team1");
-					
-					if (bases[1] == null)
-					{
+
+					if (bases[1] == null) {
 
 						double x = team0.getDouble("FlagStartXPos");
 						double y = team0.getDouble("FlagStartYPos");
 						int teamId = team0.getInt("TeamID");
-						blueFlag = new Player((float)(settings.getFloat("Longitude", 0) + 0.001), (float)(settings.getFloat("Latitude", 0) + 0.001), true,
-								true, teamId, 0);
-//						blueFlag = new Player((float)x, (float)y, true,
-//								true, teamId, 0);
+						blueFlag = new Player(
+								(float) (settings.getFloat("Longitude", 0) + 0.001),
+								(float) (settings.getFloat("Latitude", 0) + 0.001),
+								true, true, teamId, 0);
+						// blueFlag = new Player((float)x, (float)y, true,
+						// true, teamId, 0);
 						bases[0] = blueFlag;
 
 						x = team1.getDouble("FlagStartXPos");
 						y = team1.getDouble("FlagStartYPos");
 						teamId = team1.getInt("TeamID");
-						redFlag = new Player((float)(settings.getFloat("Longitude", 0) - 0.001), (float)(settings.getFloat("Latitude", 0) - 0.001), true,
-								true, teamId, 0);
-//						redFlag = new Player((float)x, (float)y, true,
-//								true, teamId, 0);
+						redFlag = new Player(
+								(float) (settings.getFloat("Longitude", 0) - 0.001),
+								(float) (settings.getFloat("Latitude", 0) - 0.001),
+								true, true, teamId, 0);
+						// redFlag = new Player((float)x, (float)y, true,
+						// true, teamId, 0);
 						bases[1] = redFlag;
 					}
-					
+
 					numPlayers = jsonResponse.getInt("numPlayers");
-					//System.out.println(numPlayers);
-					JSONObject playerList = jsonResponse.getJSONObject("PlayerArray");
-					 
+					// System.out.println(numPlayers);
+					JSONObject playerList = jsonResponse
+							.getJSONObject("PlayerArray");
+
 					for (int i = 0; i < playerList.length(); i++) {
-						JSONObject player = playerList.getJSONObject("player" + i);
+						JSONObject player = playerList.getJSONObject("player"
+								+ i);
 						System.out.println(player);
 						convertJsonResponseToPlayer(player, i);
 					}
@@ -378,79 +375,79 @@ public class PlayGame extends MapActivity {
 		return sb.toString();
 	}// end stream to string
 
-//	public void convertJsonResponseToPlayer(JSONObject json, int i,
-//			Player[] players) {
-//		try {
-//			String stringToParse = json.getString("User" + i);
-//			String[] playerInfo = stringToParse.split(", ");
-//			String[] temp;
-//			temp = playerInfo[0].split("UserGameID: ");
-//			int userID = Integer.parseInt(temp[1]);
-//			int index = -1;
-//			for (int j = 0; j < numPlayers; j++) {
-//				if (players[j] != null) {
-//					if (players[j].userGameID == userID) {
-//						index = j;
-//						break;
-//					}
-//				} else {
-//					index = index * j;
-//					break;
-//				}
-//			}
-//			if (index > 0) {
-//				// player already exists in array
-//				temp = playerInfo[3].split("XPos: ");
-//				players[index].xPosition = Float.parseFloat(temp[1]);
-//				temp = playerInfo[4].split("YPos: ");
-//				players[index].yPosition = Float.parseFloat(temp[1]);
-//				temp = playerInfo[5].split("hasOpponentFlag: ");
-//				int opp = Integer.parseInt(temp[1]);
-//				if (opp == 0)
-//					players[index].hasOpponentFlag = false;
-//				else
-//					players[index].hasOpponentFlag = true;
-//				temp = playerInfo[6].split("hasOwnFlag: ");
-//				int own = Integer.parseInt(temp[1]);
-//				if (own == 0)
-//					players[index].hasOwnFlag = false;
-//				else
-//					players[index].hasOwnFlag = true;
-//			} else {
-//				// player does not exist in array; need to create new player
-//				index = index * -1;
-//
-//				temp = playerInfo[1].split("UserName: ");
-//				String userName = temp[1];
-//				temp = playerInfo[2].split("TeamID: ");
-//				int teamID = Integer.parseInt(temp[1]);
-//				temp = playerInfo[3].split("XPos: ");
-//				float xPosition = Float.parseFloat(temp[1]);
-//				temp = playerInfo[4].split("YPos: ");
-//				float yPosition = Float.parseFloat(temp[1]);
-//				temp = playerInfo[5].split("hasOpponentFlag: ");
-//				int opp = Integer.parseInt(temp[1]);
-//				boolean hasOpponentFlag;
-//				if (opp == 0)
-//					hasOpponentFlag = false;
-//				else
-//					hasOpponentFlag = true;
-//				temp = playerInfo[6].split("hasOwnFlag: ");
-//				boolean hasOwnFlag;
-//				int own = Integer.parseInt(temp[1]);
-//				if (own == 0)
-//					hasOwnFlag = false;
-//				else
-//					hasOwnFlag = true;
-//				players[index] = new Player(userID, userName, xPosition,
-//						yPosition, hasOpponentFlag, hasOwnFlag, teamID);
-//
-//			}
-//		} catch (Exception e) {
-//			System.out.println("Error: " + e);
-//		}
-//	}// end json response conversion
-	
+	// public void convertJsonResponseToPlayer(JSONObject json, int i,
+	// Player[] players) {
+	// try {
+	// String stringToParse = json.getString("User" + i);
+	// String[] playerInfo = stringToParse.split(", ");
+	// String[] temp;
+	// temp = playerInfo[0].split("UserGameID: ");
+	// int userID = Integer.parseInt(temp[1]);
+	// int index = -1;
+	// for (int j = 0; j < numPlayers; j++) {
+	// if (players[j] != null) {
+	// if (players[j].userGameID == userID) {
+	// index = j;
+	// break;
+	// }
+	// } else {
+	// index = index * j;
+	// break;
+	// }
+	// }
+	// if (index > 0) {
+	// // player already exists in array
+	// temp = playerInfo[3].split("XPos: ");
+	// players[index].xPosition = Float.parseFloat(temp[1]);
+	// temp = playerInfo[4].split("YPos: ");
+	// players[index].yPosition = Float.parseFloat(temp[1]);
+	// temp = playerInfo[5].split("hasOpponentFlag: ");
+	// int opp = Integer.parseInt(temp[1]);
+	// if (opp == 0)
+	// players[index].hasOpponentFlag = false;
+	// else
+	// players[index].hasOpponentFlag = true;
+	// temp = playerInfo[6].split("hasOwnFlag: ");
+	// int own = Integer.parseInt(temp[1]);
+	// if (own == 0)
+	// players[index].hasOwnFlag = false;
+	// else
+	// players[index].hasOwnFlag = true;
+	// } else {
+	// // player does not exist in array; need to create new player
+	// index = index * -1;
+	//
+	// temp = playerInfo[1].split("UserName: ");
+	// String userName = temp[1];
+	// temp = playerInfo[2].split("TeamID: ");
+	// int teamID = Integer.parseInt(temp[1]);
+	// temp = playerInfo[3].split("XPos: ");
+	// float xPosition = Float.parseFloat(temp[1]);
+	// temp = playerInfo[4].split("YPos: ");
+	// float yPosition = Float.parseFloat(temp[1]);
+	// temp = playerInfo[5].split("hasOpponentFlag: ");
+	// int opp = Integer.parseInt(temp[1]);
+	// boolean hasOpponentFlag;
+	// if (opp == 0)
+	// hasOpponentFlag = false;
+	// else
+	// hasOpponentFlag = true;
+	// temp = playerInfo[6].split("hasOwnFlag: ");
+	// boolean hasOwnFlag;
+	// int own = Integer.parseInt(temp[1]);
+	// if (own == 0)
+	// hasOwnFlag = false;
+	// else
+	// hasOwnFlag = true;
+	// players[index] = new Player(userID, userName, xPosition,
+	// yPosition, hasOpponentFlag, hasOwnFlag, teamID);
+	//
+	// }
+	// } catch (Exception e) {
+	// System.out.println("Error: " + e);
+	// }
+	// }// end json response conversion
+
 	public void convertJsonResponseToPlayer(JSONObject json, int i) {
 		try {
 			int index = -1;
@@ -467,50 +464,51 @@ public class PlayGame extends MapActivity {
 				}
 			}
 			if (index > 0) {
-				
+
 				// player already exists in array
-				players[index].xPosition = (float)json.getDouble("XPos");
-				players[index].yPosition = (float)json.getDouble("YPos");
+				players[index].xPosition = (float) json.getDouble("XPos");
+				players[index].yPosition = (float) json.getDouble("YPos");
 				int opp = json.getInt("hasOpponentFlag");
-				
+
 				if (opp == 0)
 					players[index].hasOpponentFlag = false;
 				else
 					players[index].hasOpponentFlag = true;
-				
+
 				int own = json.getInt("hasOwnFlag");
-				
+
 				if (own == 0)
 					players[index].hasOwnFlag = false;
 				else
 					players[index].hasOwnFlag = true;
-				
+
 			} else {
-				
+
 				// player does not exist in array; need to create new player
 				index = index * -1;
-				
-				int opp = json.getInt("hasOpponentFlag"); 
+
+				int opp = json.getInt("hasOpponentFlag");
 				int own = json.getInt("hasOwnFlag");
-				
+
 				boolean hasOpponentFlag;
 				if (opp == 0)
 					hasOpponentFlag = false;
 				else
 					hasOpponentFlag = true;
-				
 
 				boolean hasOwnFlag;
 				if (own == 0)
 					hasOwnFlag = false;
 				else
 					hasOwnFlag = true;
-				
-				players[index] = new Player(json.getInt("UserID"), json.getString("UserName"),
-						(float)json.getDouble("XPos"), (float)json.getDouble("YPos"), 
-						hasOpponentFlag, hasOwnFlag, json.getInt("TeamID"));
-					
-			} 
+
+				players[index] = new Player(json.getInt("UserID"),
+						json.getString("UserName"),
+						(float) json.getDouble("XPos"),
+						(float) json.getDouble("YPos"), hasOpponentFlag,
+						hasOwnFlag, json.getInt("TeamID"));
+
+			}
 		} catch (Exception e) {
 			System.out.println("Error: " + e);
 		}
@@ -525,21 +523,19 @@ public class PlayGame extends MapActivity {
 		OverlayItem overlayitem;
 
 		int count = 0;
-		if (players.length == 20){
+		if (players.length == 20) {
 			count = numPlayers;
 			map.getOverlays().clear();
 			mapOverlays = map.getOverlays();
-			
-		}
-		else if (players.length == 2){
+
+		} else if (players.length == 2) {
 			count = 2;
 			mapOverlays = map.getOverlays();
-		}
-		else
+		} else
 			System.out.println("Error");
-		
+
 		System.out.println("count:" + count);
-		
+
 		if (players != null) {
 			for (int i = 0; i < count; i++) {
 
@@ -583,49 +579,51 @@ public class PlayGame extends MapActivity {
 		}
 		map.invalidate();
 	}
-	
-	public void startCountdown(int milliseconds){
-		new CountDownTimer(milliseconds, 1000){
-			public void onTick(long millisecondsUntilFinished){
-				int seconds = (int)((millisecondsUntilFinished/1000)%60);
-				int minutes = (int)((millisecondsUntilFinished - (seconds*1000))/60000);
-				if(seconds >= 10)
+
+	public void startCountdown(int milliseconds) {
+		new CountDownTimer(milliseconds, 1000) {
+			public void onTick(long millisecondsUntilFinished) {
+				int seconds = (int) ((millisecondsUntilFinished / 1000) % 60);
+				int minutes = (int) ((millisecondsUntilFinished - (seconds * 1000)) / 60000);
+				if (seconds >= 10)
 					clockText.setText(minutes + ":" + seconds);
 				else
 					clockText.setText(minutes + ":0" + seconds);
 			}
-			public void onFinish(){
-				
+
+			public void onFinish() {
+
 			}
 		}.start();
 	}
-	
-	//this will basically create a new thread that will handle updating everything
-	public void startUpdateCountDown(int milliseconds){
-		new CountDownTimer(milliseconds, 1000){
-			public void onTick(long millisecondsUntilFinished){
+
+	// this will basically create a new thread that will handle updating
+	// everything
+	public void startUpdateCountDown(int milliseconds) {
+		new CountDownTimer(milliseconds, 1000) {
+			public void onTick(long millisecondsUntilFinished) {
 				updatePositions(user.xPosition, user.yPosition,
-						 user.hasOwnFlag, user.hasOpponentFlag, players);
+						user.hasOwnFlag, user.hasOpponentFlag, players);
 				putLocationsOnMap(players, map);
 				putLocationsOnMap(bases, map);
 				compareLocations();
 			}
-			public void onFinish(){
-				
+
+			public void onFinish() {
+
 			}
 		}.start();
 	}
-	
+
 	@Override
-    protected void onStop()
-    {
-    	super.onStop();
-    	finish();
-    	leaveGame();
-    }
-	
-private boolean leaveGame() {
-		
+	protected void onStop() {
+		super.onStop();
+		finish();
+		leaveGame();
+	}
+
+	private boolean leaveGame() {
+
 		// Create a HTTPClient as the form container
 		HttpClient httpclient = new DefaultHttpClient();
 
@@ -672,7 +670,7 @@ private boolean leaveGame() {
 					// parameter.
 					JSONObject jsonResponse = new JSONObject(
 							convertStreamToString(instream));
-					
+
 					return true;
 				}
 			}
@@ -681,31 +679,37 @@ private boolean leaveGame() {
 		}
 		return false;
 	}
-	
+
 	/*
 	 * This is all you guys, have fun lol
 	 * 
 	 * update score with: redScoreView.setText(redScore++);
-	 * 
 	 */
-	public void compareLocations(){
-		//loop through the player array, on players that have a flag and are on opposing team
-		//check distance, and if distance small enough, use AlertDialog to steal/capture flag
-		
-		//steal from opp player
-		//on steal, make a new servercall with the opponents usergameID as a parameter
-		//to indicate that they no longer have the flag
-		//you will need to work with david/raiden to create that php file.
-		
-		//snatch flag from base
-		//so there is that case for shit getting done in each time interval
-		//then check to see if player is within specified distance to enemy "base" player to capture flag
-		//show them steal button and handle capture
-		
-		//capture flag and score point
-		//finally, check if player has the enemies flag and is within specified distance to friendly "base player"
-		//to capture flag
-		//show them capture button (or just do it automatically) and handle server shit
-		//need way to increment the points on the server and in local text field
+	public void compareLocations() {
+		// loop through the player array, on players that have a flag and are on
+		// opposing team
+		// check distance, and if distance small enough, use AlertDialog to
+		// steal/capture flag
+
+		// steal from opp player
+		// on steal, make a new servercall with the opponents usergameID as a
+		// parameter
+		// to indicate that they no longer have the flag
+		// you will need to work with david/raiden to create that php file.
+
+		// snatch flag from base
+		// so there is that case for shit getting done in each time interval
+		// then check to see if player is within specified distance to enemy
+		// "base" player to capture flag
+		// show them steal button and handle capture
+
+		// capture flag and score point
+		// finally, check if player has the enemies flag and is within specified
+		// distance to friendly "base player"
+		// to capture flag
+		// show them capture button (or just do it automatically) and handle
+		// server shit
+		// need way to increment the points on the server and in local text
+		// field
 	}
 }

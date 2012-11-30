@@ -39,161 +39,152 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
 public class GameLobby extends Activity {
-	
+
 	private int userID;
 	private int gameID;
 	private double xPos;
 	private double yPos;
 	private int teamSize;
 	private int mapRadius;
-	
+
 	private boolean host;
 
 	private static final int ADD_ITEM_ID = 1;
-	
-	private ArrayList<HashMap<String,String>> redTeam = new ArrayList<HashMap<String,String>>();
+
+	private ArrayList<HashMap<String, String>> redTeam = new ArrayList<HashMap<String, String>>();
 	private SimpleAdapter redTeamAdapter;
-	
-	private ArrayList<HashMap<String,String>> blueTeam = new ArrayList<HashMap<String,String>>();
+
+	private ArrayList<HashMap<String, String>> blueTeam = new ArrayList<HashMap<String, String>>();
 	private SimpleAdapter blueTeamAdapter;
-	
+
 	private ListView redListView;
 	private ListView blueListView;
-	
+
 	private String serverURL = "http://www.rkaneda.com/GetPlayerListForLobby.php";
 	private String leaveGameURL = "http://www.rkaneda.com/LeaveGame.php";
-	
+
 	boolean readyToStart = false;
-	
-	
+
 	private SharedPreferences settings;
-    private SharedPreferences.Editor editor;
-	
+	private SharedPreferences.Editor editor;
+
 	int userGameID;
-	
+
 	CountDownTimer updater;
-	
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        
-        // Sets the activity to fullscreen.
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-        		WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        
-        setContentView(R.layout.activity_game_lobby);
-        
-        settings = getApplicationContext().getSharedPreferences("com.thundersnatch", Context.MODE_PRIVATE);
-        editor = settings.edit();
-       
-        
-        redListView = (ListView)findViewById(R.id.listView1);
-        blueListView = (ListView)findViewById(R.id.listView2);
-        		
-        redTeamAdapter = new SimpleAdapter( 
-				this, 
-				redTeam,
-				R.layout.red_team_item,
-				new String[] { "line1" },
-				new int[] { R.id.text1 }  );
-        
-        blueTeamAdapter = new SimpleAdapter( 
-				this, 
-				blueTeam,
-				R.layout.blue_team_item,
-				new String[] { "line1" },
-				new int[] { R.id.text1 }  );
-        
-        redListView.setAdapter(redTeamAdapter);
-        blueListView.setAdapter(blueTeamAdapter);
-        
-        
-     // Sets up the "Start" button handler.
-        Button start = (Button)findViewById(R.id.startButton);
-        start.setOnClickListener(new View.OnClickListener() {
-			
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+
+		// Sets the activity to fullscreen.
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+				WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+		setContentView(R.layout.activity_game_lobby);
+
+		settings = getApplicationContext().getSharedPreferences(
+				"com.thundersnatch", Context.MODE_PRIVATE);
+		editor = settings.edit();
+
+		redListView = (ListView) findViewById(R.id.listView1);
+		blueListView = (ListView) findViewById(R.id.listView2);
+
+		redTeamAdapter = new SimpleAdapter(this, redTeam,
+				R.layout.red_team_item, new String[] { "line1" },
+				new int[] { R.id.text1 });
+
+		blueTeamAdapter = new SimpleAdapter(this, blueTeam,
+				R.layout.blue_team_item, new String[] { "line1" },
+				new int[] { R.id.text1 });
+
+		redListView.setAdapter(redTeamAdapter);
+		blueListView.setAdapter(blueTeamAdapter);
+
+		// Sets up the "Start" button handler.
+		Button start = (Button) findViewById(R.id.startButton);
+		start.setOnClickListener(new View.OnClickListener() {
+
 			public void onClick(View v) {
 				updater.cancel();
 				finish();
-				
+
 				JSONObject response = lobbyServerInterface(1);
 
-		        moveToGame();
-				
+				moveToGame();
+
 			}
 		});
-        updater = startCountdown();
-        
-    }
-    
-    @Override
-    public void onStop() {
-        super.onStop();
-        updater.cancel();
-    }
-    
-//    @Override
-//    protected void onPause()
-//    {
-//    	super.onPause();
-//    	
-//    	leaveGame();
-//    }
+		updater = startCountdown();
 
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        getMenuInflater().inflate(R.menu.activity_game_lobby, menu);
-//        return true;
-//    }
-    
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-      boolean result = super.onCreateOptionsMenu(menu);
-      menu.add(0, ADD_ITEM_ID, Menu.NONE, R.string.add_item );
-      return result;
-    }
+	}
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch ( item.getItemId() ) {
-          case ADD_ITEM_ID:
-				addRedPlayer("fuck");
-                break;
-        }
-        return super.onOptionsItemSelected(item);
-    }
+	@Override
+	public void onStop() {
+		super.onStop();
+		updater.cancel();
+	}
 
-    private void moveToGame(){
-    	
-    	finish();
-    	
-    	Intent intent = new Intent(GameLobby.this, PlayGame.class);
-        GameLobby.this.startActivity(intent);
-    }
-    
-    private void addRedPlayer(String player) {
-	    HashMap<String,String> item = new HashMap<String,String>();
-	    
-	    item.put("line1", player);
-	    if(!redTeam.contains(item)){
-	    	redTeam.add(item);
-	        redTeamAdapter.notifyDataSetChanged();
-	    }
-	  }
-       
-       private void addBluePlayer(String player) {
-        HashMap<String,String> item = new HashMap<String,String>();
-        item.put("line1", player);
-        if(!blueTeam.contains(item)){
-        	blueTeam.add(item);
-        	blueTeamAdapter.notifyDataSetChanged();
-        }
-      }
-    
-    
-    private JSONObject lobbyServerInterface(int status) {
-		
+	// @Override
+	// protected void onPause()
+	// {
+	// super.onPause();
+	//
+	// leaveGame();
+	// }
+
+	// @Override
+	// public boolean onCreateOptionsMenu(Menu menu) {
+	// getMenuInflater().inflate(R.menu.activity_game_lobby, menu);
+	// return true;
+	// }
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		boolean result = super.onCreateOptionsMenu(menu);
+		menu.add(0, ADD_ITEM_ID, Menu.NONE, R.string.add_item);
+		return result;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case ADD_ITEM_ID:
+			addRedPlayer("fuck");
+			break;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+
+	private void moveToGame() {
+
+		finish();
+
+		Intent intent = new Intent(GameLobby.this, PlayGame.class);
+		GameLobby.this.startActivity(intent);
+	}
+
+	private void addRedPlayer(String player) {
+		HashMap<String, String> item = new HashMap<String, String>();
+
+		item.put("line1", player);
+		if (!redTeam.contains(item)) {
+			redTeam.add(item);
+			redTeamAdapter.notifyDataSetChanged();
+		}
+	}
+
+	private void addBluePlayer(String player) {
+		HashMap<String, String> item = new HashMap<String, String>();
+		item.put("line1", player);
+		if (!blueTeam.contains(item)) {
+			blueTeam.add(item);
+			blueTeamAdapter.notifyDataSetChanged();
+		}
+	}
+
+	private JSONObject lobbyServerInterface(int status) {
+
 		// Create a HTTPClient as the form container
 		HttpClient httpclient = new DefaultHttpClient();
 
@@ -250,80 +241,93 @@ public class GameLobby extends Activity {
 		}
 		return null;
 	}
- 
-    private static String convertStreamToString(InputStream is) {
-        /*
-         * To convert the InputStream to String we use the BufferedReader.readLine()
-         * method. We iterate until the BufferedReader return null which means
-         * there's no more data to read. Each line will appended to a StringBuilder
-         * and returned as String.
-         */
-        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-        StringBuilder sb = new StringBuilder();
- 
-        String line = null;
-        try {
-            while ((line = reader.readLine()) != null) {
-                sb.append(line + "\n");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                is.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return sb.toString();
-    }
-    
-    public void updateLobby(){
-    	try{
-        	JSONObject response = lobbyServerInterface(0);
-        	//System.out.println("response: " + response.toString());
-        	if(response.getInt("GameStatus") == 1){
-        		readyToStart = true;
-        	}
-        	int numPlayers = response.getInt("numPlayers");
-        	for(int i = 0; i < numPlayers; i++){
-        		String username = response.getJSONObject("PlayerArray").getJSONObject("player" + i).getString("UserName");
-        		int teamID = response.getJSONObject("PlayerArray").getJSONObject("player" + i).getInt("TeamID");
-        		if(teamID == settings.getInt("TeamID", 0)){
-        			//addItems does nothing if string already exists in list
-        			//put players on users side
-        			if(settings.getString("TeamColor", "").equals("blue"))//put player on blue side
-        				addBluePlayer(username);
-        			else //put player on red side
-        				addRedPlayer(username);
-        		}
-        		else{
-        			//put player on opp side
-        			if(settings.getString("TeamColor", "").equals("blue"))//put player on red side
-        				addRedPlayer(username);
-        			else //put player on blue side
-        				addBluePlayer(username);
-        		}
-        	}
-        }catch(Exception e){
-        	e.printStackTrace();
-        }
-    }
-    
-    public CountDownTimer startCountdown(){
-		CountDownTimer timer = new CountDownTimer(300000, 1000){
-			public void onTick(long millisecondsUntilFinished){
-				updateLobby();
-				if(readyToStart) moveToGame();
+
+	private static String convertStreamToString(InputStream is) {
+		/*
+		 * To convert the InputStream to String we use the
+		 * BufferedReader.readLine() method. We iterate until the BufferedReader
+		 * return null which means there's no more data to read. Each line will
+		 * appended to a StringBuilder and returned as String.
+		 */
+		BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+		StringBuilder sb = new StringBuilder();
+
+		String line = null;
+		try {
+			while ((line = reader.readLine()) != null) {
+				sb.append(line + "\n");
 			}
-			public void onFinish(){
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				is.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return sb.toString();
+	}
+
+	public void updateLobby() {
+		try {
+			JSONObject response = lobbyServerInterface(0);
+			// System.out.println("response: " + response.toString());
+			if (response.getInt("GameStatus") == 1) {
+				readyToStart = true;
+			}
+			int numPlayers = response.getInt("numPlayers");
+			for (int i = 0; i < numPlayers; i++) {
+				String username = response.getJSONObject("PlayerArray")
+						.getJSONObject("player" + i).getString("UserName");
+				int teamID = response.getJSONObject("PlayerArray")
+						.getJSONObject("player" + i).getInt("TeamID");
+				if (teamID == settings.getInt("TeamID", 0)) {
+					// addItems does nothing if string already exists in list
+					// put players on users side
+					if (settings.getString("TeamColor", "").equals("blue"))// put
+																			// player
+																			// on
+																			// blue
+																			// side
+						addBluePlayer(username);
+					else
+						// put player on red side
+						addRedPlayer(username);
+				} else {
+					// put player on opp side
+					if (settings.getString("TeamColor", "").equals("blue"))// put
+																			// player
+																			// on
+																			// red
+																			// side
+						addRedPlayer(username);
+					else
+						// put player on blue side
+						addBluePlayer(username);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public CountDownTimer startCountdown() {
+		CountDownTimer timer = new CountDownTimer(300000, 1000) {
+			public void onTick(long millisecondsUntilFinished) {
+				updateLobby();
+				if (readyToStart)
+					moveToGame();
+			}
+
+			public void onFinish() {
 			}
 		}.start();
 		return timer;
 	}
-    
-    private boolean leaveGame() {
-		
+
+	private boolean leaveGame() {
+
 		// Create a HTTPClient as the form container
 		HttpClient httpclient = new DefaultHttpClient();
 
@@ -370,7 +374,7 @@ public class GameLobby extends Activity {
 					// parameter.
 					JSONObject jsonResponse = new JSONObject(
 							convertStreamToString(instream));
-					
+
 					return true;
 				}
 			}
@@ -380,4 +384,3 @@ public class GameLobby extends Activity {
 		return false;
 	}
 }
-
