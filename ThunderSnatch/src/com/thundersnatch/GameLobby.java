@@ -19,7 +19,9 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
@@ -39,6 +41,7 @@ import android.widget.SimpleAdapter;
 public class GameLobby extends Activity {
 	
 	private int userID;
+	private int gameID;
 	private double xPos;
 	private double yPos;
 	private int teamSize;
@@ -57,7 +60,8 @@ public class GameLobby extends Activity {
 	private ListView redListView;
 	private ListView blueListView;
 	
-	String serverURL = "http://www.rkaneda.com/GetPlayerListForLobby.php";
+	private String serverURL = "http://www.rkaneda.com/GetPlayerListForLobby.php";
+	private String leaveGameURL = "http://www.rkaneda.com/LeaveGame.php";
 	
 	boolean readyToStart = false;
 	
@@ -128,6 +132,14 @@ public class GameLobby extends Activity {
         super.onStop();
         updater.cancel();
     }
+    
+    @Override
+    protected void onPause()
+    {
+    	super.onPause();
+    	
+    	leaveGame();
+    }
 
 //    @Override
 //    public boolean onCreateOptionsMenu(Menu menu) {
@@ -153,6 +165,9 @@ public class GameLobby extends Activity {
     }
 
     private void moveToGame(){
+    	
+    	finish();
+    	
     	Intent intent = new Intent(GameLobby.this, PlayGame.class);
         GameLobby.this.startActivity(intent);
     }
@@ -201,11 +216,9 @@ public class GameLobby extends Activity {
 			nameValuePairs = new ArrayList<NameValuePair>();
 			userID = settings.getInt("userID", 0);
 			nameValuePairs.add(new BasicNameValuePair("userId", "" + userID));
-			int gameID = settings.getInt("GameID", 0);
+			gameID = settings.getInt("GameID", 0);
 			nameValuePairs.add(new BasicNameValuePair("gameId", "" + gameID));
 			nameValuePairs.add(new BasicNameValuePair("status", "" + status));
-			
-			System.out.println("UserID: " + userID + " GameID: " + gameID);
 
 			// Add array list to http post
 			httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
@@ -237,8 +250,7 @@ public class GameLobby extends Activity {
 		}
 		return null;
 	}
-
-    
+ 
     private static String convertStreamToString(InputStream is) {
         /*
          * To convert the InputStream to String we use the BufferedReader.readLine()
@@ -308,6 +320,64 @@ public class GameLobby extends Activity {
 			}
 		}.start();
 		return timer;
+	}
+    
+    private boolean leaveGame() {
+		
+		// Create a HTTPClient as the form container
+		HttpClient httpclient = new DefaultHttpClient();
+
+		// Create an array list for the input data to be sent
+		ArrayList<NameValuePair> nameValuePairs;
+
+		// Create a HTTP Response and HTTP Entity
+		HttpResponse response;
+		HttpEntity entity;
+
+		// run http methods
+		try {
+
+			// Use HTTP POST method
+			URI uri = new URI(leaveGameURL);
+			HttpPost httppost = new HttpPost(uri);// this is where the address
+													// to the php file goes
+
+			// place credentials in the array list
+			nameValuePairs = new ArrayList<NameValuePair>();
+			userID = settings.getInt("userID", 0);
+			nameValuePairs.add(new BasicNameValuePair("userId", "" + userID));
+			gameID = settings.getInt("GameID", 0);
+			nameValuePairs.add(new BasicNameValuePair("gameId", "" + gameID));
+
+			// Add array list to http post
+			httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+
+			// assign executed form container to response
+			response = httpclient.execute(httppost);
+
+			// check status code, need to check status code 200
+			if (response.getStatusLine().getStatusCode() == 200) {
+
+				// assign response entity to http entity
+				entity = response.getEntity();
+
+				// check if entity is not null
+				if (entity != null) {
+					// Create new input stream with received data assigned
+					InputStream instream = entity.getContent();
+
+					// Create new JSON Object. assign converted data as
+					// parameter.
+					JSONObject jsonResponse = new JSONObject(
+							convertStreamToString(instream));
+					
+					return true;
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 }
 

@@ -130,6 +130,9 @@ public class CreateGame extends Activity {
 				int userGameID;
 				int userTeamID;
 				int gameID;
+				
+				finish();
+				
 				Intent intent = new Intent(CreateGame.this, GameLobby.class);
 				try{
 					gameID = response.getInt("gameID");
