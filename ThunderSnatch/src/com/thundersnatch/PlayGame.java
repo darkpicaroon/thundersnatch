@@ -440,7 +440,7 @@ public class PlayGame extends MapActivity {
 	/*
 	 * This is all you guys, have fun lol
 	 * 
-	 * update score with - redScoreView.setText(redScore++);
+	 * update score with: redScoreView.setText(redScore++);
 	 * 
 	 */
 	public void compareLocations(){
