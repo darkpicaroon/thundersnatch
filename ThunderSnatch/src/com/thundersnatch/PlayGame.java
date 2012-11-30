@@ -16,6 +16,7 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import android.content.Context;
@@ -74,6 +75,7 @@ public class PlayGame extends MapActivity {
 
 	public final int MAX_NUM_PLAYERS = 20;
 	public Player[] players = new Player[MAX_NUM_PLAYERS];
+	public Player[] bases = new Player[2];
 	private int numPlayers = 0;
 	
 	private int userID;
@@ -116,7 +118,7 @@ public class PlayGame extends MapActivity {
 		teamColor = settings.getString("TeamColor", "");
 		userID = settings.getInt("userID", 0);
 
-		user = new Player(userGameID, "USER",
+		user = new Player(userID, "USER",
 				settings.getFloat("Longitude", 0),
 				settings.getFloat("Latitude", 0), false, false, teamID);	
 
@@ -311,13 +313,32 @@ public class PlayGame extends MapActivity {
 					JSONObject team0 = jsonResponse.getJSONObject("Team0");
 					JSONObject team1 = jsonResponse.getJSONObject("Team1");
 					
-					double x = team0.getDouble("FlagStartXPos");
-					double y = team0.getDouble("FlagStartYPos");
-					redFlag = new Player();
+					if (bases[1] == null)
+					{
+
+						double x = team0.getDouble("FlagStartXPos");
+						double y = team0.getDouble("FlagStartYPos");
+						int teamId = team0.getInt("TeamID");
+						blueFlag = new Player((float) x, (float) (y), true,
+								true, teamId, 0);
+						bases[0] = blueFlag;
+
+						x = team1.getDouble("FlagStartXPos");
+						y = team1.getDouble("FlagStartYPos");
+						teamId = team1.getInt("TeamID");
+						redFlag = new Player((float) x, (float) (y), true,
+								true, teamId, 1);
+						bases[1] = redFlag;
+					}
 					
 					numPlayers = jsonResponse.getInt("numPlayers");
-					for (int i = 0; i < numPlayers; i++) {
-						convertJsonResponseToPlayer(jsonResponse, i, players);
+					//System.out.println(numPlayers);
+					JSONObject playerList = jsonResponse.getJSONObject("PlayerArray");
+					 
+					for (int i = 0; i < playerList.length(); i++) {
+						JSONObject player = playerList.getJSONObject("player" + i);
+						System.out.println(player);
+						convertJsonResponseToPlayer(player, i);
 					}
 				}
 			}
@@ -426,15 +447,10 @@ public class PlayGame extends MapActivity {
 //		}
 //	}// end json response conversion
 	
-	public void convertJsonResponseToPlayer(JSONObject json, int i,
-			Player[] players) {
+	public void convertJsonResponseToPlayer(JSONObject json, int i) {
 		try {
-			String stringToParse = json.getString("User" + i);
-			String[] playerInfo = stringToParse.split(", ");
-			String[] temp;
-			temp = playerInfo[0].split("UserGameID: ");
-			int userID = Integer.parseInt(temp[1]);
 			int index = -1;
+			int userID = json.getInt("UserID");
 			for (int j = 0; j < numPlayers; j++) {
 				if (players[j] != null) {
 					if (players[j].userGameID == userID) {
@@ -447,53 +463,50 @@ public class PlayGame extends MapActivity {
 				}
 			}
 			if (index > 0) {
+				
 				// player already exists in array
-				temp = playerInfo[3].split("XPos: ");
-				players[index].xPosition = Float.parseFloat(temp[1]);
-				temp = playerInfo[4].split("YPos: ");
-				players[index].yPosition = Float.parseFloat(temp[1]);
-				temp = playerInfo[5].split("hasOpponentFlag: ");
-				int opp = Integer.parseInt(temp[1]);
+				players[index].xPosition = (float)json.getDouble("XPos");
+				players[index].yPosition = (float)json.getDouble("YPos");
+				int opp = json.getInt("hasOpponentFlag");
+				
 				if (opp == 0)
 					players[index].hasOpponentFlag = false;
 				else
 					players[index].hasOpponentFlag = true;
-				temp = playerInfo[6].split("hasOwnFlag: ");
-				int own = Integer.parseInt(temp[1]);
+				
+				int own = json.getInt("hasOwnFlag");
+				
 				if (own == 0)
 					players[index].hasOwnFlag = false;
 				else
 					players[index].hasOwnFlag = true;
+				
 			} else {
+				
 				// player does not exist in array; need to create new player
 				index = index * -1;
-
-				temp = playerInfo[1].split("UserName: ");
-				String userName = temp[1];
-				temp = playerInfo[2].split("TeamID: ");
-				int teamID = Integer.parseInt(temp[1]);
-				temp = playerInfo[3].split("XPos: ");
-				float xPosition = Float.parseFloat(temp[1]);
-				temp = playerInfo[4].split("YPos: ");
-				float yPosition = Float.parseFloat(temp[1]);
-				temp = playerInfo[5].split("hasOpponentFlag: ");
-				int opp = Integer.parseInt(temp[1]);
+				
+				int opp = json.getInt("hasOpponentFlag"); 
+				int own = json.getInt("hasOwnFlag");
+				
 				boolean hasOpponentFlag;
 				if (opp == 0)
 					hasOpponentFlag = false;
 				else
 					hasOpponentFlag = true;
-				temp = playerInfo[6].split("hasOwnFlag: ");
+				
+
 				boolean hasOwnFlag;
-				int own = Integer.parseInt(temp[1]);
 				if (own == 0)
 					hasOwnFlag = false;
 				else
 					hasOwnFlag = true;
-				players[index] = new Player(userID, userName, xPosition,
-						yPosition, hasOpponentFlag, hasOwnFlag, teamID);
-
-			}
+				
+				players[index] = new Player(json.getInt("UserID"), json.getString("UserName"),
+						(float)json.getDouble("XPos"), (float)json.getDouble("YPos"), 
+						hasOpponentFlag, hasOwnFlag, json.getInt("TeamID"));
+					
+			} 
 		} catch (Exception e) {
 			System.out.println("Error: " + e);
 		}
@@ -509,9 +522,21 @@ public class PlayGame extends MapActivity {
 		MapItemizedOverlay itemizedoverlay;
 		OverlayItem overlayitem;
 
+		int count = 0;
+		if (players.length == 20)
+			count = numPlayers;
+		else if (players.length == 2)
+			count = 2;
+		else
+			System.out.println("Error");
+		
+		System.out.println("count:" + count);
+		
 		if (players != null) {
-			for (int i = 0; i < numPlayers; i++) {
+			for (int i = 0; i < count; i++) {
 
+				System.out.println(i);
+				System.out.println(players[i]);
 				if (user.userGameID == players[i].userGameID) {
 					drawable = getResources().getDrawable(R.drawable.black_dot);
 				} else if ((teamColor.equals("red") && teamID == players[i].teamID)
@@ -574,6 +599,7 @@ public class PlayGame extends MapActivity {
 				updatePositions(user.xPosition, user.yPosition,
 						 user.hasOwnFlag, user.hasOpponentFlag, players);
 				putLocationsOnMap(players, map);
+				putLocationsOnMap(bases, map);
 				compareLocations();
 			}
 			public void onFinish(){
