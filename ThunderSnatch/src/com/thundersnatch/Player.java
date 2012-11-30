@@ -25,6 +25,18 @@ public class Player {
 	}
 
 	public Player(int id, String name, float x, float y, boolean own,
+			boolean opp, int team) {
+		userGameID = id;
+		xPosition = x;
+		yPosition = y;
+		hasOwnFlag = own;
+		hasOpponentFlag = opp;
+		base = false;
+		teamID = team;
+		userName = name;
+	}
+	
+	public Player(int id, String name, float x, float y, boolean own,
 			boolean opp, boolean isBase, int team) {
 		userGameID = id;
 		xPosition = x;

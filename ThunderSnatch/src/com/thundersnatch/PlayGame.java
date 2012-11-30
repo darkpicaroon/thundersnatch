@@ -19,6 +19,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
@@ -66,20 +67,25 @@ public class PlayGame extends MapActivity {
 	MapController mapC;
 	
 	TextView clockText;
+	
+	private SharedPreferences settings;
+    private SharedPreferences.Editor editor;
 
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		Bundle extras = getIntent().getExtras();
-		userGameID = extras.getInt("UserGameID");
-		gameID = extras.getInt("GameID");
-		teamID = extras.getInt("TeamID");
-		teamColor = extras.getString("TeamColor");
+		
+		settings = getApplicationContext().getSharedPreferences("com.thundersnatch", Context.MODE_PRIVATE);
+        editor = settings.edit();
+        
+		userGameID = settings.getInt("UserGameID", 0);
+		gameID = settings.getInt("GameID", 0);
+		teamID = settings.getInt("TeamID", 0);
+		teamColor = settings.getString("TeamColor", "");
 
 		user = new Player(userGameID, "USER",
-				(float) extras.getDouble("Longitude"),
-				(float) extras.getDouble("Latitude"), false, false, teamID);
+				settings.getFloat("Longitude", 0),
+				settings.getFloat("Latitude", 0), false, false, teamID);
 
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -89,6 +95,7 @@ public class PlayGame extends MapActivity {
 		
 		clockText = (TextView)findViewById(R.id.countDown);
 		startCountdown(900000);
+		startUpdateCountDown(900000);
 
 		map = (MapView) findViewById(R.id.mapView);
 		map.displayZoomControls(false);
@@ -97,12 +104,12 @@ public class PlayGame extends MapActivity {
 		map.setTraffic(false);
 
 		MapController mapControl = map.getController();
-		mapControl.setZoom(3);
+		mapControl.setZoom(10);
 
 		if (!(user.xPosition == 0) || !(user.yPosition == 0)) {
 			putLocationsOnMap(players, map);
-			mapControl.animateTo(new GeoPoint((int) (user.yPosition * 1e6),
-					(int) (user.xPosition * 1e6)));
+			mapControl.animateTo(new GeoPoint((int) (user.xPosition * 1e6),
+					(int) (user.yPosition * 1e6)));
 		}
 
 		// Acquire a reference to the system Location Manager
@@ -374,16 +381,52 @@ public class PlayGame extends MapActivity {
 					clockText.setText(minutes + ":" + seconds);
 				else
 					clockText.setText(minutes + ":0" + seconds);
-				if(seconds%2 == 0){
-					updatePositions(user.xPosition, user.yPosition,
-							 user.hasOwnFlag, user.hasOpponentFlag, players);
-					putLocationsOnMap(players, map);
-				}
 			}
 			public void onFinish(){
 				
 			}
 		}.start();
+	}
+	
+	public void startUpdateCountDown(int milliseconds){
+		new CountDownTimer(milliseconds, 1000){
+			public void onTick(long millisecondsUntilFinished){
+				updatePositions(user.xPosition, user.yPosition,
+						 user.hasOwnFlag, user.hasOpponentFlag, players);
+				compareLocations();
+				putLocationsOnMap(players, map);
+			}
+			public void onFinish(){
+				
+			}
+		}.start();
+	}
+	
+	
+	/*
+	 * This is all you guys, have fun lol
+	 */
+	public void compareLocations(){
+		//loop through the player array, on players that have a flag and are on opposing team
+		//check distance, and if distance small enough, use AlertDialog to steal/capture flag
+		
+		//steal from opp player
+		//on steal, make a new servercall with the opponents usergameID as a parameter
+		//to indicate that they no longer have the flag
+		//you will need to work with david/raiden  drewes/kaneda to create that php file.
+		
+		//snatch flag from base
+		//so there is that case for shit getting done in each time interval
+		//then check to see if player is within specified distance to enemy "base" player to capture flag
+		//show them steal button and handle capture
+		
+		//capture flag and score point
+		//finally, check if player has the enemies flag and is within specified distance to friendly "base player"
+		//to capture flag
+		//show them capture button (or just do it automatically) and handle server shit
+		//need way to increment the points on the server and in local text field
+		
+		
 	}
 
 }

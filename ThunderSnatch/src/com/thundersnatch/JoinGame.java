@@ -31,6 +31,7 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.SimpleAdapter;
+import android.widget.Toast;
 
 public class JoinGame extends ListActivity
 {
@@ -44,6 +45,7 @@ public class JoinGame extends ListActivity
 	private float longitude;
 	
 	private String gameListURL = "http://www.rkaneda.com/GetGameList.php";
+	private String joinGameURL = "http://www.rkaneda.com/JoinGame.php";
 	
 	private SharedPreferences settings;
     private SharedPreferences.Editor editor;
@@ -60,16 +62,15 @@ public class JoinGame extends ListActivity
        		WindowManager.LayoutParams.FLAG_FULLSCREEN);
        
        setContentView(R.layout.activity_join_game);
-
-       Bundle extras = this.getIntent().getExtras();
-       userID = extras.getInt("UserID");
+       
+       userID = settings.getInt("userID", 0);
        latitude = settings.getFloat("Latitude", 0);
        longitude = settings.getFloat("Longitude", 0);
        
        notes = new SimpleAdapter( 
 				this, 
 				gameList,
-				R.layout.join_game_item,
+				R.layout.join_game_item2,
 				new String[] { "line1","line2" },
 				new int[] { R.id.text1, R.id.text2 }  );
        
@@ -79,18 +80,47 @@ public class JoinGame extends ListActivity
        this.getListView().setOnItemClickListener(new OnItemClickListener(){
 
     	   public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+    		   JSONObject response = joinGameServerCall(gameIdList.get(position));
+    		   int error = -1;
+    		   try{
+    			   if(response.getBoolean("isValid")){
+		    		   editor.putInt("TeamID", response.getInt("TeamID"));
+		    		   editor.putInt("UserGameID", response.getInt("UserGameID"));
+		    		   int teamIndex = response.getInt("TeamIndex");
+		    		   editor.putInt("TeamIndex", teamIndex);
+		    		   if(teamIndex == 0)
+		    			   editor.putString("TeamColor", "blue");
+		    		   else editor.putString("TeamColor", "red");
+		    		   editor.putInt("GameID", gameIdList.get(position));
+		    		   editor.commit();
+		    		   error = 0;
+    			   }
+    			   else error = 1;
+    		   }
+    		   catch(Exception e){
+    			   e.printStackTrace();
+    		   }
     		   
-    		   finish();
-    		   
-    		   Intent intent = new Intent(JoinGame.this, GameLobby.class);
-    		   intent.putExtra("GameID", gameIdList.get(position));
-    		   editor.putInt("GameID", gameIdList.get(position));
-    		   intent.putExtra("UserID", userID);
-    		   intent.putExtra("xPos", 0.0);
-    		   intent.putExtra("yPos", 0.0);
-    		   intent.putExtra("Host", 0);
-    		   editor.commit();
-    		   JoinGame.this.startActivity(intent);
+    		   Context context = getApplicationContext();
+    		   int duration = Toast.LENGTH_SHORT;
+    		   CharSequence text;
+    		   Toast toast;
+    		   if(error == 0){//enter lobby
+    			   finish();
+        		   
+        		   Intent intent = new Intent(JoinGame.this, GameLobby.class);
+        		   JoinGame.this.startActivity(intent);
+    		   }
+    		   else if(error == 1){//lobby full
+    			   text = "This lobby is full";
+    			   toast = Toast.makeText(context, text, duration);
+    			   toast.show();
+    		   }
+    		   else{//other error
+    			   text = "Error!";
+    			   toast = Toast.makeText(context, text, duration);
+    			   toast.show();
+    		   }
     	   }
     	   
        });
@@ -210,6 +240,68 @@ public class JoinGame extends ListActivity
 		
 		return false;
 	}
+	
+	private JSONObject joinGameServerCall(int gameID) {
+		
+		// Create a HTTPClient as the form container
+		HttpClient httpclient = new DefaultHttpClient();
+
+		// Create an array list for the input data to be sent
+		ArrayList<NameValuePair> nameValuePairs;
+
+		// Create a HTTP Response and HTTP Entity
+		HttpResponse response;
+		HttpEntity entity;
+
+		// run http methods
+		try {
+
+			// Use HTTP POST method
+			URI uri = new URI(joinGameURL);
+			HttpPost httppost = new HttpPost(uri);// this is where the address
+													// to the php file goes
+
+			// place credentials in the array list
+			nameValuePairs = new ArrayList<NameValuePair>();
+			System.out.println("Join game server: " + userID);
+			nameValuePairs.add(new BasicNameValuePair("userId", "" + userID));
+			nameValuePairs.add(new BasicNameValuePair("gameId", "" + gameID));
+			nameValuePairs.add(new BasicNameValuePair("xPos", "" + settings.getFloat("Longitude", 0)));
+			nameValuePairs.add(new BasicNameValuePair("yPos", "" + settings.getFloat("Latitude", 0)));
+			
+
+			// Add array list to http post
+			httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+
+			// assign executed form container to response
+			response = httpclient.execute(httppost);
+
+			// check status code, need to check status code 200
+			if (response.getStatusLine().getStatusCode() == 200) {
+
+				// assign response entity to http entity
+				entity = response.getEntity();
+
+				// check if entity is not null
+				if (entity != null) {
+					// Create new input stream with received data assigned
+					InputStream instream = entity.getContent();
+
+					// Create new JSON Object. assign converted data as
+					// parameter.
+					JSONObject jsonResponse = new JSONObject(
+							convertStreamToString(instream));
+					return jsonResponse;
+
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+
     
     private static String convertStreamToString(InputStream is) {
         /*

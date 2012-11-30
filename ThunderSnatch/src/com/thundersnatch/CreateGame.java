@@ -127,9 +127,6 @@ public class CreateGame extends Activity {
 				
 				// Should all previous menus be closed at this point?
 				JSONObject response = serverShit();
-				
-				int teamID1;
-				int teamID2;
 				int userGameID;
 				int userTeamID;
 				int gameID;
@@ -137,29 +134,17 @@ public class CreateGame extends Activity {
 				try{
 					gameID = response.getInt("gameID");
 					editor.putInt("GameID", gameID);
-					intent.putExtra("GameID", "" + gameID);
-					teamID1 = response.getInt("teamID1");
-					intent.putExtra("TeamID1", "" + teamID1);
-					teamID2 = response.getInt("teamID2");
-					intent.putExtra("TeamID2", "" + teamID2);
 					userGameID = response.getInt("userGameID");
-					intent.putExtra("UserGameID", "" + userGameID);
+					editor.putInt("UserGameID", userGameID);
 					userTeamID = response.getInt("userTeamID");
 					editor.putInt("TeamID", userTeamID);
-					intent.putExtra("TeamID", userTeamID);
+					int teamIndex = response.getInt("teamIndex");
+					editor.putInt("TeamIndex", teamIndex);
 					
-					String color = "";
-					//assign blue to the lowest teamID
-					if(userTeamID == teamID1 && teamID1 < teamID2)
-						color = "blue";
-					else if(userTeamID == teamID1 && teamID1 > teamID2)
-						color = "red";
-					else if(userTeamID == teamID2 && teamID1 < teamID2)
-						color = "red";
-					else if(userTeamID == teamID2 && teamID1 > teamID2)
-						color = "blue";
+					if(teamIndex == 0)
+						editor.putString("TeamColor", "blue");
+					else editor.putString("TeamColor", "red");
 					
-					editor.putString("TeamColor", color);
 					editor.commit();
 
 				}catch(Exception e){
@@ -209,8 +194,8 @@ private JSONObject serverShit() {
 			nameValuePairs.add(new BasicNameValuePair("userID", "" + userID));
 			nameValuePairs.add(new BasicNameValuePair("gameType", "" + 0));
 			nameValuePairs.add(new BasicNameValuePair("duration", "" + 10));
-			nameValuePairs.add(new BasicNameValuePair("maxPlayers", "" + maxPlayers));
-			nameValuePairs.add(new BasicNameValuePair("gameRadius", "" + mapRadius));
+			nameValuePairs.add(new BasicNameValuePair("maxPlayers", "" + (maxPlayers)*2));
+			nameValuePairs.add(new BasicNameValuePair("gameRadius", "" + (mapRadius/364320)));
 			nameValuePairs.add(new BasicNameValuePair("xPos", "" + lng));
 			nameValuePairs.add(new BasicNameValuePair("yPos", "" + lat));
 			nameValuePairs.add(new BasicNameValuePair("gamestatus", "" + 0));
