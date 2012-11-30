@@ -38,10 +38,13 @@ public class JoinGame extends ListActivity
 	private SimpleAdapter notes;
 	
 	private int userID;
+	private String userName;
+	private int teamID;
 	private double xPos;
 	private double yPos;
 	
 	private String gameListURL = "http://www.rkaneda.com/GetGameList.php";
+	private String joinGameURL = "http://www.rkaneda.com/JoinGame.php";
 
     public void onCreate(Bundle icicle)
     {
@@ -57,6 +60,8 @@ public class JoinGame extends ListActivity
        userID = extras.getInt("UserID");
        xPos = extras.getDouble("xPos");
        yPos = extras.getDouble("yPos");
+       userID = extras.getInt("UserID");
+       userName = extras.getString("userName");
        
        notes = new SimpleAdapter( 
 				this, 
@@ -72,21 +77,29 @@ public class JoinGame extends ListActivity
 
     	   public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
     		   
-    		   finish();
-    		   
-    		   Intent intent = new Intent(JoinGame.this, GameLobby.class);
-    		   intent.putExtra("GameID", gameIdList.get(position));
-    		   //intent.putExtra("GameID", 0);
-    		   intent.putExtra("UserID", userID);
-    		   intent.putExtra("xPos", 0.0);
-    		   intent.putExtra("yPos", 0.0);
-    		   intent.putExtra("Host", 0);
-    		   JoinGame.this.startActivity(intent);
+    		   if (joinGame(userID, gameIdList.get(position), xPos, yPos))
+    		   {
+    			   	finish();
+
+					Intent intent = new Intent(JoinGame.this, GameLobby.class);
+					intent.putExtra("GameID", gameIdList.get(position));
+					intent.putExtra("UserID", userID);
+					intent.putExtra("userName", userName);
+					intent.putExtra("teamID", teamID);
+					intent.putExtra("xPos", xPos);
+					intent.putExtra("yPos", yPos);
+					intent.putExtra("Host", 0);
+					JoinGame.this.startActivity(intent);
+    		   }
+    		   else
+    		   {
+    			   // create toast "Game is full."
+    		   }
     	   }
     	   
        });
        
-       getGameList(extras.getFloat("Latitude"), extras.getFloat("Longitude"));
+       getGameList(xPos, yPos);
        
     }
 
@@ -137,8 +150,8 @@ public class JoinGame extends ListActivity
 
 			// place credentials in the array list
 			nameValuePairs = new ArrayList<NameValuePair>();
-			nameValuePairs.add(new BasicNameValuePair("xPos", "" + x));
-			nameValuePairs.add(new BasicNameValuePair("yPos", "" + y));
+			nameValuePairs.add(new BasicNameValuePair("xPos", "" + y));
+			nameValuePairs.add(new BasicNameValuePair("yPos", "" + x));
 
 			// Add array list to http post
 			httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
@@ -200,6 +213,86 @@ public class JoinGame extends ListActivity
 		return false;
 	}
     
+	private boolean joinGame(int userId, int gameId, double x, double y) {
+
+		// Create a HTTPClient as the form container
+		HttpClient httpclient = new DefaultHttpClient();
+
+		// Create an array list for the input data to be sent
+		ArrayList<NameValuePair> nameValuePairs;
+
+		// Create a HTTP Response and HTTP Entity
+		HttpResponse response;
+		HttpEntity entity;
+
+		// run http methods
+		try {
+
+			// Use HTTP POST method
+			URI uri = new URI(gameListURL);
+			HttpPost httppost = new HttpPost(uri);// this is where the address
+													// to the php file goes
+
+			// place credentials in the array list
+			nameValuePairs = new ArrayList<NameValuePair>();
+			nameValuePairs.add(new BasicNameValuePair("userId", "" + userId));
+			nameValuePairs.add(new BasicNameValuePair("gameId", "" + gameId));
+			nameValuePairs.add(new BasicNameValuePair("xPos", "" + x));
+			nameValuePairs.add(new BasicNameValuePair("yPos", "" + y));
+
+			// Add array list to http post
+			httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+
+			// assign executed form container to response
+			response = httpclient.execute(httppost);
+
+			// check status code, need to check status code 200
+			if (response.getStatusLine().getStatusCode() == 200) {
+				
+				// assign response entity to http entity
+				entity = response.getEntity();
+				// check if entity is not null
+				if (entity != null) {
+					
+					// Create new input stream with received data assigned
+					InputStream instream = entity.getContent();
+
+					// Create new JSON Object. assign converted data as
+					// parameter.
+					JSONObject jsonResponse = new JSONObject(
+							convertStreamToString(instream));
+					
+					// assign json responses to local strings
+					boolean isValid = jsonResponse.getBoolean("isValid");
+					
+					// Response is valid.
+					if (isValid) {
+						
+						String responseMessage = jsonResponse.getString("responseMsg");
+						
+						if (responseMessage.compareTo("Game already has the maximum amount of allowed players.") == 0)
+							return false;
+						
+						teamID = jsonResponse.getInt("TeamID");						
+						
+						return true;
+						
+					} else {
+						// credentials are invalid
+						// errorMsg.setText("Invalid login credentials, please try again.");
+						return false;
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			// errorMsg.setText("Unable to connect to server.");
+			return false;
+		}
+		
+		return false;
+	}
+	
     private static String convertStreamToString(InputStream is) {
         /*
          * To convert the InputStream to String we use the BufferedReader.readLine()
