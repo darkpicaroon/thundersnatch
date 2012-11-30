@@ -319,15 +319,15 @@ public class PlayGame extends MapActivity {
 						double x = team0.getDouble("FlagStartXPos");
 						double y = team0.getDouble("FlagStartYPos");
 						int teamId = team0.getInt("TeamID");
-						blueFlag = new Player((float) x, (float) (y), true,
+						blueFlag = new Player((float)(settings.getFloat("Longitude", 0) + 0.001), (float)(settings.getFloat("Latitude", 0) + 0.001), true,
 								true, teamId, 0);
 						bases[0] = blueFlag;
 
 						x = team1.getDouble("FlagStartXPos");
 						y = team1.getDouble("FlagStartYPos");
 						teamId = team1.getInt("TeamID");
-						redFlag = new Player((float) x, (float) (y), true,
-								true, teamId, 1);
+						redFlag = new Player((float)(settings.getFloat("Longitude", 0) - 0.001), (float)(settings.getFloat("Latitude", 0) - 0.001), true,
+								true, teamId, 0);
 						bases[1] = redFlag;
 					}
 					
