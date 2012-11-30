@@ -15,6 +15,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.math.BigDecimal;
 import java.net.URI;
 import java.util.ArrayList;
 
@@ -198,8 +199,10 @@ private JSONObject serverShit() {
 			nameValuePairs.add(new BasicNameValuePair("gameType", "" + 0));
 			nameValuePairs.add(new BasicNameValuePair("duration", "" + 10));
 			nameValuePairs.add(new BasicNameValuePair("maxPlayers", "" + (maxPlayers)*2));
-			nameValuePairs.add(new BasicNameValuePair("gameRadius", "" + (((float)mapRadius)/364320.0)));
-			System.out.println("" + (((float)mapRadius)/364320.0));
+			double dub = ((double)mapRadius)/364320.0;
+			BigDecimal mapR = new BigDecimal(dub);
+			nameValuePairs.add(new BasicNameValuePair("gameRadius", "" + mapR));
+			System.out.println("" + mapR);
 			nameValuePairs.add(new BasicNameValuePair("xPos", "" + lng));
 			nameValuePairs.add(new BasicNameValuePair("yPos", "" + lat));
 			nameValuePairs.add(new BasicNameValuePair("gamestatus", "" + 0));
