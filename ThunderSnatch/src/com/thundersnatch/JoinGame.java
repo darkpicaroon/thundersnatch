@@ -52,6 +52,7 @@ public class JoinGame extends ListActivity
        		WindowManager.LayoutParams.FLAG_FULLSCREEN);
        
        setContentView(R.layout.activity_join_game);
+
        Bundle extras = this.getIntent().getExtras();
        userID = extras.getInt("UserID");
        xPos = extras.getDouble("xPos");
@@ -60,23 +61,27 @@ public class JoinGame extends ListActivity
        notes = new SimpleAdapter( 
 				this, 
 				gameList,
-				R.layout.join_game_item2,
+				R.layout.join_game_item,
 				new String[] { "line1","line2" },
 				new int[] { R.id.text1, R.id.text2 }  );
        
        setListAdapter(notes);
        
+       // Set up join game handler.
        this.getListView().setOnItemClickListener(new OnItemClickListener(){
 
     	   public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
     		   
+    		   finish();
+    		   
     		   Intent intent = new Intent(JoinGame.this, GameLobby.class);
     		   intent.putExtra("GameID", gameIdList.get(position));
+    		   //intent.putExtra("GameID", 0);
     		   intent.putExtra("UserID", userID);
     		   intent.putExtra("xPos", 0.0);
     		   intent.putExtra("yPos", 0.0);
+    		   intent.putExtra("Host", 0);
     		   JoinGame.this.startActivity(intent);
-    		   
     	   }
     	   
        });
