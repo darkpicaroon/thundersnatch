@@ -13,8 +13,9 @@ public class Player {
 	public String userName;
 	public boolean base;
 	public int teamIndex;
-	
-	public Player(int id, float x, float y, boolean own, boolean opp, int steals, int captures, int team){
+
+	public Player(int id, float x, float y, boolean own, boolean opp,
+			int steals, int captures, int team) {
 		userGameID = id;
 		xPosition = x;
 		yPosition = y;
@@ -36,9 +37,10 @@ public class Player {
 		teamID = team;
 		userName = name;
 	}
-	
+
 	// Flag constructor.
-	public Player(float x, float y, boolean own, boolean isBase, int team, int index) {
+	public Player(float x, float y, boolean own, boolean isBase, int team,
+			int index) {
 		xPosition = x;
 		yPosition = y;
 		hasOwnFlag = own;
@@ -48,14 +50,16 @@ public class Player {
 		userGameID = -1;
 	}
 
-	public Player(String name, int team){
+	public Player(String name, int team) {
 		userName = name;
 		teamID = team;
 	}
-	
+
 	public String toString() {
-		String sReturn = "UserGameID: " + userGameID + " UserName: " + userName + " Team: " + " Own:" + hasOwnFlag + " Opp: " + hasOpponentFlag + " x:" + xPosition + " y:" + yPosition;
+		String sReturn = "UserGameID: " + userGameID + " UserName: " + userName
+				+ " Team: " + " Own:" + hasOwnFlag + " Opp: " + hasOpponentFlag
+				+ " x:" + xPosition + " y:" + yPosition;
 		return sReturn;
 	}
-	
+
 }
