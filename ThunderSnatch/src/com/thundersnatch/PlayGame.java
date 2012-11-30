@@ -321,6 +321,8 @@ public class PlayGame extends MapActivity {
 						int teamId = team0.getInt("TeamID");
 						blueFlag = new Player((float)(settings.getFloat("Longitude", 0) + 0.001), (float)(settings.getFloat("Latitude", 0) + 0.001), true,
 								true, teamId, 0);
+//						blueFlag = new Player((float)x, (float)y, true,
+//								true, teamId, 0);
 						bases[0] = blueFlag;
 
 						x = team1.getDouble("FlagStartXPos");
@@ -328,6 +330,8 @@ public class PlayGame extends MapActivity {
 						teamId = team1.getInt("TeamID");
 						redFlag = new Player((float)(settings.getFloat("Longitude", 0) - 0.001), (float)(settings.getFloat("Latitude", 0) - 0.001), true,
 								true, teamId, 0);
+//						redFlag = new Player((float)x, (float)y, true,
+//								true, teamId, 0);
 						bases[1] = redFlag;
 					}
 					
@@ -613,10 +617,10 @@ public class PlayGame extends MapActivity {
 	}
 	
 	@Override
-    protected void onPause()
+    protected void onStop()
     {
-    	super.onPause();
-    	
+    	super.onStop();
+    	finish();
     	leaveGame();
     }
 	
