@@ -24,15 +24,16 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.view.Menu;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.TextView;
 
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapActivity;
 import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
-import com.google.android.maps.MyLocationOverlay;
 import com.google.android.maps.Overlay;
 import com.google.android.maps.OverlayItem;
 
@@ -61,17 +62,11 @@ public class PlayGame extends MapActivity {
 	private String updateURL = "http://www.rkaneda.com/Update.php";
 
 	public MapView map;
+	GeoPoint geoP;
 	MapController mapC;
-	MyLocationOverlay compass;
-	MyLocationOverlay location;
-	GeoPoint touchPoint;
-	List<Overlay> overlayList;
-	Drawable d;
 	
-	int x, y;
-	
-	long startPoint;
-	long stopPoint;
+	TextView clockText;
+
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -83,16 +78,19 @@ public class PlayGame extends MapActivity {
 		teamColor = extras.getString("TeamColor");
 
 		user = new Player(userGameID, "USER",
-				extras.getFloat("Longitude"),
-				extras.getFloat("Latitude"), false, false, false, teamID);
+				(float) extras.getDouble("Longitude"),
+				(float) extras.getDouble("Latitude"), false, false, teamID);
 
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-		setContentView(R.layout.activity_play_game);
+		setContentView(R.layout.activity_map);
+		
+		clockText = (TextView)findViewById(R.id.countDown);
+		startCountdown(900000);
 
-		map = (MapView) findViewById(R.id.MapView);
+		map = (MapView) findViewById(R.id.mapView);
 		map.displayZoomControls(false);
 		map.setBuiltInZoomControls(false);
 		map.setSatellite(false);
@@ -100,11 +98,8 @@ public class PlayGame extends MapActivity {
 
 		MapController mapControl = map.getController();
 		mapControl.setZoom(3);
-		
 
 		if (!(user.xPosition == 0) || !(user.yPosition == 0)) {
-			updatePositions(user.xPosition, user.yPosition,
-					 user.hasOwnFlag, user.hasOpponentFlag, players);
 			putLocationsOnMap(players, map);
 			mapControl.animateTo(new GeoPoint((int) (user.yPosition * 1e6),
 					(int) (user.xPosition * 1e6)));
@@ -118,12 +113,8 @@ public class PlayGame extends MapActivity {
 			public void onLocationChanged(Location location) {
 				user.xPosition = (float) location.getLatitude();
 				user.yPosition = (float) location.getLongitude();
-
-				// now being done in thread
-				 updatePositions(user.xPosition, user.yPosition,
-						 user.hasOwnFlag, user.hasOpponentFlag, players);
-				 putLocationsOnMap(players, map);
 				
+
 			}
 
 			public void onStatusChanged(String provider, int status,
@@ -136,9 +127,10 @@ public class PlayGame extends MapActivity {
 			public void onProviderDisabled(String provider) {
 			}
 		};
-		
+
 		// Register the listener with the Location Manager to receive location
 		// updates
+	
 		locationManager.requestLocationUpdates(
 				LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
 		locationManager.requestLocationUpdates(
@@ -150,32 +142,11 @@ public class PlayGame extends MapActivity {
 		getMenuInflater().inflate(R.menu.activity_play_game, menu);
 		return true;
 	}
-    
-	public void compareLocation(Player[] players){
-		
-		int i;
-		for(i=0; i<players.length; i++){
-			
-		}
-		
-		players[i] = jointFlagPlayer(players[i]); 
-	}
-	
-	public Player jointFlagPlayer(Player player){
-		
-		
-		return player;
-	}
-	
-    /*
-     * Override method for MapActivity.
-     * Doesn't need to be changed.
-     */
+
 	protected boolean isRouteDisplayed() {
 		return false;
 	}
-	
-        
+
 	protected void updatePositions(float xPosition, float yPosition,
 			boolean hasOwnFlag, boolean hasOppFlag, Player[] players) {
 
@@ -190,7 +161,6 @@ public class PlayGame extends MapActivity {
 		HttpEntity entity;
 
 		// run http methods
-		
 		try {
 			// Use HTTP POST method
 			URI uri = new URI(updateURL);
@@ -243,9 +213,6 @@ public class PlayGame extends MapActivity {
 		}
 	}// end update method
 
-	/*
-	 * 
-	 */
 	private static String convertStreamToString(InputStream is) {
 		/*
 		 * To convert the InputStream to String we use the
@@ -281,9 +248,6 @@ public class PlayGame extends MapActivity {
 			String[] temp;
 			temp = playerInfo[0].split("UserGameID: ");
 			int userID = Integer.parseInt(temp[1]);
-			if (userID < 0){
-				
-			}
 			int index = -1;
 			for (int j = 0; j < numPlayers; j++) {
 				if (players[j] != null) {
@@ -340,15 +304,8 @@ public class PlayGame extends MapActivity {
 					hasOwnFlag = false;
 				else
 					hasOwnFlag = true;
-				temp = playerInfo[7].split("isBase: ");
-				int base = Integer.parseInt(temp[1]);
-				boolean isBase;
-				if (base == 0)
-					isBase = false;
-				else
-					isBase = true;
 				players[index] = new Player(userID, userName, xPosition,
-						yPosition, hasOpponentFlag, hasOwnFlag, isBase, teamID);
+						yPosition, hasOpponentFlag, hasOwnFlag, teamID);
 
 			}
 		} catch (Exception e) {
@@ -358,6 +315,7 @@ public class PlayGame extends MapActivity {
 
 	public void putLocationsOnMap(Player[] players, MapView map) {
 
+		//map.deleteoverlays()
 		map.getOverlays().clear();
 		List<Overlay> mapOverlays = map.getOverlays();
 		Drawable drawable = null;
@@ -367,12 +325,10 @@ public class PlayGame extends MapActivity {
 
 		if (players != null) {
 			for (int i = 0; i < numPlayers; i++) {
+
 				if (user.userGameID == players[i].userGameID) {
-					System.out.println("do i get here?");
-					
 					drawable = getResources().getDrawable(R.drawable.black_dot);
-				} 
-				else if ((teamColor.equals("red") && teamID == players[i].teamID)
+				} else if ((teamColor.equals("red") && teamID == players[i].teamID)
 						|| (teamColor.equals("blue") && teamID != players[i].teamID)) {
 					if (players[i].hasOwnFlag == true)
 						drawable = getResources().getDrawable(
@@ -408,5 +364,29 @@ public class PlayGame extends MapActivity {
 		}
 		map.invalidate();
 	}// end putLocations on map
+	
+	public void startCountdown(int milliseconds){
+		new CountDownTimer(milliseconds, 1000){
+			public void onTick(long millisecondsUntilFinished){
+				int seconds = (int)((millisecondsUntilFinished/1000)%60);
+				int minutes = (int)((millisecondsUntilFinished - (seconds*1000))/60000);
+				if(seconds >= 10)
+					clockText.setText(minutes + ":" + seconds);
+				else
+					clockText.setText(minutes + ":0" + seconds);
+				if(seconds%2 == 0){
+					updatePositions(user.xPosition, user.yPosition,
+							 user.hasOwnFlag, user.hasOpponentFlag, players);
+					putLocationsOnMap(players, map);
+				}
+			}
+			public void onFinish(){
+				
+			}
+		}.start();
+	}
 
 }
+
+
+
