@@ -146,7 +146,7 @@ public class GameLobby extends Activity {
 	private void moveToGame() {
 
 		finish();
-
+		updater.cancel();
 		Intent intent = new Intent(GameLobby.this, PlayGame.class);
 		GameLobby.this.startActivity(intent);
 	}
@@ -259,7 +259,7 @@ public class GameLobby extends Activity {
 	public void updateLobby() {
 		try {
 			JSONObject response = lobbyServerInterface(0);
-			// System.out.println("response: " + response.toString());
+			System.out.println("gs: " + response.getInt("GameStatus"));
 			if (response.getInt("GameStatus") == 1) {
 				readyToStart = true;
 			}
