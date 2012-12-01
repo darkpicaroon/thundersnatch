@@ -212,6 +212,9 @@ public class PlayGame extends MapActivity {
 			nameValuePairs.add(new BasicNameValuePair("teamId", "" + teamID));
 			nameValuePairs.add(new BasicNameValuePair("xPos", "" + xPosition));
 			nameValuePairs.add(new BasicNameValuePair("yPos", "" + yPosition));
+			nameValuePairs.add(new BasicNameValuePair("takeOppFlag", "" + 0));
+			nameValuePairs.add(new BasicNameValuePair("takeOwnFlag", "" + 0));
+			
 
 			// Add array list to http post
 			httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
