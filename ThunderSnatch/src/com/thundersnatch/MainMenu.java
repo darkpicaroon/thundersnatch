@@ -83,9 +83,6 @@ public class MainMenu extends Activity {
 			public void onClick(View v) {
 
 				Intent intent = new Intent(MainMenu.this, JoinGame.class);
-				intent.putExtra("UserID", userID);
-				intent.putExtra("xPos", 0.0);
-				intent.putExtra("yPos", 0.0);
 				MainMenu.this.startActivity(intent);
 
 			}
