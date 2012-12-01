@@ -125,19 +125,7 @@ public class GameLobby extends Activity {
 		updater.cancel();
 	}
 
-	// @Override
-	// protected void onPause()
-	// {
-	// super.onPause();
-	//
-	// leaveGame();
-	// }
 
-	// @Override
-	// public boolean onCreateOptionsMenu(Menu menu) {
-	// getMenuInflater().inflate(R.menu.activity_game_lobby, menu);
-	// return true;
-	// }
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -150,7 +138,6 @@ public class GameLobby extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case ADD_ITEM_ID:
-			addRedPlayer("fuck");
 			break;
 		}
 		return super.onOptionsItemSelected(item);
