@@ -79,6 +79,8 @@ public class PlayGame extends MapActivity {
 	int redScore;
 	TextView blueScoreView;
 	int blueScore;
+	
+	CountDownTimer updateTimer;
 
 	private SharedPreferences settings;
 	private SharedPreferences.Editor editor;
@@ -107,7 +109,7 @@ public class PlayGame extends MapActivity {
 
 		clockText = (TextView) findViewById(R.id.countDown);
 		startCountdown(900000);
-		startUpdateCountDown(900000);
+		updateTimer = startUpdateCountDown(900000);
 
 		blueScoreView = (TextView) findViewById(R.id.blueScore);
 		blueScore = 0;
@@ -168,7 +170,20 @@ public class PlayGame extends MapActivity {
 	protected boolean isRouteDisplayed() {
 		return false;
 	}
+	
 
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		updateTimer.cancel();
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		updateTimer.cancel();
+		
+	}
 
 	protected void updatePositions(float xPosition, float yPosition,
 			boolean hasOwnFlag, boolean hasOppFlag, Player[] players) {
@@ -229,24 +244,24 @@ public class PlayGame extends MapActivity {
 						double y = team0.getDouble("FlagStartYPos");
 						System.out.println("team 0 (x,y): "+ x + " , " + y);
 						int teamId = team0.getInt("TeamID");
-						blueFlag = new Player(
-								(float) (settings.getFloat("Longitude", 0) + 0.001),
-								(float) (settings.getFloat("Latitude", 0) + 0.001),
-								true, true, teamId, 0);
-						// blueFlag = new Player((float)x, (float)y, true,
-						// true, teamId, 0);
+//						blueFlag = new Player(
+//								(float) (settings.getFloat("Longitude", 0) + 0.001),
+//								(float) (settings.getFloat("Latitude", 0) + 0.001),
+//								true, true, teamId, 0);
+						 blueFlag = new Player((float)x, (float)y, true,
+						 true, teamId, 0);
 						bases[0] = blueFlag;
 
 						x = team1.getDouble("FlagStartXPos");
 						y = team1.getDouble("FlagStartYPos");
 						System.out.println("team 1 (x,y): "+ x + " , " + y);
 						teamId = team1.getInt("TeamID");
-						redFlag = new Player(
-								(float) (settings.getFloat("Longitude", 0) - 0.001),
-								(float) (settings.getFloat("Latitude", 0) - 0.001),
-								true, true, teamId, 0);
-						// redFlag = new Player((float)x, (float)y, true,
-						// true, teamId, 0);
+//						redFlag = new Player(
+//								(float) (settings.getFloat("Longitude", 0) - 0.001),
+//								(float) (settings.getFloat("Latitude", 0) - 0.001),
+//								true, true, teamId, 0);
+						 redFlag = new Player((float)x, (float)y, true,
+						 true, teamId, 0);
 						bases[1] = redFlag;
 					}
 
@@ -447,8 +462,8 @@ public class PlayGame extends MapActivity {
 
 	// this will basically create a new thread that will handle updating
 	// everything
-	public void startUpdateCountDown(int milliseconds) {
-		new CountDownTimer(milliseconds, 1000) {
+	public CountDownTimer startUpdateCountDown(int milliseconds) {
+		CountDownTimer timer = new CountDownTimer(milliseconds, 1000) {
 			public void onTick(long millisecondsUntilFinished) {
 				updatePositions(user.xPosition, user.yPosition,
 						user.hasOwnFlag, user.hasOpponentFlag, players);
@@ -461,11 +476,13 @@ public class PlayGame extends MapActivity {
 
 			}
 		}.start();
+		return timer;
 	}
 
 	@Override
 	protected void onStop() {
 		super.onStop();
+		updateTimer.cancel();
 		finish();
 		leaveGame();
 	}

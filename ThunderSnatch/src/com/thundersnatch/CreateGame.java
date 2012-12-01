@@ -49,7 +49,7 @@ public class CreateGame extends Activity {
 
 	private TextView maxRadiusText;
 	private SeekBar radiusSeek;
-	private int mapRadius = 100;
+	private int mapRadius = 800;
 
 	private TextView maxPlayersText;
 	private SeekBar playersSeek;
@@ -82,21 +82,21 @@ public class CreateGame extends Activity {
 
 		radiusSeek = (SeekBar) findViewById(R.id.seekBar1);
 		radiusSeek.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
-
 			public void onProgressChanged(SeekBar seekBar, int progress,
 					boolean fromUser) {
-
-				progress += 5;
-				mapRadius = progress;
-				char[] num = Integer.toString(progress * 10).toCharArray();
+				progress += 10;
+				mapRadius = progress * 50;
+				char[] num = Integer.toString(mapRadius).toCharArray();
 				maxRadiusText.setText(num, 0, num.length);
-
+				
 			}
 
 			public void onStartTrackingTouch(SeekBar arg0) {
+
 			}
 
 			public void onStopTrackingTouch(SeekBar arg0) {
+				
 			}
 
 		});
