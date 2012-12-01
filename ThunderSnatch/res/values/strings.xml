@@ -22,7 +22,7 @@
     <string name="game_type">Game Type: </string>
     <string name="flag_placement">Flag Placement: </string>
     <string name="map_radius">Map Radius:&#160;&#160;&#160;</string>
-    <string name="default_radius">100</string>
+    <string name="default_radius">800</string>
     <string name="create_game2">Create Game</string>
     <string name="blank"></string>
     <string name="retype_password">Verify Password:</string>
