@@ -227,6 +227,7 @@ public class PlayGame extends MapActivity {
 
 						double x = team0.getDouble("FlagStartXPos");
 						double y = team0.getDouble("FlagStartYPos");
+						System.out.println("team 0 (x,y): "+ x + " , " + y);
 						int teamId = team0.getInt("TeamID");
 						blueFlag = new Player(
 								(float) (settings.getFloat("Longitude", 0) + 0.001),
@@ -238,6 +239,7 @@ public class PlayGame extends MapActivity {
 
 						x = team1.getDouble("FlagStartXPos");
 						y = team1.getDouble("FlagStartYPos");
+						System.out.println("team 1 (x,y): "+ x + " , " + y);
 						teamId = team1.getInt("TeamID");
 						redFlag = new Player(
 								(float) (settings.getFloat("Longitude", 0) - 0.001),
