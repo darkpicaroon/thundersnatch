@@ -112,8 +112,12 @@ public class PlayGame extends MapActivity {
 		}
 		else{
 			//parse starttimestring
-			timer = startCountdown(900000);
-			updateTimer = startUpdateCountDown(900000);
+			
+			//add 15 minutes to start time and subtract from now()
+			//set that milisecondsRemaining to that value
+			int millisecondsRemaining = 900000;
+			timer = startCountdown(millisecondsRemaining);
+			updateTimer = startUpdateCountDown(millisecondsRemaining);
 		}
 
 		user = new Player(userID, "USER", settings.getFloat("Longitude", 0),
