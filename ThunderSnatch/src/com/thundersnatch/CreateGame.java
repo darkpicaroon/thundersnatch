@@ -210,7 +210,6 @@ public class CreateGame extends Activity {
 			double dub = ((double) mapRadius) / 364320.0;
 			BigDecimal mapR = new BigDecimal(dub);
 			nameValuePairs.add(new BasicNameValuePair("gameRadius", "" + mapR));
-			System.out.println("" + mapR);
 			nameValuePairs.add(new BasicNameValuePair("xPos", "" + lng));
 			nameValuePairs.add(new BasicNameValuePair("yPos", "" + lat));
 			nameValuePairs.add(new BasicNameValuePair("gamestatus", "" + 0));

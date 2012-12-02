@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
+import java.sql.Time;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,10 +18,11 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
@@ -27,6 +30,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.Window;
 import android.view.WindowManager;
@@ -60,12 +64,12 @@ public class PlayGame extends MapActivity {
 	private int gameID;
 	private int teamID;
 	private String teamColor;
+	double distanceToOwnFlag;
+	double distanceToOppFlag;
+	Time startTime;
 
 	Player user;
-	Player redFlag = null;
-	Player blueFlag = null;
 
-	private String updateURL = "http://www.rkaneda.com/Update.php";
 	private String getPlayerPositionsURL = "http://www.rkaneda.com/GetPlayerPositions.php";
 	private String leaveGameURL = "http://www.rkaneda.com/LeaveGame.php";
 
@@ -80,6 +84,7 @@ public class PlayGame extends MapActivity {
 	TextView blueScoreView;
 	int blueScore;
 	
+	CountDownTimer timer;
 	CountDownTimer updateTimer;
 
 	private SharedPreferences settings;
@@ -97,6 +102,19 @@ public class PlayGame extends MapActivity {
 		teamID = settings.getInt("TeamID", 0);
 		teamColor = settings.getString("TeamColor", "");
 		userID = settings.getInt("userID", 0);
+		
+		clockText = (TextView) findViewById(R.id.countDown);
+		
+		String startTimeTemp = settings.getString("GameStartTime", "");
+		if(startTimeTemp.equals("")){
+			timer = startCountdown(900000);
+			updateTimer = startUpdateCountDown(900000);
+		}
+		else{
+			//parse starttimestring
+			timer = startCountdown(900000);
+			updateTimer = startUpdateCountDown(900000);
+		}
 
 		user = new Player(userID, "USER", settings.getFloat("Longitude", 0),
 				settings.getFloat("Latitude", 0), false, false, teamID);
@@ -107,9 +125,6 @@ public class PlayGame extends MapActivity {
 
 		setContentView(R.layout.activity_map);
 
-		clockText = (TextView) findViewById(R.id.countDown);
-		startCountdown(900000);
-		updateTimer = startUpdateCountDown(900000);
 
 		blueScoreView = (TextView) findViewById(R.id.blueScore);
 		blueScore = 0;
@@ -176,12 +191,14 @@ public class PlayGame extends MapActivity {
 	protected void onDestroy() {
 		super.onDestroy();
 		updateTimer.cancel();
+		timer.cancel();
 	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
 		updateTimer.cancel();
+		timer.cancel();
 		
 	}
 
@@ -237,35 +254,68 @@ public class PlayGame extends MapActivity {
 					// parameter.
 					JSONObject jsonResponse = new JSONObject(
 							convertStreamToString(instream));
+					
+					distanceToOppFlag = jsonResponse.getDouble("distanceToOpponentFlag") * 364320;
+					distanceToOwnFlag = jsonResponse.getDouble("distanceToOwnFlag") * 364320;
 
 					JSONObject team0 = jsonResponse.getJSONObject("Team0");
 					JSONObject team1 = jsonResponse.getJSONObject("Team1");
+					
+					if(team0.getInt("TeamIndex") == 0){
+						blueScore = team0.getInt("Points");
+						blueScoreView.setText("" + blueScore);
+					}else{
+						redScore = team0.getInt("Points");
+						redScoreView.setText("" + redScore);
+					}
+					
+					if(team1.getInt("TeamIndex") == 0){
+						blueScore = team1.getInt("Points");
+						blueScoreView.setText("" + blueScore);
+					}else{
+						redScore = team1.getInt("Points");
+						redScoreView.setText("" + redScore);
+					}
 
 					if (bases[1] == null) {
 
 						double x = team0.getDouble("FlagStartXPos");
 						double y = team0.getDouble("FlagStartYPos");
-						System.out.println("team 0 (x,y): "+ x + " , " + y);
 						int teamId = team0.getInt("TeamID");
-//						blueFlag = new Player(
-//								(float) (settings.getFloat("Longitude", 0) + 0.001),
-//								(float) (settings.getFloat("Latitude", 0) + 0.001),
-//								true, true, teamId, 0);
-						 blueFlag = new Player((float)x, (float)y, true,
-						 true, teamId, 0);
-						bases[0] = blueFlag;
+						if(team0.getInt("TeamIndex") == 0){
+							bases[0] = new Player(
+								(float) (settings.getFloat("Longitude", 0) + 0.0005),
+								(float) (settings.getFloat("Latitude", 0) + 0.0005),
+								true, true, teamId, 0);
+//						 blueFlag = new Player((float)x, (float)y, true,
+//						 true, teamId, 0);
+						}else{
+							bases[1] = new Player(
+									(float) (settings.getFloat("Longitude", 0) + 0.0005),
+									(float) (settings.getFloat("Latitude", 0) + 0.0005),
+									true, true, teamId, 1);
+//							 blueFlag = new Player((float)x, (float)y, true,
+//							 true, teamId, 0);
+						}
 
 						x = team1.getDouble("FlagStartXPos");
 						y = team1.getDouble("FlagStartYPos");
-						System.out.println("team 1 (x,y): "+ x + " , " + y);
 						teamId = team1.getInt("TeamID");
-//						redFlag = new Player(
-//								(float) (settings.getFloat("Longitude", 0) - 0.001),
-//								(float) (settings.getFloat("Latitude", 0) - 0.001),
-//								true, true, teamId, 0);
-						 redFlag = new Player((float)x, (float)y, true,
-						 true, teamId, 0);
-						bases[1] = redFlag;
+						if(team1.getInt("TeamIndex") == 0){
+							bases[0] = new Player(
+								(float) (settings.getFloat("Longitude", 0) + 0.0005),
+								(float) (settings.getFloat("Latitude", 0) + 0.0005),
+								true, true, teamId, 0);
+//						 blueFlag = new Player((float)x, (float)y, true,
+//						 true, teamId, 0);
+						}else{
+							bases[1] = new Player(
+									(float) (settings.getFloat("Longitude", 0) + 0.0005),
+									(float) (settings.getFloat("Latitude", 0) + 0.0005),
+									true, true, teamId, 1);
+//							 redFlag = new Player((float)x, (float)y, true,
+//							 true, teamId, 0);
+						}
 					}
 
 					numPlayers = jsonResponse.getInt("numPlayers");
@@ -276,7 +326,6 @@ public class PlayGame extends MapActivity {
 					for (int i = 0; i < playerList.length(); i++) {
 						JSONObject player = playerList.getJSONObject("player"
 								+ i);
-						System.out.println(player);
 						convertJsonResponseToPlayer(player, i);
 					}
 				}
@@ -400,54 +449,66 @@ public class PlayGame extends MapActivity {
 		} else
 			System.out.println("Error");
 
-		System.out.println("count:" + count);
 
 		if (players != null) {
 			for (int i = 0; i < count; i++) {
 
-				System.out.println(i);
-				System.out.println(players[i]);
-				if (user.userGameID == players[i].userGameID) {
-					drawable = getResources().getDrawable(R.drawable.black_dot);
-				} else if ((teamColor.equals("red") && teamID == players[i].teamID)
-						|| (teamColor.equals("blue") && teamID != players[i].teamID)) {
-					if (players[i].hasOwnFlag == true)
-						drawable = getResources().getDrawable(
-								R.drawable.red_flag);
-					else if (players[i].hasOpponentFlag == true)
-						drawable = getResources().getDrawable(
-								R.drawable.blue_flag);
-					else
-						drawable = getResources().getDrawable(
-								R.drawable.red_dot);
-				} else if ((teamColor.equals("blue") && teamID == players[i].teamID)
-						|| (teamColor.equals("red") && teamID != players[i].teamID)) {
-					if (players[i].hasOwnFlag == true)
-						drawable = getResources().getDrawable(
-								R.drawable.blue_flag);
-					else if (players[i].hasOpponentFlag == true)
-						drawable = getResources().getDrawable(
-								R.drawable.red_flag);
-					else
-						drawable = getResources().getDrawable(
-								R.drawable.blue_dot);
+				if(!players[i].isBase){
+					if (user.userGameID == players[i].userGameID) {
+					} else if ((teamColor.equals("red") && teamID == players[i].teamID)
+							|| (teamColor.equals("blue") && teamID != players[i].teamID)) {
+						if (players[i].hasOwnFlag == true)
+							drawable = getResources().getDrawable(
+									R.drawable.red_flag);
+						else if (players[i].hasOpponentFlag == true)
+							drawable = getResources().getDrawable(
+									R.drawable.blue_flag);
+						else
+							drawable = getResources().getDrawable(
+									R.drawable.red_dot);
+					} else if ((teamColor.equals("blue") && teamID == players[i].teamID)
+							|| (teamColor.equals("red") && teamID != players[i].teamID)) {
+						if (players[i].hasOwnFlag == true)
+							drawable = getResources().getDrawable(
+									R.drawable.blue_flag);
+						else if (players[i].hasOpponentFlag == true)
+							drawable = getResources().getDrawable(
+									R.drawable.red_flag);
+						else
+							drawable = getResources().getDrawable(
+									R.drawable.blue_dot);
+					}
 				}
-
-				itemizedoverlay = new MapItemizedOverlay(drawable, this);
-
-				point = new GeoPoint((int) (players[i].xPosition * 1E6),
-						(int) (players[i].yPosition * 1E6));
-				overlayitem = new OverlayItem(point, players[i].userName, ""
-						+ players[i].teamID);
-				itemizedoverlay.addOverlay(overlayitem);
-				mapOverlays.add(itemizedoverlay);
+				else{
+					if(players[i].teamIndex == 0){
+						drawable = getResources().getDrawable(R.drawable.blue_castle);
+					}
+					drawable = getResources().getDrawable(R.drawable.castle);
+				}
+				if(drawable != null){
+					itemizedoverlay = new MapItemizedOverlay(drawable, this);
+	
+					point = new GeoPoint((int) (players[i].xPosition * 1E6),
+							(int) (players[i].yPosition * 1E6));
+					overlayitem = new OverlayItem(point, players[i].userName, ""
+							+ players[i].teamID);
+					itemizedoverlay.addOverlay(overlayitem);
+					mapOverlays.add(itemizedoverlay);
+				}
 			}
 		}
+		point = new GeoPoint((int) (user.xPosition * 1E6),
+				(int) (user.yPosition * 1E6));
+		overlayitem = new OverlayItem(point, user.userName, ""
+				+ user.teamID);
+		itemizedoverlay = new MapItemizedOverlay(getResources().getDrawable(R.drawable.black_dot), this);
+		itemizedoverlay.addOverlay(overlayitem);
+		mapOverlays.add(itemizedoverlay);
 		map.invalidate();
 	}
 
-	public void startCountdown(int milliseconds) {
-		new CountDownTimer(milliseconds, 1000) {
+	public CountDownTimer startCountdown(int milliseconds) {
+		CountDownTimer timer = new CountDownTimer(milliseconds, 1000) {
 			public void onTick(long millisecondsUntilFinished) {
 				int seconds = (int) ((millisecondsUntilFinished / 1000) % 60);
 				int minutes = (int) ((millisecondsUntilFinished - (seconds * 1000)) / 60000);
@@ -461,6 +522,7 @@ public class PlayGame extends MapActivity {
 
 			}
 		}.start();
+		return timer;
 	}
 
 	// this will basically create a new thread that will handle updating
@@ -486,6 +548,7 @@ public class PlayGame extends MapActivity {
 	protected void onStop() {
 		super.onStop();
 		updateTimer.cancel();
+		timer.cancel();
 		finish();
 		leaveGame();
 	}
@@ -549,6 +612,139 @@ public class PlayGame extends MapActivity {
 	}
 
 	public void compareLocations() {
-		
+		System.out.println("Distance: " + distanceToOppFlag);
+		//refresh bases flag
+		bases[0].hasOwnFlag = true;
+		bases[1].hasOwnFlag = true;
+		for(int i = 0; i < numPlayers; i++){
+			if(players[i].hasOpponentFlag){
+				if(players[i].teamID != bases[0].teamID) bases[0].hasOwnFlag = false;
+				else bases[1].hasOwnFlag = false;
+			}
+			if(players[i].hasOwnFlag){
+				if(players[i].teamID == bases[0].teamID) bases[0].hasOwnFlag = false;
+				else bases[1].hasOwnFlag = false;
+			}
+		}
+		//compare to bases
+		for(int i = 0; i < 2; i++){
+			//from other base
+			if(bases[i].hasOwnFlag && bases[i].teamID != user.teamID){
+				if(distanceToOppFlag < 100) takeFlag();
+			}
+			if(user.hasOpponentFlag && user.teamID == bases[i].teamID){
+				//score
+			}
+		}
+		//compare to players
+		for(int i = 0; i < numPlayers; i++){
+			//take opp flag
+			if(players[i].hasOpponentFlag && players[i].teamID != user.teamID){
+				if(distanceToOppFlag < 100) takeFlag();
+			}
+		}
 	}
+	
+	private void takeFlag(){
+		AlertDialog steal = new AlertDialog.Builder(PlayGame.this).create();
+		
+		steal.requestWindowFeature(Window.FEATURE_NO_TITLE);
+		WindowManager.LayoutParams orientSteal = steal.getWindow().getAttributes();
+		orientSteal.gravity = Gravity.BOTTOM | Gravity.CENTER;
+		orientSteal.x = 0;
+		orientSteal.y = 0;
+		steal.getWindow().setAttributes(orientSteal);
+		    			
+		steal.setIcon(0);
+		    			
+		steal.setTitle("Flag in proximity!");
+		steal.setButton("Steal Flag", new DialogInterface.OnClickListener(){
+
+			public void onClick(DialogInterface dialog, 
+				int which){
+				takeFlagServerCall();
+			}
+
+		});
+			
+		steal.setButton2("Cancel", new DialogInterface.OnClickListener(){
+
+			public void onClick(DialogInterface dialog, 
+				int which){
+			}
+
+		});
+		steal.show();
+	}
+	
+	private void takeFlagServerCall(){
+
+			// Create a HTTPClient as the form container
+			HttpClient httpclient = new DefaultHttpClient();
+
+			// Create an array list for the input data to be sent
+			ArrayList<NameValuePair> nameValuePairs;
+
+			// Create a HTTP Response and HTTP Entity
+			HttpResponse response;
+			HttpEntity entity;
+
+			// run http methods
+			try {
+				// Use HTTP POST method
+				URI uri = new URI(getPlayerPositionsURL);
+				HttpPost httppost = new HttpPost(uri);
+
+				// place credentials in the array list
+				nameValuePairs = new ArrayList<NameValuePair>();
+				nameValuePairs
+						.add(new BasicNameValuePair("userId", "" + userGameID));
+				nameValuePairs.add(new BasicNameValuePair("gameId", "" + gameID));
+				nameValuePairs.add(new BasicNameValuePair("teamId", "" + teamID));
+				nameValuePairs.add(new BasicNameValuePair("xPos", "" + user.xPosition));
+				nameValuePairs.add(new BasicNameValuePair("yPos", "" + user.yPosition));
+				nameValuePairs.add(new BasicNameValuePair("takeOppFlag", "" + 1));
+				nameValuePairs.add(new BasicNameValuePair("takeOwnFlag", "" + 0));
+				
+
+				// Add array list to http post
+				httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+
+				// assign executed form container to response
+				response = httpclient.execute(httppost);
+
+				// check status code, need to check status code 200
+				if (response.getStatusLine().getStatusCode() == 200) {
+
+					// assign response entity to http entity
+					entity = response.getEntity();
+
+					// check if entity is not null
+					if (entity != null) {
+						// Create new input stream with received data assigned
+						InputStream instream = entity.getContent();
+
+						// Create new JSON Object. assign converted data as
+						// parameter.
+						JSONObject jsonResponse = new JSONObject(
+								convertStreamToString(instream));
+						
+						distanceToOppFlag = jsonResponse.getDouble("distanceToOpponentFlag") * 364320;
+						distanceToOwnFlag = jsonResponse.getDouble("distanceToOwnFlag") * 364320;
+
+						numPlayers = jsonResponse.getInt("numPlayers");
+						JSONObject playerList = jsonResponse
+								.getJSONObject("PlayerArray");
+
+						for (int i = 0; i < playerList.length(); i++) {
+							JSONObject player = playerList.getJSONObject("player"
+									+ i);
+							convertJsonResponseToPlayer(player, i);
+						}
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 }
