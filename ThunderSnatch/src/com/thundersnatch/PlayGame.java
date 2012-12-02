@@ -187,6 +187,7 @@ public class PlayGame extends MapActivity {
 	public int getTime(String s) {
 		//input: String syntax YYYY-MM-DD HH:MM:SS
 		//output: Difference in milliseconds between Start time and phone's current time
+		s = s.split("\\s+")[1];
 		String[] temp = s.split("\\:");
 		Calendar c  = Calendar.getInstance();
 		int currentTime = c.get(Calendar.MILLISECOND);
