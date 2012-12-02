@@ -112,12 +112,7 @@ public class PlayGame extends MapActivity {
 			updateTimer = startUpdateCountDown(900000);
 		}
 		else{
-			//input format: YYYY-MM-DD HH:MM:SS
 			String temp = startTimeTemp.split("\\s+")[1];
-			
-			
-			//add 15 minutes to start time and subtract from now()
-			//set that milisecondsRemaining to that value
 			int millisecondsRemaining = getTime(temp);
 			timer = startCountdown(millisecondsRemaining);
 			updateTimer = startUpdateCountDown(millisecondsRemaining);
@@ -185,9 +180,8 @@ public class PlayGame extends MapActivity {
 	}
 	
 	public int getTime(String s) {
-		//input: String syntax YYYY-MM-DD HH:MM:SS
+		//input: String syntax HH:MM:SS
 		//output: Difference in milliseconds between Start time and phone's current time
-		s = s.split("\\s+")[1];
 		String[] temp = s.split("\\:");
 		Calendar c  = Calendar.getInstance();
 		int currentTime = c.get(Calendar.MILLISECOND);
