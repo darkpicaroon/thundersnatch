@@ -110,6 +110,7 @@ public class GameLobby extends Activity {
 				finish();
 
 				JSONObject response = lobbyServerInterface(1);
+				
 
 				moveToGame();
 
@@ -259,8 +260,9 @@ public class GameLobby extends Activity {
 	public void updateLobby() {
 		try {
 			JSONObject response = lobbyServerInterface(0);
-			System.out.println("gs: " + response.getInt("GameStatus"));
 			if (response.getInt("GameStatus") == 1) {
+				editor.putString("GameStartDate", response.getString("StartTime"));
+				editor.commit();
 				readyToStart = true;
 			}
 			int numPlayers = response.getInt("numPlayers");

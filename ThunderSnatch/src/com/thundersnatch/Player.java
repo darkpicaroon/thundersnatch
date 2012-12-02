@@ -24,6 +24,7 @@ public class Player {
 		stealsThisGame = steals;
 		capturesThisGame = captures;
 		teamID = team;
+		base = false;
 	}
 
 	public Player(int id, String name, float x, float y, boolean own,
