@@ -185,7 +185,7 @@ public class PlayGame extends MapActivity {
 		String[] temp = s.split("\\:");
 		Calendar c  = Calendar.getInstance();
 		int currentTime = c.get(Calendar.MILLISECOND);
-		int startTime = Integer.parseInt(temp[0]) + Integer.parseInt(temp[1]) + Integer.parseInt(temp[2]);
+		int startTime = (Integer.parseInt(temp[0])*3600000) + (Integer.parseInt(temp[1])*60000) + (Integer.parseInt(temp[2])*1000) + 900000;
 		
 		return startTime - currentTime;
 	}
