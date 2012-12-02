@@ -8,6 +8,7 @@ import java.net.URI;
 import java.sql.Time;
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import org.apache.http.HttpEntity;
@@ -111,11 +112,13 @@ public class PlayGame extends MapActivity {
 			updateTimer = startUpdateCountDown(900000);
 		}
 		else{
-			//parse starttimestring
+			//input format: YYYY-MM-DD HH:MM:SS
+			String temp = startTimeTemp.split("\\s+")[1];
+			
 			
 			//add 15 minutes to start time and subtract from now()
 			//set that milisecondsRemaining to that value
-			int millisecondsRemaining = 900000;
+			int millisecondsRemaining = getTime(temp);
 			timer = startCountdown(millisecondsRemaining);
 			updateTimer = startUpdateCountDown(millisecondsRemaining);
 		}
@@ -179,6 +182,17 @@ public class PlayGame extends MapActivity {
 		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0,
 				0, locationListener);
 
+	}
+	
+	public int getTime(String s) {
+		//input: String syntax YYYY-MM-DD HH:MM:SS
+		//output: Difference in milliseconds between Start time and phone's current time
+		String[] temp = s.split("\\:");
+		Calendar c  = Calendar.getInstance();
+		int currentTime = c.get(Calendar.MILLISECOND);
+		int startTime = Integer.parseInt(temp[0]) + Integer.parseInt(temp[1]) + Integer.parseInt(temp[2]);
+		
+		return startTime - currentTime;
 	}
 
 	public boolean onCreateOptionsMenu(Menu menu) {
