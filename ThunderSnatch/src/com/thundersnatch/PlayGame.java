@@ -124,7 +124,7 @@ public class PlayGame extends MapActivity {
 		
 		String startTimeTemp = "";
 		startTimeTemp = settings.getString("GameStartDate", "");
-		System.out.println("Hello " + startTimeTemp);
+		
 		if(startTimeTemp.equals("")){
 			timer = startCountdown(900000);
 			updateTimer = startUpdateCountDown(900000);
@@ -132,14 +132,12 @@ public class PlayGame extends MapActivity {
 		else{
 			String temp = startTimeTemp.split("\\s+")[1];
 			int millisecondsRemaining = getTime(temp);
-			System.out.println("milliseconds rcvd: " + millisecondsRemaining);
 			timer = startCountdown(millisecondsRemaining);
 			updateTimer = startUpdateCountDown(millisecondsRemaining);
 		}
 
 		user = new Player(userID, "USER", settings.getFloat("Longitude", 0),
 				settings.getFloat("Latitude", 0), false, false, teamID);
-
 
 		blueScoreView = (TextView) findViewById(R.id.blueScore);
 		blueScore = 0;
@@ -195,24 +193,15 @@ public class PlayGame extends MapActivity {
 	public int getTime(String s) {
 		//input: String syntax HH:MM:SS
 		//output: Difference in milliseconds between Start time and phone's current time
-		System.out.println("getTime rcvd: " + s);
-		String[] temp = s.split("\\:");
-		System.out.println("getTime: temp array: " + temp.toString());
-		String currentTimeString = DateFormat.getDateTimeInstance().format(new Date());
-		String[] temp2 = currentTimeString.split("\\s+");
-		currentTimeString = temp2[3];
-		String am_pm = temp2[4];
-		System.out.println("currentTimeString: " + currentTimeString);
-		temp2 = currentTimeString.split("\\:");
-		System.out.println("temp2: " + temp2.toString());
-		int currentTime = ((Integer.parseInt(temp2[0]))*3600000 + (Integer.parseInt(temp2[1]))*60000 + (Integer.parseInt(temp2[2]))*1000);
-		int startTime = (Integer.parseInt(temp[0])*3600000) + (Integer.parseInt(temp[1])*60000) + (Integer.parseInt(temp[2])*1000) + 900000;
-		if(am_pm.equals("PM")) {
-			currentTime += 43200000;
-		}
+		SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
+		String currentTimeString = format.format(new Date());
 		
-		System.out.println("current: " + currentTime);
-		System.out.println("start: " + startTime);
+		String[] temp = s.split("\\:");
+		String[] temp2 = currentTimeString.split("\\s+");
+		temp2 = currentTimeString.split("\\:");
+		
+		int currentTime = ((Integer.parseInt(temp2[0]))*3600000 + (Integer.parseInt(temp2[1]))*60000 + (Integer.parseInt(temp2[2]))*1000);
+		int startTime = (Integer.parseInt(temp[0])*3600000) + (Integer.parseInt(temp[1])*60000) + (Integer.parseInt(temp[2])*1000) + 3600000+ 900000;
 		return startTime - currentTime;
 	}
 
