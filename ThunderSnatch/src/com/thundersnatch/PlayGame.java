@@ -220,6 +220,7 @@ public class PlayGame extends MapActivity {
 		super.onDestroy();
 		updateTimer.cancel();
 		timer.cancel();
+		leaveGame();
 	}
 
 	@Override

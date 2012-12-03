@@ -64,6 +64,7 @@ public class GameLobby extends Activity {
 	private String leaveGameURL = "http://www.rkaneda.com/LeaveGame.php";
 
 	boolean readyToStart = false;
+	boolean movedToGame = false;
 
 	private SharedPreferences settings;
 	private SharedPreferences.Editor editor;
@@ -129,9 +130,17 @@ public class GameLobby extends Activity {
 	public void onStop() {
 		super.onStop();
 		updater.cancel();
+		finish();
 	}
 
+	
 
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		updater.cancel();
+		finish();
+	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -150,10 +159,13 @@ public class GameLobby extends Activity {
 	}
 
 	private void moveToGame() {
-		finish();
-		updater.cancel();
-		Intent intent = new Intent(GameLobby.this, PlayGame.class);
-		GameLobby.this.startActivity(intent);
+		if(!movedToGame){
+			movedToGame = true;
+			updater.cancel();
+			finish();
+			Intent intent = new Intent(GameLobby.this, PlayGame.class);
+			GameLobby.this.startActivity(intent);
+		}
 	}
 
 	private void addRedPlayer(String player) {
@@ -265,9 +277,10 @@ public class GameLobby extends Activity {
 		try {
 			JSONObject response = lobbyServerInterface(0);
 			if (response.getInt("GameStatus") == 1) {
+				readyToStart = true;
 				editor.putString("GameStartDate", response.getString("StartTime"));
 				editor.commit();
-				readyToStart = true;
+				moveToGame();
 			}
 			int numPlayers = response.getInt("numPlayers");
 			for (int i = 0; i < numPlayers; i++) {
@@ -306,10 +319,11 @@ public class GameLobby extends Activity {
 	}
 
 	public CountDownTimer startCountdown() {
-		CountDownTimer timer = new CountDownTimer(300000, 1000) {
+		CountDownTimer timer = new CountDownTimer(300000, 1500) {
 			public void onTick(long millisecondsUntilFinished) {
-				updateLobby();
-				if (readyToStart)
+				if (!readyToStart)
+					updateLobby();
+				else
 					moveToGame();
 			}
 
