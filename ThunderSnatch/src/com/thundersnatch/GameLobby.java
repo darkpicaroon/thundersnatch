@@ -110,6 +110,11 @@ public class GameLobby extends Activity {
 				finish();
 
 				JSONObject response = lobbyServerInterface(1);
+				try{
+					editor.putString("GameStartDate", response.getString("StartTime"));
+					editor.commit();
+				}
+				catch(Exception e){}
 				
 
 				moveToGame();
@@ -145,7 +150,6 @@ public class GameLobby extends Activity {
 	}
 
 	private void moveToGame() {
-
 		finish();
 		updater.cancel();
 		Intent intent = new Intent(GameLobby.this, PlayGame.class);

@@ -123,13 +123,13 @@ public class PlayGame extends MapActivity {
 		clockText = (TextView) findViewById(R.id.countDown);
 		
 		String startTimeTemp = "";
-		//startTimeTemp = settings.getString("GameStartDate", "");
+		startTimeTemp = settings.getString("GameStartDate", "");
+		System.out.println("Hello " + startTimeTemp);
 		if(startTimeTemp.equals("")){
 			timer = startCountdown(900000);
 			updateTimer = startUpdateCountDown(900000);
 		}
 		else{
-			
 			String temp = startTimeTemp.split("\\s+")[1];
 			int millisecondsRemaining = getTime(temp);
 			System.out.println("milliseconds rcvd: " + millisecondsRemaining);
