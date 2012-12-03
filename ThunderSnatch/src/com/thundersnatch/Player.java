@@ -11,7 +11,6 @@ public class Player {
 	public int capturesThisGame;
 	public int teamID;
 	public String userName;
-	public boolean base;
 	public int teamIndex;
 
 	public Player(int id, float x, float y, boolean own, boolean opp,
@@ -24,7 +23,7 @@ public class Player {
 		stealsThisGame = steals;
 		capturesThisGame = captures;
 		teamID = team;
-		base = false;
+		isBase = false;
 	}
 
 	public Player(int id, String name, float x, float y, boolean own,
@@ -34,18 +33,18 @@ public class Player {
 		yPosition = y;
 		hasOwnFlag = own;
 		hasOpponentFlag = opp;
-		base = false;
+		isBase = false;
 		teamID = team;
 		userName = name;
 	}
 
 	// Flag constructor.
-	public Player(float x, float y, boolean own, boolean isBase, int team,
+	public Player(float x, float y, int team,
 			int index) {
 		xPosition = x;
 		yPosition = y;
-		hasOwnFlag = own;
-		base = isBase;
+		hasOwnFlag = true;
+		isBase = true;
 		teamID = team;
 		teamIndex = index;
 		userGameID = -1;
